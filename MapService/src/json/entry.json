@@ -1,0 +1,16 @@
+{
+	"_id": "_design/entry",
+	"language": "javascript",
+	"views": 
+	{
+		"agreed": 
+		{
+			"map": "function (doc) { typeof doc.agreed == \"boolean\" && emit(doc._id, 1); }"
+		},
+
+		"answers": 
+		{
+			"map": "function (doc) { doc.type==\"application\" && emit(doc.device_id, 1); }"
+		}
+	}
+}

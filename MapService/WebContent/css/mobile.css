@@ -1,0 +1,224 @@
+/*******************************************************************************
+ * Copyright (c) 2014, 2017 IBM Corporation, Carnegie Mellon University and
+ * others
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ ******************************************************************************/
+@CHARSET "UTF-8";
+
+html, body {
+	height: 100%;
+	margin: 0;
+	padding: 0;
+}
+
+#loading {
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	height: 100%;
+	width: 100%;
+	background-color: #FFF;
+	background-image: url("../images/loading.gif");
+	background-repeat: no-repeat;
+	background-position: center;
+	filter: alpha(opacity = 50);
+	-moz-opacity: 0.50;
+	opacity: 0.50;
+	z-index: 10000;
+}
+
+#map-container {
+	padding: 0;
+}
+
+#map {
+	padding: 0;
+	width: 100%;
+}
+
+#map a[target] {
+	display: none !important;
+}
+
+#map-center {
+	position: absolute;
+	display: none;
+	width: 14px;
+	height: 14px;
+	top: 50%;
+	left: 50%;
+	margin-left: -7px;
+	margin-top: -7px;
+}
+
+#map-center-heading {
+	position: absolute;
+	display: none;
+	width: 28px;
+	height: 28px;
+	top: 50%;
+	left: 50%;
+	margin-left: -14px;
+	margin-top: -14px;
+}
+
+#control table {
+	width: 100%;
+}
+
+#confirm table {
+	width: 100%;
+}
+
+#settings .ui-select {
+	margin-bottom: 1em;
+}
+
+#route_result {
+	font-size: small;
+	overflow: auto;
+}
+
+#route_table {
+	border-collapse: collapse;
+	position: relative;
+}
+
+#route_table tr.invisible {
+	display: none;
+}
+
+#route_table tr a {
+	height: 28px;
+	line-height: 28px;
+	margin: 4px;
+	display: block;
+}
+
+#route_table tr a._btn {
+	line-height: 28px;
+	display: block;
+}
+
+#route_table tr a._label {
+	white-space: normal;
+}
+
+#route_table tr a span.direction, #route_table tr a span.linktype {
+	width: 28px;
+	height: 28px;
+	background-repeat: no-repeat;
+	background-position: center center;
+	background-size: auto 28px;
+}
+
+#route_table tr a span.direction {
+	float: left;
+}
+
+#route_table tr a span.linktype {
+	float: right;
+}
+
+.STRAIGHT span.direction {
+	background-image: url("../images/arrow-straight.png");
+}
+
+.TURN_LEFT span.direction {
+	background-image: url("../images/arrow-left.png");
+}
+
+.TURN_RIGHT span.direction {
+	background-image: url("../images/arrow-right.png");
+}
+
+.SLIGHT_LEFT span.direction {
+	background-image: url("../images/arrow-slight-left.png");
+}
+
+.SLIGHT_RIGHT span.direction {
+	background-image: url("../images/arrow-slight-right.png");
+}
+
+.SHARP_LEFT span.direction {
+	background-image: url("../images/arrow-sharp-left.png");
+}
+
+.SHARP_RIGHT span.direction {
+	background-image: url("../images/arrow-sharp-right.png");
+}
+
+.UTURN span.direction {
+	background-image: url("../images/arrow-uturn-right.png");
+}
+
+.UTURN_LEFT span.direction {
+	background-image: url("../images/arrow-uturn-left.png");
+}
+
+.UTURN_RIGHT span.direction {
+	background-image: url("../images/arrow-uturn-right.png");
+}
+
+.link_type_10 span.linktype {
+	background-image: url("../images/1472186683_aiga_elevator.png")
+}
+
+.link_type_13 span.linktype {
+	background-image: url("../images/slope.png")
+}
+
+#confirm_floor table {
+	width: 100%;
+}
+
+.route_instructions .title {
+	line-height: 28px;
+	margin: 4px;
+	display: block;
+}
+
+.route_instructions .distance {
+	font-size: small;
+	color: #777;
+	margin-left: 32px;
+	display: block;
+	margin-left: 32px;
+}
+
+.route_instructions span.direction, .route_instructions span.linktype {
+	width: 28px;
+	height: 28px;
+	background-repeat: no-repeat;
+	background-position: center center;
+	background-size: auto 18px;
+}
+
+.route_instructions span.direction {
+	float: left;
+}
+
+.route_instructions span.linktype {
+	float: right;
+}
+
+.route_instructions .STRAIGHT span.direction {
+	background-image: none;
+}

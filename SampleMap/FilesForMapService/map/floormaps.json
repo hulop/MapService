@@ -1,0 +1,16 @@
+[
+	{
+		"id": "sample",
+		"image": "map/sample.png",
+		"floor": 1,
+		"origin_x": 264,
+		"origin_y": 265,
+		"width": 528,
+		"height": 530,
+		"ppm_x": 10,
+		"ppm_y": 10,
+		"lat": 0,
+		"lng": 0,
+		"rotate": 0
+	}
+]

@@ -1,0 +1,31 @@
+{
+	"_id": "_design/geo",
+	"language": "javascript",
+	"views": 
+	{
+		
+	},
+
+	"st_indexes": 
+	{
+		"geoIndex": 
+		{
+			"index": "function (doc) { doc.geometry && doc.geometry.coordinates && st_index(doc.geometry); }"
+		},
+
+		"nodeIndex": 
+		{
+			"index": "function (doc) { doc.geometry && doc.geometry.coordinates && doc.properties && doc.properties.category==\"ノード情報\" && st_index(doc.geometry); }"
+		},
+
+		"linkIndex": 
+		{
+			"index": "function (doc) { doc.geometry && doc.geometry.coordinates && doc.properties && doc.properties.category==\"リンクの情報\" && st_index(doc.geometry); }"
+		},
+
+		"toiletIndex": 
+		{
+			"index": "function (doc) { doc.geometry && doc.geometry.coordinates && doc.properties && (doc.properties.category==\"公共用トイレの情報\"　|| doc.properties.category==\"出入口情報\") && st_index(doc.geometry); }"
+		}
+	}
+}

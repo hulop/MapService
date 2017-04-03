@@ -1,0 +1,12 @@
+{
+	"_id": "_design/user",
+	"language": "javascript",
+	"views": 
+	{
+		"users": 
+		{
+			"map": "function (doc) { doc.roles && emit(doc._id, 1); }"
+		}
+		
+	}
+}

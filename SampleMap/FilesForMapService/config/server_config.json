@@ -1,0 +1,29 @@
+{
+	"conv_server": "<please set your conversation server name>.mybluemix.net",
+	"conv_api_key": "<please set your conversation api key>",
+	"preset_for_blind":
+	{
+		"src": "location/presets/blind.plist",
+		"size": 1429
+	},
+
+	"preset_for_wheelchair":
+	{
+		"src": "location/presets/wheelchair.plist",
+		"size": 1434
+	},
+
+	"preset_for_sighted":
+	{
+		"src": "location/presets/general.plist",
+		"size": 1434
+	},
+
+	"map_files":
+	[
+		{
+			"src": "location/mapdata.json",
+			"size": 183102
+		}
+	]
+}

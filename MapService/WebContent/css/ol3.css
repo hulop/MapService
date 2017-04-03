@@ -1,0 +1,100 @@
+/*******************************************************************************
+ * Copyright (c) 2014, 2017 IBM Corporation, Carnegie Mellon University and
+ * others
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ ******************************************************************************/
+@CHARSET "UTF-8";
+
+.RIGHT_CENTER {
+	right: 0.5em;
+	top: 50%;
+	transform: translate(0, -50%);
+	-webkit-transform: translate(0, -50%);
+}
+
+.RIGHT_BOTTOM {
+	right: 0.5em;
+	bottom: 3.0em;
+}
+
+.RIGHT_TOP {
+	right: 0.5em;
+	top: 0.5em;
+}
+
+.LEFT_BOTTOM {
+	left: 0.5em;
+	bottom: 0.5em;
+}
+
+.BOTTOM {
+	bottom: 0.5em;
+	left: 50%;
+	transform: translate(-50%, 0);
+	-webkit-transform: translate(-50%, 0);
+}
+
+.ol-rotate {
+	left: 0.5em !important;
+	right: initial !important;
+}
+
+.ol-attribution {
+	z-index: 1;
+}
+
+.ui-btn-icon-left {
+	padding-left: 2.0em !important;
+}
+
+.ui-btn .ui-btn-icon-top .ui-icon-north-up:after,
+.ui-btn .ui-btn-icon-top .ui-icon-route-up:after,
+.ui-btn .ui-btn-icon-top .ui-icon-head-up:after,
+.ui-btn .ui-btn-icon-top .ui-icon-navigation:after
+{
+	padding: 0.3em !important;
+}
+.ui-icon-north-up:after,
+.ui-icon-route-up:after,
+.ui-icon-head-up:after,
+.ui-icon-navigation:after
+{
+	width: 44px !important;
+	height: 44px !important;
+	margin-left: -22px !important;
+	border-radius: 44px !important;
+	background-size: 30px 30px;
+}
+
+.ui-icon-north-up:after {
+	background-image: url("../images/icon-north-up.png");
+}
+
+.ui-icon-route-up:after {
+	background-image: url("../images/icon-route-up.png");
+}
+
+.ui-icon-head-up:after {
+	background-image: url("../images/icon-head-up.png");
+}
+
+.ui-icon-my-location:after {
+	background-image: url("../images/map-location.png");
+}

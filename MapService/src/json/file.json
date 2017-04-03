@@ -1,0 +1,17 @@
+{
+	"_id": "_design/file",
+	"language": "javascript",
+	"views": 
+	{
+		"files": 
+		{
+			"map": "function (doc) { doc.properties && doc.properties.file && emit(doc.properties.file, doc._rev); }"
+		},
+
+		"count": 
+		{
+			"map": "function (doc) { doc.properties && doc.properties.file && emit(doc.properties.file, 1); }",
+			"reduce": "_count"
+		}
+	}
+}

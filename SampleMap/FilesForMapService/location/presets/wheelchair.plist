@@ -1,7 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
 The MIT License (MIT)
 
-Copyright (c) 2014, 2017 IBM Corporation
+Copyright (c) 2016, 2017 IBM Corporation, Carnegie Mellon University and others
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -20,20 +21,12 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 -->
-
-
-# MapService
-
-MapService is a server-side component that provides Map related services for [NavCogIOSv3](https://github.com/hulop/NavCogIOSv3).
-Please import 2 projects (MapService and SampleMap) by using Eclipse IDE for Java EE Developers Mars2 or later.
-
-Please visit *MapService* folder for more details about MapService application.
-*SampleMap* folder contains sample map and GeoJSON data.
-
------
-
-## About
-[About HULOP](https://github.com/hulop/00Readme)
-
-## License
-[MIT](http://opensource.org/licenses/MIT)
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>bleloc_map_data</key>
+	<string>mapdata.json</string>
+	<key>ui_mode</key>
+	<string>UI_WHEELCHAIR</string>
+</dict>
+</plist>

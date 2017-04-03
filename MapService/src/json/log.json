@@ -1,0 +1,27 @@
+{
+	"_id": "_design/log",
+	"language": "javascript",
+	"views": 
+	{
+		"stats": 
+		{
+			"map": "function (doc) { doc.client && doc.timestamp && emit(doc.client, doc.timestamp); }",
+			"reduce": "_stats"
+		},
+
+		"timestamp": 
+		{
+			"map": "function (doc) { doc.client && doc.timestamp && emit(doc.timestamp, 1); }"
+		},
+
+		"event_timestamp": 
+		{
+			"map": "function (doc) { doc.client && doc.timestamp && doc.event && emit([doc.event, doc.timestamp], 1); }"
+		},
+
+		"client_timestamp": 
+		{
+			"map": "function (doc) { doc.client && doc.timestamp && emit([doc.client, doc.timestamp], 1); }"
+		}
+	}
+}

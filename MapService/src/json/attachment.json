@@ -1,0 +1,11 @@
+{
+	"_id": "_design/attachment",
+	"language": "javascript",
+	"views": 
+	{
+		"files": 
+		{
+			"map": "function (doc) { doc._attachments && emit(doc._id, doc._rev); }"
+		}
+	}
+}
