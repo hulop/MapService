@@ -961,6 +961,9 @@ $hulop.editor = function() {
 	}
 
 	function createLink(node1, node2) {
+		if (node1 == node2) {
+			return false;
+		}
 		var linkID = newID('link');
 		[ node1, node2 ].forEach(function(node) {
 			for (var i = 1; i <= 10; i++) {
