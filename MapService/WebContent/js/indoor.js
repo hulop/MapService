@@ -234,6 +234,8 @@ $hulop.indoor = function() {
 		'setStyle' : function(style) {
 			styleOptions = style;
 		},
+		'getOverlay' : getOverlay,
+		'refresh' : refresh,
 		'loadOverlays' : loadOverlays,
 		'showFloor' : showFloor,
 		'getCurrentFloor' : getCurrentFloor
