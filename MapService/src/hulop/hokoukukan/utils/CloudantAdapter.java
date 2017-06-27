@@ -519,9 +519,6 @@ public class CloudantAdapter implements DBAdapter {
 			rev = file_db.find(JsonObject.class, path).get("_rev").getAsString();
 		} catch (NoDocumentException e) {
 		}
-		if (rev != null) {
-			file_db.removeAttachment(path, rev, "file");
-		}
 		file_db.saveAttachment(is, "file", "application/octet-stream", path, rev);
 	}
 
@@ -555,17 +552,7 @@ public class CloudantAdapter implements DBAdapter {
 	@Override
 	public void deleteAttachment(String path) {
 		try {
-			String rev = null;
-			try {
-				rev = file_db.find(JsonObject.class, path).get("_rev").getAsString();
-			} catch (NoDocumentException e) {
-			}
-			file_db.removeAttachment(path, rev, "file");
-			try {
-				rev = file_db.find(JsonObject.class, path).get("_rev").getAsString();
-			} catch (NoDocumentException e) {
-			}
-			file_db.remove(path, rev);
+			file_db.remove(file_db.find(JsonObject.class, path));
 			System.out.println("deleteAttachment:" + path);
 		} catch (NoDocumentException e) {
 		}
