@@ -336,7 +336,10 @@ $hulop.editor = function() {
 		select = new ol.interaction.Select({
 			'condition' : ol.events.condition.never,
 			'style' : function(feature) {
-				var style = [ getStyle(feature) ];
+				var style = getStyle(feature);
+				if (!Array.isArray(style)) {
+					style = [style];
+				}
 				if (feature.getGeometry().getType() == 'LineString') {
 					feature.getGeometry().getCoordinates().forEach(function(point, index, array) {
 						var edge = index == 0 || index == array.length - 1;
@@ -1137,12 +1140,32 @@ $hulop.editor = function() {
 
 				});
 			} else {
-				style = new ol.style.Style({
+				style = [new ol.style.Style({
 					'stroke' : new ol.style.Stroke({
 						'color' : heights.length == 1 ? odd ? '#0000ff' : '#ff0000' : '#7f007f',
 						'width' : 6
 					})
-				});
+				})];
+				var dir = feature.get('方向性');
+				
+				if (dir == '1' || dir == '2') {
+				var geometry = feature.getGeometry();
+				  geometry.forEachSegment(function(start, end) {
+				    var dx = end[0] - start[0];
+				    var dy = end[1] - start[1];
+				    var rotation = Math.atan2(dy, dx);
+				    // arrows
+				    style.push(new ol.style.Style({
+				      geometry: new ol.geom.Point((dir=='1')?end:start),
+				      image: new ol.style.Icon({
+				        src: 'images/arrow.png',
+				        anchor: [1.5, 0.5],
+				        rotateWithView: false,
+				        rotation: (dir=='1')?-rotation:-rotation+Math.PI
+				      })
+				    }));
+				  });
+				}
 			}
 		} else if (feature.get('出入口ID')) {
 			style = null;
@@ -1192,7 +1215,13 @@ $hulop.editor = function() {
 			}
 		}
 		if (feature.error) {
-			style && style.getStroke() && style.getStroke().setColor('#c0c0c0');
+			if (Array.isArray(style)) {
+				style.forEach(function(s) {
+					s && s.getStroke() && s.getStroke().setColor('#c0c0c0');					
+				});
+			} else {
+				style && style.getStroke() && style.getStroke().setColor('#c0c0c0');
+			}
 		}
 		return style;
 	}
