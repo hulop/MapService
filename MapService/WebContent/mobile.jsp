@@ -17,11 +17,11 @@ if (id == null || (agreeBean.isAgreementSupported() && !agreeBean.getAgreed(id))
 <link rel="stylesheet" href="jquery/jquery.mobile-1.4.5.min.css"/>
 <link rel="stylesheet" href="css/mobilelist.css">
 <link rel="stylesheet" href="css/ol3.css">
-<link rel="stylesheet" href="openlayers/v3.20.1/ol.css">
+<link rel="stylesheet" href="openlayers/v4.0.1/ol.css">
 <script src="jquery/jquery-1.11.3.min.js"></script>
 <script src="jquery/jquery.mobile-1.4.5.min.js"></script>
 <script src="jquery/jquery.mobile.nestedlists.js"></script>
-<script src="openlayers/v3.20.1/ol.js"></script>
+<script src="openlayers/v4.0.1/ol.js"></script>
 <script type="text/javascript" src="js/messages.js"></script>
 <script type="text/javascript" src="js/mobile.js"></script>
 <script type="text/javascript" src="js/location.js"></script>
