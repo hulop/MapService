@@ -114,6 +114,7 @@ $hulop.map = function() {
 				$hulop.config = data;
 				initCenter();
 				initTile();
+				initRotationMode();
 				map.on('moveend', saveCenter);
 			},
 			'error' : function(XMLHttpRequest, textStatus, errorThrown) {
@@ -284,6 +285,10 @@ $hulop.map = function() {
 			'lng' : 139.77392703294754
 		};
 		setCenter([ center.lng, center.lat ]);
+	}
+
+	function initRotationMode() {
+		isNaN($hulop.config.INITIAL_ROTATION_MODE) || setRotationMode($hulop.config.INITIAL_ROTATION_MODE);
 	}
 
 	function initTile() {
