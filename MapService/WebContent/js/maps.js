@@ -584,6 +584,10 @@ $hulop.map = function() {
 	}
 
 	function loadCenter() {
+		if ($hulop.config.DO_NOT_USE_SAVED_CENTER) {
+			return null;
+		}
+		
 		if (window.localStorage) {
 			try {
 				return JSON.parse(window.localStorage["map_center"]);
