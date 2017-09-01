@@ -60,6 +60,20 @@ public class DatabaseBean {
 				e.printStackTrace();
 			}
 		}
+		url = CloudUtils.getCredential(new String[] { "compose-for-mongodb" }, "uri", null);
+		if (url != null) {
+			String cert = CloudUtils.getCredential(new String[] { "compose-for-mongodb" }, "ca_certificate_base64",
+					null);
+			if (cert != null) {
+				System.out.println(url);
+				System.out.println(cert);
+				try {
+					return new MongoAdapter(url, "db", cert);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
 		url = CloudUtils.getCredentialURL(new String[] { "mongodb", "mongodb-2.4" },
 				"mongodb://localhost:27017/navi_db");
 		if (url != null) {
@@ -330,7 +344,8 @@ public class DatabaseBean {
 		return adapter.getLogStats();
 	}
 
-	public static JSONArray getLogs(String clientId, String start, String end, String skip, String limit, String event) {
+	public static JSONArray getLogs(String clientId, String start, String end, String skip, String limit,
+			String event) {
 		JSONArray logs = adapter.getLogs(clientId, start, end, skip, limit, event);
 		for (Object log : logs) {
 			if (log instanceof JSONObject) {

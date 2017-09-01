@@ -21,14 +21,22 @@
  *******************************************************************************/
 package hulop.hokoukukan.utils;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.UnknownHostException;
+import java.security.KeyStore;
+import java.security.SecureRandom;
+import java.security.cert.CertificateFactory;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManagerFactory;
 
 import org.apache.wink.json4j.JSONArray;
 import org.apache.wink.json4j.JSONException;
@@ -40,6 +48,7 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
+import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoClientURI;
 import com.mongodb.gridfs.GridFS;
 import com.mongodb.gridfs.GridFSDBFile;
@@ -48,15 +57,21 @@ public class MongoAdapter implements DBAdapter {
 
 	private final DB db;
 	private final GridFS mFS;
+	private final MongoClient client;
 	private final MongoClientURI mongoURI;
 	private final DBCollection mapCol, userCol, logCol, fileCol, entryCol;
 	private final List<DBObject> insertList = new ArrayList<DBObject>();
 	private final List<DBObject> insertLogList = new ArrayList<DBObject>();
 	private int insertCount = 0;
 
-	public MongoAdapter(String url) throws UnknownHostException {
-		mongoURI = new MongoClientURI(url);
-		db = new MongoClient(mongoURI).getDB(mongoURI.getDatabase());
+	public MongoAdapter(String url) throws Exception {
+		this(url, null, null);
+	}
+
+	public MongoAdapter(String url, String dbName, String cert) throws Exception {
+		mongoURI = cert != null ? new MongoClientURI(url, optionsBuilder(cert)) : new MongoClientURI(url);
+		client = new MongoClient(mongoURI);
+		db = client.getDB(dbName != null ? dbName : mongoURI.getDatabase());
 		mFS = new GridFS(db);
 		System.out.println(db.getCollectionNames());
 		mapCol = db.getCollection("maps");
@@ -139,12 +154,10 @@ public class MongoAdapter implements DBAdapter {
 	@Override
 	public void getGeometry(double[] center, double radius, JSONObject nodeMap, JSONArray features,
 			List<String> categories) {
-		DBObject query = new BasicDBObject()
-				.append("geometry",
-						new BasicDBObject("$near",
-								new BasicDBObject("$geometry",
-										new BasicDBObject("type", "Point").append("coordinates", center))
-												.append("$maxDistance", radius)));
+		DBObject query = new BasicDBObject().append("geometry",
+				new BasicDBObject("$near",
+						new BasicDBObject("$geometry", new BasicDBObject("type", "Point").append("coordinates", center))
+								.append("$maxDistance", radius)));
 		if (categories != null) {
 			query.put("properties.category", new BasicDBObject("$in", categories));
 		}
@@ -399,4 +412,25 @@ public class MongoAdapter implements DBAdapter {
 		return null;
 	}
 
+	private static MongoClientOptions.Builder optionsBuilder(String cert) throws Exception {
+		if (!cert.startsWith("-----BEGIN CERTIFICATE-----")) {
+			cert = new String(Base64.getDecoder().decode(cert));
+		}
+
+		KeyStore keystore = KeyStore.getInstance("PKCS12");
+		keystore.load(null);
+		CertificateFactory cf = CertificateFactory.getInstance("X.509");
+		BufferedInputStream bis = new BufferedInputStream(new ByteArrayInputStream(cert.getBytes()));
+		for (int i = 0; bis.available() > 0; i++) {
+			keystore.setCertificateEntry("alias" + i, cf.generateCertificate(bis));
+		}
+		bis.close();
+
+		String tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
+		TrustManagerFactory tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
+		tmf.init(keystore);
+		SSLContext sc = SSLContext.getInstance("TLSv1.2");
+		sc.init(null, tmf.getTrustManagers(), new SecureRandom());
+		return MongoClientOptions.builder().socketFactory(sc.getSocketFactory());
+	}
 }

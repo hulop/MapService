@@ -27,6 +27,10 @@ import org.apache.wink.json4j.JSONObject;
 public class CloudUtils {
 
 	public static String getCredentialURL(String[] keys, String defaultURL) {
+		return getCredential(keys, "url", defaultURL);
+	}
+
+	public static String getCredential(String[] keys, String key2, String defaultValue) {
 		try {
 			String vcap = System.getenv("HULOP_VCAP_SERVICES");
 			if (vcap == null) {
@@ -37,13 +41,13 @@ public class CloudUtils {
 				for (String key : keys) {
 					if (json.has(key)) {
 						System.out.println(json.toString(4));
-						return json.getJSONArray(key).getJSONObject(0).getJSONObject("credentials").getString("url");
+						return json.getJSONArray(key).getJSONObject(0).getJSONObject("credentials").getString(key2);
 					}
 				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return defaultURL;
+		return defaultValue;
 	}
 }
