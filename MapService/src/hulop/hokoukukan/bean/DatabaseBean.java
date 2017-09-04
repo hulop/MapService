@@ -68,7 +68,7 @@ public class DatabaseBean {
 				System.out.println(url);
 				System.out.println(cert);
 				try {
-					return new MongoAdapter(url, "db", cert);
+					return new MongoAdapter(url, "navi_db", cert);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

@@ -402,14 +402,30 @@ public class MongoAdapter implements DBAdapter {
 
 	@Override
 	public JSONArray getAgreements() {
-		// TODO Auto-generated method stub
-		return null;
+		JSONArray agreements = new JSONArray();
+		DBCursor cursor = entryCol.find(new BasicDBObject().append("agreed", new BasicDBObject("$exists", true)));
+		try {
+			while (cursor.hasNext()) {
+				agreements.add(new JSONObject(cursor.next().toString()));
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return agreements;
 	}
 
 	@Override
 	public JSONArray getAnswers(String deviceId) {
-		// TODO Auto-generated method stub
-		return null;
+		JSONArray answers = new JSONArray();
+		DBCursor cursor = entryCol.find(new BasicDBObject().append("device_id", deviceId));
+		try {
+			while (cursor.hasNext()) {
+				answers.add(new JSONObject(cursor.next().toString()));
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return answers;
 	}
 
 	private static MongoClientOptions.Builder optionsBuilder(String cert) throws Exception {
