@@ -65,10 +65,15 @@ public class DatabaseBean {
 			String cert = CloudUtils.getCredential(new String[] { "compose-for-mongodb" }, "ca_certificate_base64",
 					null);
 			if (cert != null) {
+				String dbName = System.getenv("HULOP_NAVI_DB");
+				if (dbName == null) {
+					dbName = "navi_db";
+				}
 				System.out.println(url);
+				System.out.println(dbName);
 				System.out.println(cert);
 				try {
-					return new MongoAdapter(url, "navi_db", cert);
+					return new MongoAdapter(url, dbName, cert);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
