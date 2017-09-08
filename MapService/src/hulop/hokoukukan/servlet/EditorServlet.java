@@ -35,6 +35,7 @@ import org.apache.wink.json4j.JSONObject;
 
 import hulop.hokoukukan.bean.AuthBean;
 import hulop.hokoukukan.bean.DatabaseBean;
+import hulop.hokoukukan.bean.RouteData;
 
 /**
  * Servlet implementation class EditorServlet
@@ -101,6 +102,7 @@ public class EditorServlet extends HttpServlet {
 					}
 
 				}
+				RouteData.clearCache();
 			}
 			if (result != null) {
 				RouteSearchServlet.sendJSON(result, request, response);

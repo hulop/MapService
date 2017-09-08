@@ -123,6 +123,7 @@ public class RouteSearchServlet extends HttpServlet {
 					params.put("lat", Double.parseDouble(request.getParameter("lat")));
 					params.put("lng", Double.parseDouble(request.getParameter("lng")));
 					params.put("dist", Double.parseDouble(request.getParameter("dist")));
+					params.put("cache", !"false".equals(request.getParameter("cache")));
 					startMap.put(user, params);
 					reStart = true;
 				}
@@ -138,7 +139,7 @@ public class RouteSearchServlet extends HttpServlet {
 
 			if (reStart) {
 				bean.init(new double[] { params.getDouble("lng"), params.getDouble("lat") }, params.getDouble("dist"),
-						lang);
+						lang, params.getBoolean("cache"));
 				if (!"start".equals(action)) {
 					System.out.println("Restarting session=" + user + ", params=" + params);
 				}

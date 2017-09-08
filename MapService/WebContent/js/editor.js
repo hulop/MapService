@@ -518,6 +518,7 @@ $hulop.editor = function() {
 	function prepareData(center, radius) {
 		$hulop.route.callService({
 			'action' : 'start',
+			'cache' : false,
 			'lat' : center[1],
 			'lng' : center[0],
 			'dist' : radius
