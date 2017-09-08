@@ -469,17 +469,11 @@ public class RouteSearchBean {
 	}
 
 	private boolean isNode(String id) {
-		if (tempNodeID.equals(id)) {
-			return mTempNode != null;
-		}
-		return mNodeMap.has(id);
+		return tempNodeID.equals(id) ? mTempNode != null : mNodeMap.has(id);
 	}
 
 	private JSONObject getNode(String id) throws JSONException {
-		if (tempNodeID.equals(id)) {
-			return mTempNode;
-		}
-		return mNodeMap.getJSONObject(id);
+		return tempNodeID.equals(id) ? mTempNode : mNodeMap.getJSONObject(id);
 	}
 
 	private float getHeight(String node) throws NumberFormatException, JSONException {
