@@ -130,6 +130,7 @@ public class RouteSearchServlet extends HttpServlet {
 				if (bean == null && params != null) {
 					routeBeanMap.put(beanUser, bean = new RouteSearchBean());
 					reStart = true;
+					System.out.println(routeBeanMap.size() + " users");
 				}
 			}
 			if (bean == null) {

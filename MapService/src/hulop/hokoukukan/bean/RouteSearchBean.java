@@ -478,7 +478,6 @@ public class RouteSearchBean {
 
 	private float getHeight(String node) throws NumberFormatException, JSONException {
 		return Float.parseFloat(getNode(node).getJSONObject("properties").getString("高さ").replace("B", "-"));
-
 	}
 
 	private String getDoor(String node) throws JSONException {
