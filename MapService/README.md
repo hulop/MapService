@@ -31,7 +31,7 @@ This server-side component provides Map related services that aimed to use with 
 - [Java Map Projection Library](https://github.com/OSUCartography/JMapProjLib) (Apache License v2.0)
 - [Cloudant Java Client version 2.7.0](https://github.com/cloudant/java-cloudant) (Apache License v2.0)
 - [JGraphT version 0.9.1](http://jgrapht.org/) (Eclipse Public License v1.0)
-- [MongoDB Java Driver version 2.12.0](https://mongodb.github.io/mongo-java-driver/) (MIT License)
+- [MongoDB Java Driver version 3.4.3](https://mongodb.github.io/mongo-java-driver/) (MIT License)
 - [Apache Wink version 1.4.0](https://wink.apache.org/) (Apache License v2.0)
 - [Apache Commons IO version 2.4](http://commons.apache.org/proper/commons-io/) (Apache License v2.0)
 - [Apache HttpClient version 4.3.6](http://hc.apache.org/httpcomponents-client-ga/) (Apache License v2.0)
