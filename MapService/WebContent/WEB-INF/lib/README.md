@@ -38,5 +38,5 @@ The following files should be placed here.
 - httpcore-4.3.3.jar
 - httpmime-4.3.6.jar
 - jgrapht-core-0.9.1.jar
-- mongo-java-driver-2.12.0.jar
+- mongo-java-driver-3.4.3.jar
 - wink-1.4.jar
