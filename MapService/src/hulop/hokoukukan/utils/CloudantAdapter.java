@@ -59,7 +59,7 @@ public class CloudantAdapter implements DBAdapter {
 	private final CloudantClient client;
 	private final List<JsonElement> insertList = new ArrayList<JsonElement>();
 	private final List<JsonElement> insertLogList = new ArrayList<JsonElement>();
-	private JSONArray resultList;
+	private JSONArray resultList = new JSONArray();
 	private static final String NAVI_DB = "navi_db", USER_DB = "user_db", LOG_DB = "log_db", FILE_DB = "file_db",
 			ENTRY_DB = "entry_db";
 	private int insertCount = 0;
@@ -100,15 +100,17 @@ public class CloudantAdapter implements DBAdapter {
 				e.printStackTrace();
 			}
 		}
-		insertList.clear();
-		insertLogList.clear();
+		// insertList.clear();
+		// insertLogList.clear();
 		resultList = new JSONArray();
 		insertCount = 0;
 	}
 
 	@Override
 	public void insert(String json) {
-		insertList.add(new JsonParser().parse(json));
+		synchronized (insertList) {
+			insertList.add(new JsonParser().parse(json));
+		}
 		if (insertList.size() >= 1000) {
 			flush();
 		}
@@ -151,27 +153,31 @@ public class CloudantAdapter implements DBAdapter {
 
 	@Override
 	public void flush() {
-		if (insertList.size() > 0) {
-			for (Response resp : navi_db.bulk(insertList)) {
-				try {
-					resultList.add(new JSONObject().put("_id", resp.getId()).put("_rev", resp.getRev()));
-				} catch (Exception e) {
-					e.printStackTrace();
+		synchronized (insertList) {
+			if (insertList.size() > 0) {
+				for (Response resp : navi_db.bulk(insertList)) {
+					try {
+						resultList.add(new JSONObject().put("_id", resp.getId()).put("_rev", resp.getRev()));
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 				}
+				insertCount += insertList.size();
+				insertList.clear();
 			}
-			insertCount += insertList.size();
-			insertList.clear();
 		}
-		if (insertLogList.size() > 0) {
-			for (Response resp : log_db.bulk(insertLogList)) {
-				try {
-					resultList.add(new JSONObject().put("_id", resp.getId()).put("_rev", resp.getRev()));
-				} catch (Exception e) {
-					e.printStackTrace();
+		synchronized (insertLogList) {
+			if (insertLogList.size() > 0) {
+				for (Response resp : log_db.bulk(insertLogList)) {
+					try {
+						new JSONObject().put("_id", resp.getId()).put("_rev", resp.getRev());
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 				}
+				insertCount += insertLogList.size();
+				insertLogList.clear();
 			}
-			insertCount += insertLogList.size();
-			insertLogList.clear();
 		}
 	}
 
@@ -316,12 +322,9 @@ public class CloudantAdapter implements DBAdapter {
 				index = "linkIndex";
 			}
 		}
-		return (JsonArray) navi_db
-				.findAny(JsonObject.class,
-						String.format(
-								"%s/_design/geo/_geo/%s?lon=%f&lat=%f8&radius=%f&relation=intersects&skip=%d&limit=%d&include_docs=true",
-								navi_db.getDBUri(), index, center[0], center[1], radius, skip, limit))
-				.get("rows");
+		return (JsonArray) navi_db.findAny(JsonObject.class, String.format(
+				"%s/_design/geo/_geo/%s?lon=%f&lat=%f8&radius=%f&relation=intersects&skip=%d&limit=%d&include_docs=true",
+				navi_db.getDBUri(), index, center[0], center[1], radius, skip, limit)).get("rows");
 	}
 
 	private JsonArray getNearestRows(double[] point, int skip, int limit) {
@@ -410,7 +413,9 @@ public class CloudantAdapter implements DBAdapter {
 
 	@Override
 	public void insertLog(String json) {
-		insertLogList.add(new JsonParser().parse(json));
+		synchronized (insertLogList) {
+			insertLogList.add(new JsonParser().parse(json));
+		}
 		if (insertLogList.size() >= 1000) {
 			flush();
 		}
@@ -447,7 +452,7 @@ public class CloudantAdapter implements DBAdapter {
 		}
 		JSONArray result = new JSONArray();
 		String view, key1;
-		if(clientId != null) {
+		if (clientId != null) {
 			view = "client_timestamp";
 			key1 = clientId;
 		} else {
@@ -455,8 +460,8 @@ public class CloudantAdapter implements DBAdapter {
 			key1 = event;
 		}
 		try {
-			UnpaginatedRequestBuilder<ComplexKey, Object> builder = log_db
-					.getViewRequestBuilder("log", view).newRequest(Key.Type.COMPLEX, Object.class);
+			UnpaginatedRequestBuilder<ComplexKey, Object> builder = log_db.getViewRequestBuilder("log", view)
+					.newRequest(Key.Type.COMPLEX, Object.class);
 			builder.startKey(Key.complex(key1).add(start != null ? Long.parseLong(start) : 0));
 			builder.endKey(Key.complex(key1).add(end != null ? Long.parseLong(end) : Long.MAX_VALUE));
 			if (skip != null) {

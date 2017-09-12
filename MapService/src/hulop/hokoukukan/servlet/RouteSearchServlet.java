@@ -164,7 +164,7 @@ public class RouteSearchServlet extends HttpServlet {
 				data.put("route", route);
 				JSONArray array = new JSONArray();
 				array.add(data);
-				System.out.println(array.toString(4));
+				System.out.println("route_search user=" + user);
 				DatabaseBean.insertLogs(array);
 			} else if ("features".equals(action)) {
 				result = bean.getFeatures();

@@ -332,17 +332,33 @@ public class DatabaseBean {
 		return result;
 	}
 
-	public static JSONArray insertLogs(JSONArray array) {
-		adapter.prepare(null);
+	private static boolean flushWaiting = false;
+	private static Runnable flushWait = new Runnable() {
+		@Override
+		public void run() {
+			try {
+				Thread.sleep(1000);
+				adapter.flush();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} finally {
+				flushWaiting = false;
+			}
+		}
+	};
+
+	public static void insertLogs(JSONArray array) {
 		try {
 			for (int i = 0; i < array.length(); i++) {
 				adapter.insertLog(array.getString(i));
 			}
-			adapter.flush();
+			if (!flushWaiting) {
+				flushWaiting = true;
+				new Thread(flushWait).start();
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return adapter.getResult();
 	}
 
 	public static JSONArray getLogStats() {

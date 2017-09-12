@@ -88,14 +88,16 @@ public class MongoAdapter implements DBAdapter {
 		if (file != null) {
 			mapCol.remove(new BasicDBObject("properties.file", file.getPath()));
 		}
-		insertList.clear();
-		insertLogList.clear();
+		// insertList.clear();
+		// insertLogList.clear();
 		insertCount = 0;
 	}
 
 	@Override
 	public void insert(String json) {
-		insertList.add((DBObject) com.mongodb.util.JSON.parse(json));
+		synchronized (insertList) {
+			insertList.add((DBObject) com.mongodb.util.JSON.parse(json));
+		}
 		if (insertList.size() >= 1000) {
 			flush();
 		}
@@ -124,15 +126,23 @@ public class MongoAdapter implements DBAdapter {
 
 	@Override
 	public void flush() {
-		if (insertList.size() > 0) {
-			mapCol.insert(insertList);
-			insertCount += insertList.size();
-			insertList.clear();
+		synchronized (insertList) {
+			if (insertList.size() > 0) {
+				mapCol.insert(insertList);
+				insertCount += insertList.size();
+				insertList.clear();
+			}
 		}
-		if (insertLogList.size() > 0) {
-			logCol.insert(insertLogList);
-			insertCount += insertLogList.size();
-			insertLogList.clear();
+		synchronized (insertLogList) {
+			if (insertLogList.size() > 0) {
+				try {
+					logCol.insert(insertLogList);
+				} catch (Exception e) {
+					throw e;
+				}
+				insertCount += insertLogList.size();
+				insertLogList.clear();
+			}
 		}
 	}
 
@@ -260,7 +270,9 @@ public class MongoAdapter implements DBAdapter {
 
 	@Override
 	public void insertLog(String json) {
-		insertLogList.add((DBObject) com.mongodb.util.JSON.parse(json));
+		synchronized (insertLogList) {
+			insertLogList.add((DBObject) com.mongodb.util.JSON.parse(json));
+		}
 		if (insertLogList.size() >= 1000) {
 			flush();
 		}
