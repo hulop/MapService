@@ -53,7 +53,7 @@ public class RouteSearchServlet extends HttpServlet {
 
 	private final Map<String, JSONObject> startMap = new LinkedHashMap<String, JSONObject>(16, 0.75f, true) {
 		private static final long serialVersionUID = 1L;
-		private final int maxSize = getEnvInt("MAX_START_PARAMS", 1000);
+		private final int maxSize = getEnvInt("MAX_START_PARAMS", 10000);
 
 		@Override
 		protected boolean removeEldestEntry(Entry<String, JSONObject> eldest) {
@@ -64,7 +64,7 @@ public class RouteSearchServlet extends HttpServlet {
 	private final Map<String, RouteSearchBean> routeBeanMap = new LinkedHashMap<String, RouteSearchBean>(16, 0.75f,
 			true) {
 		private static final long serialVersionUID = 1L;
-		private final int maxSize = getEnvInt("MAX_ROUTE_BEANS", 100);
+		private final int maxSize = getEnvInt("MAX_ROUTE_BEANS", 1000);
 
 		@Override
 		protected boolean removeEldestEntry(Entry<String, RouteSearchBean> eldest) {
