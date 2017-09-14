@@ -45,7 +45,7 @@ public class RouteSearchBean {
 	public static final DBAdapter adapter = DatabaseBean.adapter;
 	private static final double WEIGHT_IGNORE = Double.MAX_VALUE;
 	private static final double ESCALATOR_WEIGHT = 100, STAIR_WEIGHT = 300, ELEVATOR_WEIGHT = 300;
-	private long mLastInit;
+	private long mLastInit = System.currentTimeMillis();
 	private JSONObject mNodeMap, mTempNode, mTempLink1, mTempLink2;
 	private JSONArray mFeatures, mLandmarks, mDoors;
 	private Set<String> mElevatorNodes;
