@@ -549,26 +549,20 @@ public class RouteSearchBean {
 			}
 			if (links.size() > 0) {
 				final Point2D.Double pt = new Point2D.Double(fromPoint.getDouble("lng"), fromPoint.getDouble("lat"));
-				links.sort(new Comparator<JSONObject>() {
-					@Override
-					public int compare(JSONObject o1, JSONObject o2) {
-						try {
-							double dist1 = calc2Ddistance(o1.getJSONObject("geometry").getJSONArray("coordinates"), pt,
-									null);
-							double dist2 = calc2Ddistance(o2.getJSONObject("geometry").getJSONArray("coordinates"), pt,
-									null);
-							if (dist1 != dist2) {
-								return dist1 < dist2 ? -1 : 1;
-							}
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-						return 0;
+				double minDist = 100;
+				JSONObject nearestLink = null;
+				for (JSONObject json : links) {
+					double dist = calc2Ddistance(json.getJSONObject("geometry").getJSONArray("coordinates"), pt, null);
+					if (dist < minDist) {
+						minDist = dist;
+						nearestLink = json;
 					}
-				});
-				return links.get(0).getString("_id");
+				}
+				if (nearestLink != null) {
+					return nearestLink.getString("_id");
+				}
 			}
-		} catch (JSONException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;
