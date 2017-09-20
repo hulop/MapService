@@ -530,7 +530,7 @@ public class RouteSearchBean {
 			for (Object feature : mFeatures) {
 				JSONObject json = (JSONObject) feature;
 				JSONObject properties = json.getJSONObject("properties");
-				if (properties.has("起点ノードID") && properties.has("終点ノードID")
+				if (properties.has("終点ノードID") // && properties.has("起点ノードID")
 						&& INVALID_LINKS.indexOf("|" + properties.getString("経路の種類") + "|") == -1) {
 					String startID = properties.getString("起点ノードID");
 					String endID = properties.getString("終点ノードID");
@@ -587,7 +587,8 @@ public class RouteSearchBean {
 
 	private static Point2D.Double get2DPoint(JSONArray coordinates, int index) throws Exception {
 		JSONArray coord = coordinates.getJSONArray(index);
-		return new Point2D.Double(coord.getDouble(0), coord.getDouble(1));
+		// return new Point2D.Double(coord.getDouble(0), coord.getDouble(1));
+		return new Point2D.Double(((Double) coord.get(0)).doubleValue(), ((Double) coord.get(1)).doubleValue());
 	}
 
 	static final String tempNodeID = "_TEMP_NODE_", tempLink1ID = "_TEMP_LINK1_", tempLink2ID = "_TEMP_LINK2_";
