@@ -143,14 +143,16 @@ public class RouteSearchBean {
 			JSONObject properties = json.getJSONObject("properties");
 			switch (properties.getString("category")) {
 			case "リンクの情報":
-				if (!properties.has("起点ノードID") || !properties.has("終点ノードID")) {
-					break;
-				}
-				String start = properties.getString("起点ノードID");
-				String end = properties.getString("終点ノードID");
 				double weight = properties.has("リンク延長") ? Double.parseDouble(properties.getString("リンク延長")) : 10.0f;
 				weight = adjustAccWeight(properties, conditions, weight);
 				if (weight == WEIGHT_IGNORE) {
+					break;
+				}
+				String start, end;
+				try {
+					start = properties.getString("起点ノードID");
+					end = properties.getString("終点ノードID");
+				} catch (Exception e) {
 					break;
 				}
 				if (from == null) {
@@ -530,10 +532,14 @@ public class RouteSearchBean {
 			for (Object feature : mFeatures) {
 				JSONObject json = (JSONObject) feature;
 				JSONObject properties = json.getJSONObject("properties");
-				if (properties.has("終点ノードID") // && properties.has("起点ノードID")
-						&& INVALID_LINKS.indexOf("|" + properties.getString("経路の種類") + "|") == -1) {
-					String startID = properties.getString("起点ノードID");
-					String endID = properties.getString("終点ノードID");
+				String startID, endID;
+				try {
+					startID = properties.getString("起点ノードID");
+					endID = properties.getString("終点ノードID");
+				} catch (Exception e) {
+					continue;
+				}
+				if (INVALID_LINKS.indexOf("|" + properties.getString("経路の種類") + "|") == -1) {
 					if (isNode(startID) && isNode(endID)) {
 						if (floors == null) {
 							links.add(json);
