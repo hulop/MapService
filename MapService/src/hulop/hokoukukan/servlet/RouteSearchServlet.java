@@ -78,6 +78,7 @@ public class RouteSearchServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		long start = System.currentTimeMillis();
 		String user = request.getParameter("user");
 		String action = request.getParameter("action");
 		if (user == null || action == null) {
@@ -164,7 +165,7 @@ public class RouteSearchServlet extends HttpServlet {
 				data.put("route", route);
 				JSONArray array = new JSONArray();
 				array.add(data);
-				System.out.println("route_search user=" + user);
+				// System.out.println("route_search user=" + user);
 				DatabaseBean.insertLogs(array);
 			} else if ("features".equals(action)) {
 				result = bean.getFeatures();
@@ -173,6 +174,7 @@ public class RouteSearchServlet extends HttpServlet {
 			}
 			if (result != null) {
 				sendJSON(result, request, response);
+				System.out.println(user + ": " + (System.currentTimeMillis() - start) + "ms");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

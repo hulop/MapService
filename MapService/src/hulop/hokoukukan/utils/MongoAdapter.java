@@ -133,15 +133,19 @@ public class MongoAdapter implements DBAdapter {
 				insertList.clear();
 			}
 		}
+		List<DBObject> flushList = null;
 		synchronized (insertLogList) {
 			if (insertLogList.size() > 0) {
-				try {
-					logCol.insert(insertLogList);
-				} catch (Exception e) {
-					throw e;
-				}
+				flushList = new ArrayList<DBObject>(insertLogList);
 				insertCount += insertLogList.size();
 				insertLogList.clear();
+			}
+		}
+		if (flushList != null) {
+			try {
+				logCol.insert(flushList);
+			} catch (Exception e) {
+				throw e;
 			}
 		}
 	}
