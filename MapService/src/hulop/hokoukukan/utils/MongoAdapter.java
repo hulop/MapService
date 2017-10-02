@@ -109,6 +109,11 @@ public class MongoAdapter implements DBAdapter {
 	}
 
 	@Override
+	public void setOBJ(JSONObject obj) {
+		mapCol.save((DBObject) com.mongodb.util.JSON.parse(obj.toString()));
+	}
+
+	@Override
 	public void remove(JSONArray array) {
 		List<String> idList = new ArrayList<String>();
 		for (int i = 0; i < array.length(); i++) {

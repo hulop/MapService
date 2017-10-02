@@ -4,6 +4,10 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%
+	if (!authBean.supportRole("auditor")) {
+		response.sendError(HttpServletResponse.SC_FORBIDDEN);
+		return;
+	}
 	Object profile = authBean.getProfile(request);
 	if (profile == null || !authBean.hasRole(request, "auditor")) {
 		response.sendRedirect("login.jsp?logout=true&redirect_url=logview.jsp");

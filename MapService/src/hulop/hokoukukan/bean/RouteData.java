@@ -48,8 +48,22 @@ public class RouteData {
 	protected long mLastRef;
 
 	private static List<RouteData> gRouteCache = new ArrayList<RouteData>();
+	private static long gNextCheck = 0;
+	private static String gLastUpdated = null;
 
 	public static RouteData getCache(double[] center, double range) throws JSONException {
+		long now = System.currentTimeMillis();
+		if (now > gNextCheck) {
+			gNextCheck = now + 60 * 1000;
+			try {
+				JSONObject updated_obj = adapter.find("last_updated");
+				if (updated_obj != null && !updated_obj.toString().equals(gLastUpdated)) {
+					clearRouteCache();
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 		synchronized (gRouteCache) {
 			RouteData cache = null;
 			for (Iterator<RouteData> it = gRouteCache.iterator(); it.hasNext();) {
@@ -73,9 +87,27 @@ public class RouteData {
 		}
 	}
 
-	public static void clearCache() {
+	public static void onUpdate() {
+		try {
+			JSONObject obj = adapter.find("last_updated");
+			if (obj == null) {
+				obj = new JSONObject().put("_id", "last_updated");
+			}
+			adapter.setOBJ(obj.put("timestamp", System.currentTimeMillis()));
+			clearRouteCache();
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private static void clearRouteCache() {
 		synchronized (gRouteCache) {
 			gRouteCache.clear();
+		}
+		try {
+			gLastUpdated = adapter.find("last_updated").toString();
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 

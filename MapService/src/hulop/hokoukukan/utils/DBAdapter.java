@@ -36,6 +36,8 @@ public interface DBAdapter {
 
 	void update(String json);
 
+	void setOBJ(JSONObject obj);
+	
 	void remove(JSONArray array);
 
 	void flush();

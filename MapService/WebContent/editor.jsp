@@ -4,6 +4,10 @@
 	class="hulop.hokoukukan.bean.AuthBean" />
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
+	if (!authBean.supportRole("editor")) {
+		response.sendError(HttpServletResponse.SC_FORBIDDEN);
+		return;
+	}
 	Object profile = authBean.getProfile(request);
 	if (profile == null || !authBean.hasRole(request, "editor")) {
 		response.sendRedirect("login.jsp?logout=true&redirect_url=editor.jsp");

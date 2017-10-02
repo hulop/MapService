@@ -122,6 +122,11 @@ public class CloudantAdapter implements DBAdapter {
 	}
 
 	@Override
+	public void setOBJ(JSONObject obj) {
+		set(obj, navi_db);
+	}
+
+	@Override
 	public void remove(JSONArray array) {
 		int count = 0;
 		List<JsonElement> deleteList = new ArrayList<JsonElement>();
@@ -375,6 +380,15 @@ public class CloudantAdapter implements DBAdapter {
 		return null;
 	}
 
+	private void set(JSONObject obj, Database db) {
+		JsonElement el = new JsonParser().parse(obj.toString());
+		if (obj.has("_rev")) {
+			db.update(el);
+		} else {
+			db.save(el);
+		}
+	}
+
 	@Override
 	public JSONArray listUsers() {
 		JSONArray users = new JSONArray();
@@ -574,12 +588,7 @@ public class CloudantAdapter implements DBAdapter {
 
 	@Override
 	public void setEntry(JSONObject entry) {
-		JsonElement el = new JsonParser().parse(entry.toString());
-		if (entry.has("_rev")) {
-			entry_db.update(el);
-		} else {
-			entry_db.save(el);
-		}
+		set(entry, entry_db);
 	}
 
 	@Override

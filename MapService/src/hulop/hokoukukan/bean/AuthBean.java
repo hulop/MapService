@@ -109,6 +109,11 @@ public class AuthBean {
 		}
 		return false;
 	}
+	
+	public boolean supportRole(String role) {
+		String env = System.getenv("ENABLE_MAP_ACCESS");
+		return env != null && env.contains(role);
+	}
 
 	public JSONArray listUsers() {
 		return adapter.listUsers();

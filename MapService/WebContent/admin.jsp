@@ -5,6 +5,10 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%
+	if (!authBean.supportRole("admin")) {
+		response.sendError(HttpServletResponse.SC_FORBIDDEN);
+		return;
+	}
 	Object profile = authBean.getProfile(request);
 	if (profile == null || !authBean.hasRole(request, "admin")) {
 		response.sendRedirect("login.jsp?logout=true&redirect_url=admin.jsp");

@@ -102,7 +102,7 @@ public class EditorServlet extends HttpServlet {
 					}
 
 				}
-				RouteData.clearCache();
+				RouteData.onUpdate();
 			}
 			if (result != null) {
 				RouteSearchServlet.sendJSON(result, request, response);
