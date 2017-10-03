@@ -21,6 +21,10 @@
  *******************************************************************************/
 package hulop.hokoukukan.bean;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -35,6 +39,18 @@ import hulop.hokoukukan.utils.DBAdapter;
 public class AuthBean {
 
 	public static final DBAdapter adapter = DatabaseBean.adapter;
+	private static List<String> supportedRoles = new ArrayList<String>();
+	static {
+		try {
+			String env = System.getenv("ENABLE_MAP_ACCESS");
+			if (env != null) {
+				supportedRoles = Arrays.asList(env.trim().split("[,\\s]+"));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		System.out.println("supportedRoles=" + supportedRoles.toString());
+	}
 
 	public AuthBean() {
 		init();
@@ -97,22 +113,23 @@ public class AuthBean {
 	}
 
 	public boolean hasRole(HttpServletRequest request, String role) {
-		HttpSession session = request.getSession(false);
-		if (session != null) {
-			try {
-				JSONObject user_profile = (JSONObject) session.getAttribute("user_profile");
-				JSONArray roles = user_profile == null ? null : user_profile.getJSONArray("roles");
-				return roles != null && roles.indexOf(role) != -1;
-			} catch (Exception e) {
-				e.printStackTrace();
+		if (supportRole(role)) {
+			HttpSession session = request.getSession(false);
+			if (session != null) {
+				try {
+					JSONObject user_profile = (JSONObject) session.getAttribute("user_profile");
+					JSONArray roles = user_profile == null ? null : user_profile.getJSONArray("roles");
+					return roles != null && roles.indexOf(role) != -1;
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 		}
 		return false;
 	}
-	
+
 	public boolean supportRole(String role) {
-		String env = System.getenv("ENABLE_MAP_ACCESS");
-		return env != null && env.contains(role);
+		return supportedRoles.contains(role);
 	}
 
 	public JSONArray listUsers() {
@@ -163,7 +180,7 @@ public class AuthBean {
 	private void init() {
 		JSONArray users = listUsers();
 		if (users.length() == 0) {
-			addUser("hulopadmin", "please change password", new String[] { "admin"});
+			addUser("hulopadmin", "please change password", new String[] { "admin" });
 		}
 	}
 
