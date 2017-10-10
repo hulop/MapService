@@ -50,7 +50,7 @@ var $hulop_admin = function() {
 				'action' : 'list-files'
 			},
 			'success' : function(data) {
-				var fileList = data.split('\n').filter(function(line) {
+				var fileList = data.split(/[\r\n]+/).filter(function(line) {
 					return line.indexOf('.') != -1;
 				});
 				showFileList(fileList, $('#fileList'), 'remove-file');
@@ -66,7 +66,7 @@ var $hulop_admin = function() {
 				'action' : 'list-attachments'
 			},
 			'success' : function(data) {
-				var fileList = data.split('\n').filter(function(line) {
+				var fileList = data.split(/[\r\n]+/).filter(function(line) {
 					return line.indexOf('.') != -1;
 				});
 				showFileList(fileList, $('#attachmentList'), 'remove-attachment');
