@@ -155,7 +155,9 @@ $hulop.location = function() {
 		}
 	}
 
+	var lastRAD;
 	function updateOrientation(rad) {
+		lastRAD = rad;
 		showDirection(rad * 180 / Math.PI);
 	}
 
@@ -177,6 +179,7 @@ $hulop.location = function() {
 					'longitude' : crd.longitude,
 					'floor' : crd.floor || 0
 				};
+				isNaN(lastRAD) || (data.z = -lastRAD);
 				$hulop.logging.onData(data);
 			}
 		}
