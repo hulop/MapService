@@ -112,7 +112,7 @@ $hulop.mobile_ready = function(bridge) {
 					'accuracy' : dataList.accuracy || 5
 				};
 				var angle = (dataList.orientation == 999 || isNaN(dataList.orientation)) ? undefined : (lastRotate + 90) * Math.PI / 180 - dataList.orientation;
-				angle && (loc.angle = angle)
+				isNaN(angle) || (loc.angle = angle)
 				$hulop.location.updateLocation(loc);
 				lastXYZ = new Date().getTime();
 				if (dataList.orientation != 999) {
