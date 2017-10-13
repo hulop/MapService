@@ -177,7 +177,6 @@ $hulop.location = function() {
 					'longitude' : crd.longitude,
 					'floor' : crd.floor || 0
 				};
-				isNaN(crd.angle) || (data.angle = crd.angle);
 				$hulop.logging.onData(data);
 			}
 		}

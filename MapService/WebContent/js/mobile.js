@@ -103,19 +103,17 @@ $hulop.mobile_ready = function(bridge) {
 			if (provider == 'XYZ') {
 				lastAnchor = $hulop.util.newLatLng(dataList.anchor);
 				lastRotate = dataList.rotate || 0;
-				var loc = {
+				$hulop.location.updateLocation({
 					'provider' : 'bleloc',
 					'timestamp' : new Date().getTime(),
 					'latitude' : dataList.lat,
 					'longitude' : dataList.lng,
 					'floor' : dataList.floor,
 					'accuracy' : dataList.accuracy || 5
-				};
-				var angle = (dataList.orientation == 999 || isNaN(dataList.orientation)) ? undefined : (lastRotate + 90) * Math.PI / 180 - dataList.orientation;
-				isNaN(angle) || (loc.angle = angle);
-				$hulop.location.updateLocation(loc);
+				});
 				lastXYZ = new Date().getTime();
 				if (dataList.orientation != 999) {
+					var angle = isNaN(dataList.orientation) ? undefined : (lastRotate + 90) * Math.PI / 180 - dataList.orientation;
 					$hulop.location.updateOrientation(angle);
 					$hulop.map.updateCenterOrientation(angle);
 					lastOrientationXYZ = lastXYZ;
