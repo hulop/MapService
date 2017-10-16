@@ -249,6 +249,11 @@ $hulop.map = function() {
 			$('#end_navi').on('click', function(event) {
 				event.preventDefault();
 				$hulop.util.logText("endNavigation");
+				$hulop.logging && $hulop.logging.onData({
+					"event" : "navigation",
+					"status" : "cancel",
+					"timestamp" : new Date().getTime()
+				});
 				clearRoute();
 			});
 			$('#confirm_yes').on('click', function(event) {
@@ -423,6 +428,11 @@ $hulop.map = function() {
 				if (index == naviRoutes.length - 1) {
 					$hulop.util.speak($m('ARRIVED', route.title), true);
 					$hulop.util.logText("endNavigation");
+					$hulop.logging && $hulop.logging.onData({
+						"event" : "navigation",
+						"status" : "end",
+						"timestamp" : new Date().getTime()
+					});
 					naviCondition.end = new Date().getTime();
 					$hulop.util.logText('navigationFinished,' + JSON.stringify(naviCondition));
 					var longDesc = getDestinationLong(true);
@@ -902,6 +912,11 @@ $hulop.map = function() {
 		naviCondition = $hulop.route.getNaviCondition();
 		naviCondition.start = new Date().getTime();
 		$hulop.util.logText("startNavigation");
+		$hulop.logging && $hulop.logging.onData({
+			"event" : "navigation",
+			"status" : "start",
+			"timestamp" : new Date().getTime()
+		});
 		console.log(naviRoutes);
 		routeReady = true;
 		showStep(-1, false);
