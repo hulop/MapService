@@ -46,7 +46,10 @@ After you setup Eclipse, you have the following options to deploy server.
 
 After you deploy MapService Server, you need to add Cloudant NoSQL DB service
 - For Bluemix, see https://console.ng.bluemix.net/catalog/services/cloudant-nosql-db/
-- If you are not using Bluemix, you need to provide `VCAP_SERVICES` Environment variable 
+- If you are not using Bluemix, you need to provide `VCAP_SERVICES` Environment variable
+
+You need to add the following environment variable for administoration instances
+- ENABLE_MAP_ACCESS=admin,auditor,editor
 
 ## Administration
 
