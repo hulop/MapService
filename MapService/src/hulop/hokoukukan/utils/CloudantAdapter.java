@@ -220,7 +220,12 @@ public class CloudantAdapter implements DBAdapter {
 				JsonArray rows = getGeometryRows(center, radius, skip, limit, categories);
 				for (int i = 0; i < rows.size(); i++) {
 					JsonObject row = (JsonObject) rows.get(i);
-					JsonObject doc = (JsonObject) row.get("doc");
+					JsonElement docElement = row.get("doc");
+					if (!(docElement instanceof JsonObject)) {
+						System.err.println(row);
+						continue;
+					}
+					JsonObject doc = (JsonObject) docElement;
 					// doc.remove("_id");
 					// doc.remove("_rev");
 					JSONObject json = new JSONObject(doc.toString());
