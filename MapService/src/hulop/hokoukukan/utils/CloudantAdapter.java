@@ -220,20 +220,17 @@ public class CloudantAdapter implements DBAdapter {
 				JsonArray rows = getGeometryRows(center, radius, skip, limit, categories);
 				for (int i = 0; i < rows.size(); i++) {
 					JsonObject row = (JsonObject) rows.get(i);
-					JsonElement docElement = row.get("doc");
-					if (!(docElement instanceof JsonObject)) {
+					try {
+						JSONObject json = new JSONObject(row.get("doc").toString());
+						JSONObject properties = json.getJSONObject("properties");
+						if ("ノード情報".equals(properties.get("category"))) {
+							nodeMap.put(properties.getString("ノードID"), json);
+						} else {
+							features.add(json);
+						}
+					} catch (Exception e) {
 						System.err.println(row);
-						continue;
-					}
-					JsonObject doc = (JsonObject) docElement;
-					// doc.remove("_id");
-					// doc.remove("_rev");
-					JSONObject json = new JSONObject(doc.toString());
-					JSONObject properties = json.getJSONObject("properties");
-					if ("ノード情報".equals(properties.get("category"))) {
-						nodeMap.put(properties.getString("ノードID"), json);
-					} else {
-						features.add(json);
+						System.err.println(e.getMessage());
 					}
 				}
 				long elapsed = System.currentTimeMillis() - start;
