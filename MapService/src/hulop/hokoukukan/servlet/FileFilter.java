@@ -100,7 +100,8 @@ public class FileFilter implements Filter {
 	private static final Pattern NOGZIP_PATTERN = Pattern.compile("\\.(png|jpg|jpeg|gif|gz|zip)$");
 
 	private boolean processFile(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		String url = request.getRequestURI().substring(contextLength + 1);
+		String url = request.getRequestURI();
+		url = url.substring(Math.min(url.length(), contextLength + 1));
 		// System.out.println(url);
 		String acceptedEncodings = request.getHeader("accept-encoding");
 		boolean gzip = acceptedEncodings != null && acceptedEncodings.indexOf("gzip") != -1;

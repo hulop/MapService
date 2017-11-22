@@ -143,7 +143,11 @@ public class RouteSearchBean {
 			JSONObject properties = json.getJSONObject("properties");
 			switch (properties.getString("category")) {
 			case "リンクの情報":
-				double weight = properties.has("リンク延長") ? Double.parseDouble(properties.getString("リンク延長")) : 10.0f;
+				double weight = 10.0f;
+				try {
+					weight = Double.parseDouble(properties.getString("リンク延長"));
+				} catch (Exception e) {
+				}
 				weight = adjustAccWeight(properties, conditions, weight);
 				if (weight == WEIGHT_IGNORE) {
 					break;
@@ -314,7 +318,11 @@ public class RouteSearchBean {
 				break;
 			}
 
-			float slope = properties.has("縦断勾配1") ? Float.parseFloat(properties.getString("縦断勾配1")) : 0;
+			float slope = 0;
+			try {
+				slope = Float.parseFloat(properties.getString("縦断勾配1"));
+			} catch (Exception e) {
+			}
 			// Maximum slope value (%) along the link
 			switch (conditions.get("slope")) {
 			case "1": // <8%
@@ -375,7 +383,11 @@ public class RouteSearchBean {
 				break;
 			}
 
-			int steps = properties.has("最小階段段数") ? Integer.parseInt(properties.getString("最小階段段数")) : 0;
+			int steps = 0;
+			try {
+				steps = Integer.parseInt(properties.getString("最小階段段数"));
+			} catch (Exception e) {
+			}
 			// number of steps along a stairway
 			// if (linkType.equals("12") && steps == 0) {
 			// System.out.println("Error: steps should > 0");
