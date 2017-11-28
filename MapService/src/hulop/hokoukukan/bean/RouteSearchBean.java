@@ -148,6 +148,9 @@ public class RouteSearchBean {
 				double weight = 10.0f;
 				try {
 					weight = Double.parseDouble(properties.getString("リンク延長"));
+					if (properties.has("road_low_priority") && "1".equals(properties.getString("road_low_priority"))) {
+						weight *= 1.25;
+					}
 				} catch (Exception e) {
 				}
 				weight = adjustAccWeight(properties, conditions, weight);
