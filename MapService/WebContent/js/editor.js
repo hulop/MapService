@@ -1141,9 +1141,14 @@ $hulop.editor = function() {
 
 				});
 			} else {
+				var b = '#0000ff', r = '#ff0000';
+				if (feature.get('road_low_priority') == '1') {
+					b = '#0000A0';
+					r = '#A00000';
+				}
 				style = [new ol.style.Style({
 					'stroke' : new ol.style.Stroke({
-						'color' : heights.length == 1 ? odd ? '#0000ff' : '#ff0000' : '#7f007f',
+						'color' : heights.length == 1 ? odd ? b : r : '#7f007f',
 						'width' : 6
 					})
 				})];
