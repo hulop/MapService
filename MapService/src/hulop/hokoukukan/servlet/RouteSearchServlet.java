@@ -232,7 +232,7 @@ public class RouteSearchServlet extends HttpServlet {
 		}
 	}
 
-	private static int getEnvInt(String key, int defaultValue) {
+	public static int getEnvInt(String key, int defaultValue) {
 		try {
 			String size = System.getenv(key);
 			if (size != null) {

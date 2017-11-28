@@ -38,13 +38,16 @@ import org.jgrapht.alg.DijkstraShortestPath;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 
+import hulop.hokoukukan.servlet.RouteSearchServlet;
 import hulop.hokoukukan.utils.DBAdapter;
 
 public class RouteSearchBean {
 
 	public static final DBAdapter adapter = DatabaseBean.adapter;
 	private static final double WEIGHT_IGNORE = Double.MAX_VALUE;
-	private static final double ESCALATOR_WEIGHT = 100, STAIR_WEIGHT = 300, ELEVATOR_WEIGHT = 300;
+	private static final double ESCALATOR_WEIGHT = RouteSearchServlet.getEnvInt("ESCALATOR_WEIGHT", 100);
+	private static final double STAIR_WEIGHT = RouteSearchServlet.getEnvInt("STAIR_WEIGHT", 300);
+	private static final double ELEVATOR_WEIGHT = RouteSearchServlet.getEnvInt("ELEVATOR_WEIGHT", 300);
 	private long mLastInit = System.currentTimeMillis();
 	private JSONObject mNodeMap, mTempNode, mTempLink1, mTempLink2;
 	private JSONArray mFeatures, mLandmarks, mDoors;
