@@ -1900,6 +1900,8 @@ $hulop.editor = function() {
 	}
 
 	return {
+		'toFeatureCollection': toFeatureCollection,
+		'downloadFile' : downloadFile,
 		'init' : init
 	};
 
