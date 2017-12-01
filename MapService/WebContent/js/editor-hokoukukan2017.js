@@ -401,16 +401,16 @@ $hulop.editor.exportV2 = function() {
 					break;
 				}
 				break;
+			case '所在地':
+				set(tp, 'address', value);
+				break;
+			case '電話番号':
+				set(tp, 'tel', value);
+				break;
 			case 'ベビーベッド':
 				if (value == '1') {
 					toilet = toilet == 2 ? 4 : 3;
 				}
-				break;
-			case '男女別':
-				set(tp, 'sex', Code(value));
-				break;
-			case '有料無料の別':
-				set(tp, 'fee', Code(value));
 				break;
 			case '階層':
 				set(tp, 'floors', Number(value));
@@ -430,6 +430,33 @@ $hulop.editor.exportV2 = function() {
 			case '名称:fr':
 				set(tp, 'hulop_name_fr', value);
 				break;
+			case '供用開始時間':
+				set(tp, 'start_time', value);
+				break;
+			case '供用終了時間':
+				set(tp, 'end_time', value);
+				break;
+			case '供用制限曜日':
+				set(tp, 'no_serv_d', value);
+				break;
+			case '男女別':
+				set(tp, 'sex', Code(value));
+				break;
+			case '有料無料の別':
+				set(tp, 'fee', Code(value));
+				break;
+			case '診療科目':
+				set(tp, 'subject', Code(value));
+				break;
+			case '休診日':
+				set(tp, 'close_day', value);
+				break;
+			case '地区名':
+				set(tp, 'med_dept', value);
+				break;
+			case '風水害対応':
+				set(tp, 'flood', Code(value));
+				break;
 			case 'building':
 			case 'major_category':
 			case 'sub_category':
@@ -448,6 +475,7 @@ $hulop.editor.exportV2 = function() {
 			case '緯度経度桁数コード':
 			case '名称':
 			case '多目的トイレ':
+			case '施設種別':
 				break;
 			default:
 				console.error(name + '=' + value);
@@ -473,9 +501,21 @@ $hulop.editor.exportV2 = function() {
 	 */
 	function addEntrance(feature, entrance, index) {
 		var fp = feature.properties;
+		var brr = 99;
+		switch (entrance.properties['段差']) {
+		case '0':
+			brr = 1;
+			break;
+		case '1':
+		case '2':
+		case '3':
+			brr = 0;
+			break;
+		}
 		set(fp, 'ent' + index + '_n', entrance.properties['出入口の名称']);
 		set(fp, 'ent' + index + '_w', Number(entrance.properties['出入口の有効幅員']));
 		set(fp, 'ent' + index + '_d', Code(entrance.properties['扉の種類']));
+		set(fp, 'ent' + index + '_brr', brr);
 		var node = nodeMap[entrance.properties['対応ノードID']];
 		if (node) {
 			set(fp, 'ent' + index + '_lat', DMS(node.properties['緯度']));
