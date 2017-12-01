@@ -64,7 +64,6 @@ $hulop.editor.exportV2 = function() {
 	function convertLink(feature) {
 		var fp = feature.properties;
 		var tp = {};
-		var brail_tile;
 
 		for ( var name in fp) {
 			var value = fp[name];
@@ -150,7 +149,7 @@ $hulop.editor.exportV2 = function() {
 			case 'エスコートゾーン':
 			case '視覚障害者誘導用ブロック':
 				if (value == '1') {
-					brail_tile = 1;
+					set(tp, 'brail_tile', 1);
 				}
 				break;
 			case 'エレベーター種別':
@@ -312,8 +311,6 @@ $hulop.editor.exportV2 = function() {
 				break;
 			}
 		}
-
-		set(tp, 'brail_tile', brail_tile);
 
 		return {
 			'type' : 'Feature',
