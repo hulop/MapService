@@ -1,14 +1,13 @@
-$('#export_button_2017').html()
-		|| $('#export_button').after([ ' | ', $('<button>', {
-			'id' : 'export_button_2017',
-			'text' : 'Export 2017',
-			'on' : {
-				'click' : function(event) {
-					var v2 = $hulop.editor.exportV2();
-					console.log(v2);
-				}
-			}
-		}) ]);
+$('#export_button_2017').html() || $('#export_button').after([ ' | ', $('<button>', {
+	'id' : 'export_button_2017',
+	'text' : 'Export 2017',
+	'on' : {
+		'click' : function(event) {
+			var v2 = $hulop.editor.exportV2();
+			$hulop.editor.downloadFile(v2, 'SpatialNetwork2017.geojson');
+		}
+	}
+}) ]);
 
 $hulop.editor.exportV2 = function() {
 	var v1features = JSON.parse($hulop.editor.toFeatureCollection()).features;
