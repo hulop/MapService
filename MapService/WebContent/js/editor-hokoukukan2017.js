@@ -87,6 +87,8 @@ $hulop.editor.exportV2 = function() {
 				switch (type) {
 				case 1: // 歩道
 				case 2: // 歩行者専用道路
+				case 3: // 園路
+				case 8: // 自由通路
 					struct = 1;
 					break;
 				case 4: // 歩車共存道路
