@@ -303,8 +303,6 @@ $hulop.editor.exportV2 = function() {
 			case 'file':
 			case 'category':
 			case '縦断勾配2':
-			case '縦断勾配2緯度':
-			case '縦断勾配2経度':
 				break;
 			default:
 				console.error(name + '=' + value);
