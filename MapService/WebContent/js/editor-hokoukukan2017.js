@@ -388,12 +388,13 @@ $hulop.editor.exportV2 = function() {
 		var fp = feature.properties;
 
 		// preset mandatory values unknown
+		var name = fp['名称'];
 		var tp = {
 			'facil_type' : 99,
 			'evacuation' : 99,
 			'temporary' : 99,
-			'name_ja' : fp['名称'] || '',
-			'name_en' : fp['名称'] || '',
+			'name_ja' : name || '',
+			'name_en' : /[\u3000-\u9fff]/.exec(name) ? '' : name,
 			'address' : '',
 			'tel' : '',
 			'elevator' : 99,
