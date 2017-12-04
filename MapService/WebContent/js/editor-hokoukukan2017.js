@@ -63,7 +63,20 @@ $hulop.editor.exportV2 = function() {
 	 */
 	function convertLink(feature) {
 		var fp = feature.properties;
-		var tp = {};
+
+		// preset mandatory values unknown
+		var tp = {
+			'rt_struct': 99,
+			'route_type': 99,
+			'direction': 99,
+			'width': 99,
+			'vtcl_slope': 99,
+			'lev_diff': 99,
+			'tfc_signal': 99,
+			'tfc_s_type': 99,
+			'brail_tile': 99,
+			'elevator': 99
+		};
 
 		for ( var name in fp) {
 			var value = fp[name];
@@ -292,7 +305,14 @@ $hulop.editor.exportV2 = function() {
 				set(tp, 'main_user', Code(value));
 				break;
 			case '通り名称または交差点名称':
-				set(tp, 'st_name', value);
+			case '通り名称または交差点名称:ja':
+			case '通り名称または交差点名称:en':
+			case '通り名称または交差点名称:es':
+			case '通り名称または交差点名称:fr':
+				set(tp, i18Name(name, 'st_name'), value);
+				break;
+			case '通り名称または交差点名称:ja-Pron':
+				set(tp, 'st_name_hira', kana2hira(value));
 				break;
 			case 'road_low_priority':
 				set(tp, 'hulop_' + name, Number(value));
@@ -366,12 +386,28 @@ $hulop.editor.exportV2 = function() {
 	 */
 	function convertFacility(feature) {
 		var fp = feature.properties;
-		var tp = {};
-		var facil_type, evacuation;
-		var toilet = Code(fp['多目的トイレ']);
-		var name_ja = fp['名称'];
-		var name_en = fp['名称'];
 
+		// preset mandatory values unknown
+		var tp = {
+			'facil_type' : 99,
+			'evacuation' : 99,
+			'temporary' : 99,
+			'name_ja' : fp['名称'] || '',
+			'name_en' : fp['名称'] || '',
+			'address' : '',
+			'tel' : '',
+			'elevator' : 99,
+			'escalator' : 99,
+			'parking' : 99,
+			'barrier' : 99,
+			'nursing' : 99,
+			'brail_tile' : 99,
+			'info' : 99,
+			'info_board' : 99
+		}
+
+		var toilet = Code(fp['多目的トイレ']) || 99;
+		
 		for ( var name in fp) {
 			var value = fp[name];
 			switch (name) {
@@ -387,46 +423,48 @@ $hulop.editor.exportV2 = function() {
 			case 'category':
 				switch (value) {
 				case '公共用トイレの情報':
-					facil_type = 10;
+					set(tp, 'facil_type', 10);
+					toilet == 99 && (toilet = 1); 
 					break;
 				case '病院の情報':
-					facil_type = 3;
+					set(tp, 'facil_type', 3);
 					break;
 				case '指定避難場所の情報':
-					evacuation = 2;
+					set(tp, 'evacuation', 2);
 					break;
 				default:
 					break;
 				}
 				break;
 			case '所在地':
-				set(tp, 'address', value);
+			case '所在地:ja':
+			case '所在地:en':
+			case '所在地:es':
+			case '所在地:fr':
+				set(tp, i18Name(name, 'address'), value);
+				break;
+			case '所在地:ja-Pron':
+				set(tp, 'address_hira', kana2hira(value));
 				break;
 			case '電話番号':
 				set(tp, 'tel', value);
 				break;
 			case 'ベビーベッド':
 				if (value == '1') {
-					toilet = toilet == 2 ? 4 : 3;
+					toilet = (toilet == 2 ? 4 : 3);
 				}
 				break;
 			case '階層':
 				set(tp, 'floors', Number(value));
 				break;
 			case '名称:ja':
-				name_ja = value;
-				break;
 			case '名称:en':
-				name_en = value;
+			case '名称:es':
+			case '名称:fr':
+				set(tp, i18Name(name, 'name'), value);
 				break;
 			case '名称:ja-Pron':
-				set(tp, 'name_hira', value);
-				break;
-			case '名称:es':
-				set(tp, 'hulop_name_es', value);
-				break;
-			case '名称:fr':
-				set(tp, 'hulop_name_fr', value);
+				set(tp, 'name_hira', kana2hira(value));
 				break;
 			case '供用開始時間':
 				set(tp, 'start_time', value);
@@ -450,7 +488,14 @@ $hulop.editor.exportV2 = function() {
 				set(tp, 'close_day', value);
 				break;
 			case '地区名':
-				set(tp, 'med_dept', value);
+			case '地区名:ja':
+			case '地区名:en':
+			case '地区名:es':
+			case '地区名:fr':
+				set(tp, i18Name(name, 'med_dept'), value);
+				break;
+			case '地区名:ja-Pron':
+				set(tp, 'med_dept_hira', kana2hira(value));
 				break;
 			case '風水害対応':
 				set(tp, 'flood', Code(value));
@@ -459,10 +504,17 @@ $hulop.editor.exportV2 = function() {
 			case 'major_category':
 			case 'sub_category':
 			case 'minor_category':
-			case 'long_description':
-			case 'long_description:en':
-			case 'long_description:ja':
 				set(tp, 'hulop_' + name, value);
+				break;
+			case 'long_description':
+			case 'long_description:ja':
+			case 'long_description:en':
+			case 'long_description:es':
+			case 'long_description:fr':
+				set(tp, i18Name(name, 'hulop_long_description'), value);
+				break;
+			case 'long_description:ja-Pron':
+				set(tp, 'hulop_long_description_hira', kana2hira(value));
 				break;
 			case 'heading':
 			case 'angle':
@@ -481,11 +533,7 @@ $hulop.editor.exportV2 = function() {
 			}
 		}
 
-		set(tp, 'facil_type', facil_type);
-		set(tp, 'evacuation', evacuation);
 		set(tp, 'toilet', toilet);
-		set(tp, 'name_ja', name_ja);
-		set(tp, 'name_en', name_en);
 
 		return {
 			'type' : 'Feature',
@@ -499,27 +547,49 @@ $hulop.editor.exportV2 = function() {
 	 */
 	function addEntrance(feature, entrance, index) {
 		var fp = feature.properties;
-		var brr = 99;
-		switch (entrance.properties['段差']) {
-		case '0':
-			brr = 1;
-			break;
-		case '1':
-		case '2':
-		case '3':
-			brr = 0;
-			break;
-		}
-		set(fp, 'ent' + index + '_n', entrance.properties['出入口の名称']);
-		set(fp, 'ent' + index + '_w', Number(entrance.properties['出入口の有効幅員']));
-		set(fp, 'ent' + index + '_d', Code(entrance.properties['扉の種類']));
-		set(fp, 'ent' + index + '_brr', brr);
-		var node = nodeMap[entrance.properties['対応ノードID']];
-		if (node) {
-			set(fp, 'ent' + index + '_lat', DMS(node.properties['緯度']));
-			set(fp, 'ent' + index + '_lon', DMS(node.properties['経度']));
-			set(fp, 'ent' + index + '_fl', Number(node.properties['高さ']));
-			set(fp, 'hulop_ent' + index + '_node', node.properties['ノードID']);
+		for (var name in entrance.properties) {
+			var value = entrance.properties[name];
+			switch (name) {
+			case '出入口の名称':
+			case '出入口の名称:ja':
+			case '出入口の名称:en':
+			case '出入口の名称:es':
+			case '出入口の名称:fr':
+				set(fp, i18Name(name, 'ent' + index + '_n'), value);
+				break;
+			case '出入口の名称:ja-Pron':
+				set(fp, name, 'ent' + index + '_n_hira', kana2hira(value));
+				break;
+			case '出入口の有効幅員':
+				set(fp, 'ent' + index + '_w', Number(value));
+				break;
+			case '扉の種類':
+				set(fp, 'ent' + index + '_d', Code(value));
+				break;
+			case '段差':
+				var brr = 99;
+				switch (value) {
+				case '0':
+					brr = 1;
+					break;
+				case '1':
+				case '2':
+				case '3':
+					brr = 0;
+					break;
+				}
+				set(fp, 'ent' + index + '_brr', brr);
+				break;
+			case '対応ノードID':
+				var node = nodeMap[value];
+				if (node) {
+					set(fp, 'ent' + index + '_lat', DMS(node.properties['緯度']));
+					set(fp, 'ent' + index + '_lon', DMS(node.properties['経度']));
+					set(fp, 'ent' + index + '_fl', Number(node.properties['高さ']));
+					set(fp, 'hulop_ent' + index + '_node', node.properties['ノードID']);
+				}
+				break;
+			}
 		}
 	}
 	
@@ -545,7 +615,20 @@ $hulop.editor.exportV2 = function() {
 		var m = /(-?)(\d+)\.(\d+)\.(.*)/.exec(value);
 		return m && (m[1] == '-' ? -1 : 1) * (Number(m[2]) + (Number(m[3]) / 60) + (Number(m[4]) / 3600));
 	}
+	
+	function i18Name(v1, v2) {
+		var m = /(.+):(.+)$/.exec(v1);
+		if (m) {
+			return v2 + '_' + (m[2] == 'ja-Pron' ? 'hira' : m[2]);
+		}
+		return v2;
+	}
 
+	function kana2hira(str) {
+	    return str.replace(/[\u30a1-\u30f6]/g, function(m) {
+	        return String.fromCharCode(m.charCodeAt(0) - 0x60);
+	    });
+	}
 };
 
 console.log('OK!');
