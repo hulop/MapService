@@ -33,6 +33,7 @@
 <script type="text/javascript" src="js/FloorPlanOverlay.js"></script>
 <script type="text/javascript" src="js/indoor.js"></script>
 <script type="text/javascript" src="js/editor.js"></script>
+<script type="text/javascript" src="js/editor-hokoukukan2017.js"></script>
 <script type="text/javascript" src="js/login-monitor.js"></script>
 <script type="text/javascript">
 	$(document).ready(function(){
@@ -87,7 +88,7 @@
 		<div class="inner">
 			<fieldset>
 				<legend>GeoJSON</legend>
-				<button id="export_button">Export</button><hr>
+				<button id="export_button">Export</button> | <button id="export_button_2017">Export 2017 Specification</button><hr>
 				<input type="file" id="import_file">
 				<button id="import_button">Import</button>
 			</fieldset>

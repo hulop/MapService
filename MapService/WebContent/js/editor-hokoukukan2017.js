@@ -20,17 +20,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-$('#export_button_2017').html() || $('#export_button').after([ ' | ', $('<button>', {
-	'id' : 'export_button_2017',
-	'text' : 'Export 2017',
-	'on' : {
-		'click' : function(event) {
-			var v2 = $hulop.editor.exportV2();
-			$hulop.editor.downloadFile(v2, 'SpatialNetwork2017.geojson');
-		}
-	}
-}) ]);
-
 $hulop.editor.exportV2 = function() {
 	var v1features = JSON.parse($hulop.editor.toFeatureCollection()).features;
 
@@ -167,7 +156,7 @@ $hulop.editor.exportV2 = function() {
 					value = 1; // 1.0m 以上～2.0m 未満（車いすの通行可能（すれ違い困難））
 					break;
 				case 3: // 2.0m 以上
-					value = 2; // 2.0m 以上～3.0m 未満（車いすの通行可能（すれ違	い可能））
+					value = 2; // 2.0m 以上～3.0m 未満（車いすの通行可能（すれ違い可能））
 					break;
 				}
 				set(tp, 'width', value);
