@@ -60,6 +60,7 @@ $hulop.editor.exportV2 = function() {
 					});
 				}
 				if (newFeature) {
+					newFeature['_id'] = newFeature.properties['link_id'] || newFeature.properties['node_id'] || newFeature.properties['facil_id'];
 					v2.push(newFeature);
 					console.log(newFeature.properties);
 				}
@@ -314,9 +315,9 @@ $hulop.editor.exportV2 = function() {
 				set(tp, 'hulop_' + name, Number(value));
 				break;
 			case 'elevator_equipments':
+			case 'file':
 				set(tp, 'hulop_' + name, value);
 				break;
-			case 'file':
 			case 'category':
 			case '縦断勾配2':
 				break;
@@ -356,6 +357,8 @@ $hulop.editor.exportV2 = function() {
 				set(tp, 'floor', Number(value));
 				break;
 			case 'file':
+				set(tp, 'hulop_' + name, value);
+				break;
 			case 'category':
 			case '緯度経度桁数コード':
 				break;
@@ -499,6 +502,7 @@ $hulop.editor.exportV2 = function() {
 			case 'major_category':
 			case 'sub_category':
 			case 'minor_category':
+			case 'file':
 				set(tp, 'hulop_' + name, value);
 				break;
 			case 'long_description':
@@ -516,7 +520,6 @@ $hulop.editor.exportV2 = function() {
 			case 'height':
 				set(tp, 'hulop_' + name, Number(value));
 				break;
-			case 'file':
 			case '緯度経度桁数コード':
 			case '名称':
 			case '多目的トイレ':
