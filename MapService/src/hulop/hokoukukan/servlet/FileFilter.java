@@ -120,9 +120,16 @@ public class FileFilter implements Filter {
 		InputStream is = DatabaseBean.getAttachment(url + gzipExt);
 		if (is != null) {
 			String contentType = URLConnection.guessContentTypeFromName(url);
-			if (contentType == null && url.endsWith(".svg")) {
-				contentType = "image/svg+xml";
+			if (contentType == null) {
+				if (url.endsWith(".js")) {
+					contentType = "application/x-javascript";
+				} else if (url.endsWith(".json")) {
+					contentType = "application/json";
+				} else if (url.endsWith(".svg")) {
+					contentType = "image/svg+xml";
+				}
 			}
+			System.out.println(url + " / " + contentType);
 			response.setContentType(contentType);
 			OutputStream os = response.getOutputStream();
 			GZIPOutputStream gzos = null;
