@@ -32,8 +32,6 @@ $hulop.editor.exportV2 = function() {
 	 * convert from v1 to v2
 	 */
 	function convert(v1) {
-		console.log('==== v1 ====');
-		console.log(v1);
 		var v2 = [];
 		v1.forEach(function(feature) {
 			var fp = feature.properties;
@@ -94,61 +92,74 @@ $hulop.editor.exportV2 = function() {
 				set(tp, 'distance', Number(value));
 				break;
 			case '経路の種類':
-				var struct = 99;
-				var type = Number(value);
-				switch (type) {
+				var rt_struct = 99, route_type = 0;
+				switch (Number(value)) {
 				case 1: // 歩道
 				case 2: // 歩行者専用道路
 				case 3: // 園路
 				case 8: // 自由通路
-					struct = 1;
+					rt_struct = 1; // 車道と歩道の物理的な分離あり
 					break;
 				case 4: // 歩車共存道路
-					struct = 2;
+					rt_struct = 2; // 車道と歩道の物理的な分離なし
 					break;
 				case 5: // 横断歩道
-					struct = 3;
+					rt_struct = 3;
 					break;
 				case 6: // 横断歩道の路面標示の無い交差点の道路
-					struct = 4;
+					rt_struct = 4;
 					break;
-				}
-				switch (type) {
 				case 7: // 動く歩道
-					type = 1;
+					route_type = 1;
 					break;
 				case 9: // 踏切
-					type = 2;
+					route_type = 2;
 					break;
 				case 10: // エレベーター
-					type = 3;
+					route_type = 3;
 					break;
 				case 11: // エスカレーター
-					type = 4;
+					route_type = 4;
 					break;
 				case 12: // 階段
-					type = 5;
+					route_type = 5;
 					break;
 				case 13: // スロープ
-					type = 6;
+					route_type = 6;
 					break;
-				case 99:
-					break;
-				default:
-					type = 0;
+				case 99: // 不明
+					route_type = 99;
 					break;
 				}
-				set(tp, 'rt_struct', struct);
-				set(tp, 'route_type', type);
+				set(tp, 'rt_struct', rt_struct);
+				set(tp, 'route_type', route_type);
 				break;
 			case '方向性':
 				set(tp, 'direction', Code(value));
 				break;
+			case '有効幅員':
+				switch (value = Code(value)) {
+				case 1: // 1m 以上 1.5m 未満
+				case 2: // 1.5m 以上 2.0m 未満
+					value = 1; // 1.0m 以上～2.0m 未満（車いすの通行可能（すれ違い困難））
+					break;
+				case 3: // 2.0m 以上
+					value = 2; // 2.0m 以上～3.0m 未満（車いすの通行可能（すれ違	い可能））
+					break;
+				}
+				set(tp, 'width', value);
+				break;
+			case '縦断勾配1':
+				set(tp, 'vSlope_max', value = Number(value));
+				var vtcl_slope = isNaN(value) ? 99 : value < 5 ? 0 : 1;
+				set(tp, 'vtcl_slope', vtcl_slope);
+				break;
 			case '段差':
 				switch (value = Code(value)){
+				case 1: // 2～5cm
 				case 2: // 5～10cm
 				case 3: // 10cm 以上
-					value = 1;
+					value = 1; // 2 ㎝より大きい（車いすの通行に支障あり）
 					break;
 				}
 				set(tp, 'lev_diff', value);
@@ -168,12 +179,12 @@ $hulop.editor.exportV2 = function() {
 			case 'エレベーター種別':
 				switch (value = Code(value)) {
 				case 0: // 障害対応なし
-					value = 1;
+					value = 1; // エレベーターあり（バリアフリー対応なし）
 					break;
 				case 1: // 点字・音声あり
 				case 2: // 車イス対応
 				case 3: // 1・2 両方
-					value = 2;
+					value = 2; // エレベーターあり（バリアフリー対応あり）
 					break;
 				}
 				set(tp, 'elevator', value);
@@ -196,37 +207,11 @@ $hulop.editor.exportV2 = function() {
 			case '通行制限':
 				set(tp, 'tfc_restr', Code(value));
 				break;
-			case '有効幅員':
-				var w_min;
-				switch (value = Code(value)) {
-				case 0: // 1.0m 未満
-					w_min = 0.9;
-					break;
-				case 1: // 1m 以上 1.5m 未満
-					w_min = 1.4;
-					break;
-				case 2: // 1.5m 以上 2.0m 未満
-					w_min = 1.9;
-					value = 1;
-					break;
-				case 3: // 2.0m 以上
-					w_min = 2.0;
-					value = 2;
-					break;
-				}
-				set(tp, 'width', value);
-				set(tp, 'w_min', w_min);
-				break;
 			case '有効幅員緯度':
 				set(tp, 'w_min_lat', DMS(value));
 				break;
 			case '有効幅員経度':
 				set(tp, 'w_min_lon', DMS(value));
-				break;
-			case '縦断勾配1':
-				set(tp, 'vSlope_max', value = Number(value));
-				var vtcl_slope = isNaN(value) ? 99 : value < 5 ? 0 : 1;
-				set(tp, 'vtcl_slope', vtcl_slope);
 				break;
 			case '縦断勾配1緯度':
 				set(tp, 'vSlope_lat', DMS(value));
@@ -255,7 +240,6 @@ $hulop.editor.exportV2 = function() {
 			case '段差経度':
 				set(tp, 'levDif_lon', DMS(value));
 				break;
-			case '最大階段段数':
 			case '最小階段段数':
 				set(tp, 'stair', Number(value));
 				break;
@@ -386,17 +370,22 @@ $hulop.editor.exportV2 = function() {
 	 */
 	function convertFacility(feature) {
 		var fp = feature.properties;
+		var name = fp['名称'] || '';
+		var toilet = Code(fp['多目的トイレ']) || 99;
+		if (fp['ベビーベッド'] == '1') {
+			toilet = (toilet == 2 ? 4 : 3);
+		}
 
 		// preset mandatory values unknown
-		var name = fp['名称'];
 		var tp = {
 			'facil_type' : 99,
 			'evacuation' : 99,
 			'temporary' : 99,
-			'name_ja' : name || '',
+			'name_ja' : name,
 			'name_en' : /[\u3000-\u9fff]/.exec(name) ? '' : name,
 			'address' : '',
 			'tel' : '',
+			'toilet' : toilet,
 			'elevator' : 99,
 			'escalator' : 99,
 			'parking' : 99,
@@ -407,8 +396,6 @@ $hulop.editor.exportV2 = function() {
 			'info_board' : 99
 		}
 
-		var toilet = Code(fp['多目的トイレ']) || 99;
-		
 		for ( var name in fp) {
 			var value = fp[name];
 			switch (name) {
@@ -424,14 +411,14 @@ $hulop.editor.exportV2 = function() {
 			case 'category':
 				switch (value) {
 				case '公共用トイレの情報':
-					set(tp, 'facil_type', 10);
-					toilet == 99 && (toilet = 1); 
+					set(tp, 'facil_type', 10); // 公共トイレ（単体）
+					tp.toilet == 99 && set(tp, 'toilet', 1); // 一般トイレ
 					break;
 				case '病院の情報':
-					set(tp, 'facil_type', 3);
+					set(tp, 'facil_type', 3); // 医療施設
 					break;
 				case '指定避難場所の情報':
-					set(tp, 'evacuation', 2);
+					set(tp, 'evacuation', 2); // 指定避難所
 					break;
 				default:
 					break;
@@ -449,11 +436,6 @@ $hulop.editor.exportV2 = function() {
 				break;
 			case '電話番号':
 				set(tp, 'tel', value);
-				break;
-			case 'ベビーベッド':
-				if (value == '1') {
-					toilet = (toilet == 2 ? 4 : 3);
-				}
 				break;
 			case '階層':
 				set(tp, 'floors', Number(value));
@@ -527,6 +509,7 @@ $hulop.editor.exportV2 = function() {
 			case '名称':
 			case '多目的トイレ':
 			case '施設種別':
+			case 'ベビーベッド':
 				break;
 			default:
 				console.error(name + '=' + value);
@@ -570,13 +553,13 @@ $hulop.editor.exportV2 = function() {
 			case '段差':
 				var brr = 99;
 				switch (value) {
-				case '0':
-					brr = 1;
+				case '0': // ：1.0m 未満
+					brr = 1; // 車いす使用者が利用可能な出入口あり
 					break;
-				case '1':
-				case '2':
-				case '3':
-					brr = 0;
+				case '1': // 1m 以上 1.5m 未満
+				case '2': // 1.5m 以上 2.0m 未満
+				case '3': // 2.0m以上
+					brr = 0; // なし
 					break;
 				}
 				set(fp, 'ent' + index + '_brr', brr);
@@ -587,7 +570,7 @@ $hulop.editor.exportV2 = function() {
 					set(fp, 'ent' + index + '_lat', DMS(node.properties['緯度']));
 					set(fp, 'ent' + index + '_lon', DMS(node.properties['経度']));
 					set(fp, 'ent' + index + '_fl', Number(node.properties['高さ']));
-					set(fp, 'hulop_ent' + index + '_node', node.properties['ノードID']);
+					set(fp, 'ent' + index + '_node', node.properties['ノードID']);
 				}
 				break;
 			}
@@ -631,5 +614,3 @@ $hulop.editor.exportV2 = function() {
 	    });
 	}
 };
-
-console.log('OK!');
