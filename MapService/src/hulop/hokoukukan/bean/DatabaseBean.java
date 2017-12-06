@@ -33,6 +33,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.wink.json4j.JSON;
 import org.apache.wink.json4j.JSONArray;
@@ -395,6 +398,28 @@ public class DatabaseBean {
 
 	public static JSONArray getAnswers(String deviceId) {
 		return adapter.getAnswers(deviceId);
+	}
+
+	public static void zipAttachments(HttpServletResponse response) throws IOException {
+		response.setHeader("Content-Disposition", "attachment; filename=\"attachments.zip\"");
+		ZipOutputStream zos = new ZipOutputStream(response.getOutputStream());
+		try {
+			byte data[] = new byte[1024 * 1024];
+			int len;
+			for (String path : listAttachment()) {
+				InputStream is = getAttachment(path);
+				if (is != null) {
+					zos.putNextEntry(new ZipEntry(path));
+					while ((len = is.read(data, 0, data.length)) > 0) {
+						zos.write(data, 0, len);
+					}
+					zos.closeEntry();
+					is.close();
+				}
+			}
+		} finally {
+			zos.close();
+		}
 	}
 
 	public static void main(String[] args) {

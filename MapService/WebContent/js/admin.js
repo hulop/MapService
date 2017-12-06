@@ -95,6 +95,11 @@ var $hulop_admin = function() {
 			}
 		});
 
+		$('#zip_all_attachments').on({
+			'click' : function() {
+				location.href = 'api/admin?action=zip-attachments';
+			}
+		});
 	});
 
 	function showFileList(fileList, parent, action) {

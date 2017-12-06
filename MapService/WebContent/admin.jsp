@@ -59,6 +59,8 @@
 	<fieldset>
 		<legend>Attachments</legend>
 		<div id="attachmentList"></div>
+		<button id="zip_all_attachments">ZIP all attachments</button>
+		|
 		<button id="delete_all_attachments">Delete all attachments</button>
 	</fieldset>
 	<fieldset>

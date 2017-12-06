@@ -70,8 +70,12 @@ public class AdminServlet extends HttpServlet {
 			return;
 		}
 		request.setCharacterEncoding("UTF-8");
-		response.setContentType("text/plain; charset=UTF-8");
 		String action = request.getParameter("action");
+		if ("zip-attachments".equals(action)) {
+			DatabaseBean.zipAttachments(response);
+			return;
+		}
+		response.setContentType("text/plain; charset=UTF-8");
 		if ("drop-database".equals(action)) {
 			DatabaseBean.dropDatabase();
 			response.getWriter().append("dropped database");
