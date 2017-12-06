@@ -1402,7 +1402,7 @@ $hulop.editor = function() {
 		if (latLng) {
 			if (keyState.ctrlKey && keyState.shiftKey) {
 				circleCenter = circleCenter || latLng;
-				circleRadius = Math.min(500, $hulop.util.computeDistanceBetween(circleCenter, latLng));
+				circleRadius = Math.min($hulop.config.MAX_RADIUS || 500, $hulop.util.computeDistanceBetween(circleCenter, latLng));
 				circleProperties.geometry = new ol.geom.Circle(ol.proj.transform(circleCenter, 'EPSG:4326', 'EPSG:3857'), circleRadius);
 			}
 			if (start_feature) {
