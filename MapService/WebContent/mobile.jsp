@@ -159,9 +159,7 @@ if (id == null || (agreeBean.isAgreementSupported() && !agreeBean.getAgreed(id))
 					<option value="250" i18n>DIST_250</option>
 					<option value="500" i18n selected>DIST_500</option>
 					<option value="750" i18n>DIST_750</option>
-					<!--option value="1000" i18n>DIST_1000</option>
-					<option value="4000">4km (TEST)</option>
-					<option value="100000">100km (TEST)</option-->
+					<option value="4000">4km</option>
 			</select>
 
 			<label for="preset" i18n>PRESET</label>
