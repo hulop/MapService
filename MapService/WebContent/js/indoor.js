@@ -121,13 +121,14 @@ $hulop.indoor = function() {
 
 		map.addLayer(toiletLayer);
 
-		var toiletLatlng, toiletDist = $hulop.config.MAX_RADIUS || 500;
+		var toiletLatlng;
 		function initToilets() {
 			setTimeout(arguments.callee, 1000);
 			if (getCurrentFloor() == 0) {
 				return;
 			}
 			var latlng = $hulop.map.getCenter();
+			var toiletDist = $hulop.config.MAX_RADIUS || 500;
 			if (toiletLatlng && $hulop.util.computeDistanceBetween(latlng, toiletLatlng) < toiletDist * 0.9) {
 				return;
 			}
