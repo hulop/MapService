@@ -76,6 +76,7 @@ public class ConfigServlet extends HttpServlet {
 				}
 			}
 			System.out.println(config.toString(4));
+			config.remove("VCAP_SERVICES");
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
