@@ -74,7 +74,7 @@ public class MongoAdapter implements DBAdapter {
 		db = client.getDB(dbName != null ? dbName : mongoURI.getDatabase());
 		mFS = new GridFS(db);
 		System.out.println(db.getCollectionNames());
-		mapCol = db.getCollection("maps");
+		mapCol = db.getCollection("h29maps");
 		userCol = db.getCollection("users");
 		logCol = db.getCollection("logs");
 		fileCol = db.getCollection("files");
@@ -171,14 +171,13 @@ public class MongoAdapter implements DBAdapter {
 	}
 
 	@Override
-	public void getGeometry(double[] center, double radius, JSONObject nodeMap, JSONArray features,
-			List<String> categories) {
+	public void getGeometry(double[] center, double radius, JSONObject nodeMap, JSONArray features, boolean toilet) {
 		DBObject query = new BasicDBObject().append("geometry",
 				new BasicDBObject("$near",
 						new BasicDBObject("$geometry", new BasicDBObject("type", "Point").append("coordinates", center))
 								.append("$maxDistance", radius)));
-		if (categories != null) {
-			query.put("properties.category", new BasicDBObject("$in", categories));
+		if (toilet) {
+			query.put("properties.facil_type", 10);
 		}
 		System.out.println(query.toString());
 		DBCursor cursor = mapCol.find(query/* , new BasicDBObject("_id", 0) */);
@@ -186,8 +185,8 @@ public class MongoAdapter implements DBAdapter {
 			while (cursor.hasNext()) {
 				JSONObject json = new JSONObject(cursor.next().toString());
 				JSONObject properties = json.getJSONObject("properties");
-				if ("ノード情報".equals(properties.get("category"))) {
-					nodeMap.put(properties.getString("ノードID"), json);
+				if (properties.has("node_id")) {
+					nodeMap.put(properties.getString("node_id"), json);
 				} else {
 					features.add(json);
 				}
@@ -198,18 +197,18 @@ public class MongoAdapter implements DBAdapter {
 	}
 
 	@Override
-	public String findNearestNode(double[] point, List<String> floors) {
+	public String findNearestNode(double[] point, List<Double> floors) {
 		BasicDBObject query = new BasicDBObject().append("geometry", new BasicDBObject("$near",
 				new BasicDBObject("$geometry", new BasicDBObject("type", "Point").append("coordinates", point))));
-		query.put("properties.category", "ノード情報");
+		query.put("properties.node_id", new BasicDBObject("$exists", true));
 		if (floors != null) {
-			query.put("properties.高さ", new BasicDBObject("$in", floors));
+			query.put("properties.floor", new BasicDBObject("$in", floors));
 		}
 		DBObject obj = mapCol.findOne(query, new BasicDBObject("_id", 0));
 		if (obj instanceof DBObject) {
 			DBObject properties = (DBObject) obj.get("properties");
 			if (properties != null) {
-				return (String) properties.get("ノードID");
+				return (String) properties.get("node_id");
 			}
 		}
 		return null;

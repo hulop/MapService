@@ -1,6 +1,11 @@
 {
-	"messages": 
-	{
+	"messages": {
+		"node_LONG": "Information of Node",
+		"node_SHORT": "Node",
+		"link_LONG": "Information of Link",
+		"link_SHORT": "Link",
+		"facil_LONG": "Information of Facility",
+		"facil_SHORT": "Facility",
 		"NODE": "Node",
 		"LINK": "Link",
 		"POI": "Facilities",
@@ -53,237 +58,396 @@
 		"GROUP_SERVICE": "Service",
 		"GROUP_OTHERS": "Others"
 	},
-
-	"keynames": 
-	{
-		"ノード情報": "Information of Node",
-		"リンクの情報": "Information of Link",
-		"出入口情報": "Information of Doorway",
-		"公共施設の情報": "Information of Public Facilities",
-		"公共用トイレの情報": "Information of Public Toilet",
-		"指定避難所の情報": "Information of Designated Shelter",
-		"病院の情報": "Information of Hospital",
-		"ノード情報_SHORT": "Node",
-		"リンクの情報_SHORT": "Link",
-		"出入口情報_SHORT": "Doorway",
-		"公共施設の情報_SHORT": "Public Facilities",
-		"公共用トイレの情報_SHORT": "Public Toilet",
-		"指定避難所の情報_SHORT": "Designated Shelter",
-		"病院の情報_SHORT": "Hospital",
-		"ノードID": "node_ID",
-		"緯度経度桁数コード": "lat_long_precision",
-		"緯度": "latitude",
-		"経度": "longitude",
-		"高さ": "height",
-		"接続リンクID": "connection_linkID",
-		"リンクID": "link_ID",
-		"起点ノードID": "startingNode_ID",
-		"終点ノードID": "endingNode_ID",
-		"経路の種類": "route_TYPE",
-		"供用開始時間": "service_startTime",
-		"供用終了時間": "service_endTime",
-		"供用開始日": "service_startDate",
-		"供用終了日": "service_endDate",
-		"供用制限曜日": "service_closedDays",
-		"方向性": "pathDirection",
-		"通行制限": "trafficRestriction",
-		"有効幅員": "effectiveWidth",
-		"有効幅員緯度": "minWidth_latitude",
-		"有効幅員経度": "minWidth_longitude",
-		"縦断勾配1": "longitudinalSlope_value",
-		"縦断勾配1緯度": "longitudinalSlope_latitude",
-		"縦断勾配1経度": "longitudinalSlope_longitude",
-		"縦断勾配2": "longitudinalSlope_difficulty",
-		"横断勾配": "transversalSlope_value",
-		"横断勾配緯度": "transversalSlope_latitude",
-		"横断勾配経度": "transversalSlope_longitude",
-		"路面状況": "surfaceCondition",
-		"段差": "bump_height",
-		"段差緯度": "bump_latitude",
-		"段差経度": "bump_longitude",
-		"最小階段段数": "minSteps_stairWay",
-		"最大階段段数": "maxSteps_stairWay",
-		"手すり": "handrail_existence",
-		"屋根の有無": "roofShelter_existence",
-		"蓋のない溝や水路の有無": "waterway_existence",
-		"バス停の有無": "busStop_existence",
-		"バス停の緯度": "busStop_latitude",
-		"バス停の経度": "busStop_longitude",
-		"視覚障害者誘導用ブロック": "tactilePaving_existence",
-		"補助施設の設置状況": "assistanceFeature_existence",
-		"補助施設の緯度": "assistanceFeature_latitude",
-		"補助施設の経度": "assistanceFeature_longitude",
-		"エレベーター種別": "elevator_a11yFeatures",
-		"エレベーターの緯度": "elevator_latitude",
-		"エレベーターの経度": "elevator_longitude",
-		"信号の有無": "trafficLight_existence",
-		"信号の緯度": "trafficLight_latitude",
-		"信号の経度": "trafficLight_longitud",
-		"信号種別": "trafficLight_sound",
-		"日交通量": "dailyTraffic",
-		"主な利用者": "path_mainUser",
-		"通り名称または交差点名称": "Pathname",
-		"エスコートゾーン": "tactilePaving_onCrosswalk",
-		"リンク延長": "linkExtension",
-		"出入口ID": "doorway_ID",
-		"対応ノードID": "doorway_nodeID",
-		"対応施設ID": "doorway_facilityID",
-		"出入口の名称": "doorway_name",
-		"出入口の有効幅員": "doorway_effectiveWidth",
-		"扉の種類": "doorway_type",
-		"施設ID": "facility_ID",
-		"名称": "name",
-		"所在地": "address",
-		"電話番号": "phoneNumber",
-		"階層": "hierarchy",
-		"多目的トイレ": "toilet_accessibility",
-		"男女別": "toilet_gender",
-		"有料無料の別": "toilet_fee",
-		"ベビーベッド": "toilet_crib",
-		"施設種別": "facility_type",
-		"地区名": "shelter_district",
-		"風水害対応": "storm_flood_protection",
-		"診療科目": "hospital_medicalCourses",
-		"休診日": "no-consultationDay"
-	},
-
-	"tooltips": 
-	{
-		"ノード情報": 
-		{
-			"ノードID": "id of the node",
-			"緯度経度桁数コード": "1: 1/10 second, 2: 1/100 second, 3: 1/1000 second",
-			"緯度": "latitude for node position",
-			"経度": "longitude for node position",
-			"高さ": "number of layer (0 for outdoor)",
-			"接続リンクID": "id of link the node is connected"
+	"information_items": {
+		"node": {
+			"node_id": {
+				"name": "Node ID",
+				"desc": "Node ID"
+			},
+			"lat": {
+				"name": "Latitude",
+				"desc": "Latitude of the center position. Enter a value in decimal notation (e.g.,35.6755310)."
+			},
+			"lon": {
+				"name": "Longitude",
+				"desc": "Longitude of the center position. Enter a value in decimal notation (e.g.,139.7512700)."
+			},
+			"floor": {
+				"name": "Floor number",
+				"desc": "Floor number (A location between floors shall be expressed with a decimal point such as \"1.5.\" Outdoors shall be \"0.\")"
+			},
+			"link#_id": {
+				"name": "Connected link ID",
+				"desc": "Enter the ID of a link to be connected (Enter multiple link IDs to connect multiple links.)"
+			}
 		},
-
-		"リンクの情報": 
-		{
-			"リンクID": "id of the link",
-			"起点ノードID": "id of the starting point",
-			"終点ノードID": "id of the end point",
-			"経路の種類": "1: sidewalk, 2: pedestrian street, 3: garden path, 4: coexistent road, 5: crosswalk, 6: crossing without crosswalk sign, 7: moving walkway, 8: free passage (inside Hakozaki 10th floor?), 9: railroad crossing, 10: elevator, 11: escalator, 12: stairs, 13: slope, 99: unknown-undefined,\n> following codes are optional & not so usual\n15: shopping street, 16: shopping street entrance, 17: shortcut path, 18: crowded/to avoid path, 19: tourist routes, 20: snow and rain avoided",
-			"供用開始時間": "service start time (hh-mm) if exists",
-			"供用終了時間": "service end time (hh-mm) if exists",
-			"供用開始日": "service start date (yyyy-mm-dd) if exists",
-			"供用終了日": "service end date (yyyy-mm-dd) if exists",
-			"供用制限曜日": "service closing days (1: Monday to 7: Sunday) if exists. Collection if several.",
-			"方向性": "0: bidirectional, 1: towards end point, 2: towards start point, 9: unknown",
-			"通行制限": "0: free walk, 1: restricted access, 2: fee required, 9: unknown",
-			"有効幅員": "0: less than 1m, 1: >1m & <1.5m, 2: >1.5m & <2m, 3: >2m 9: unknown",
-			"有効幅員緯度": "latitude of minimum effective width",
-			"有効幅員経度": "longitude of minimum effective width",
-			"縦断勾配1": "Maximum slope value (%) along the link",
-			"縦断勾配1緯度": "Location latitude for maximum slope",
-			"縦断勾配1経度": "Location longitude for maximum slope",
-			"縦断勾配2": "0: no problem, even with manual wheelchair, 1: difficulty for manual wheelchair, but not for electrical, 2: difficulty even with electrical wheelchair",
-			"横断勾配": "Maximum value (%) for crosswise slope",
-			"横断勾配緯度": "Latitude location for max. crosswise slope",
-			"横断勾配経度": "Longitude location for max. crosswise slope",
-			"路面状況": "0: no problem, 1: dirt, 2: gravel, 3: other, 9: unknown",
-			"段差": "0: less than 2cm, 1: 2~5cm, 2: 5~10cm, 3: more than 10cm, 9: unknown (assign max bump height for whole link)",
-			"段差緯度": "Latitude location for bump",
-			"段差経度": "Longitude location for bump",
-			"最小階段段数": "number of steps along a stairway",
-			"最大階段段数": "(optional) max. number of steps when different ways along stairs",
-			"手すり": "0: no, 1: on the right, 2: on the left, 3: both sides, 9: unknown (link direction - start node to end node)",
-			"屋根の有無": "0: no, 1: yes, 9: unknown",
-			"蓋のない溝や水路の有無": "0: no, 1: yes, 9: unknown",
-			"バス停の有無": "0: no, 1: yes, 9: unknown",
-			"バス停の緯度": "Latitude location for bus stop",
-			"バス停の経度": "Longitude location for bus stop",
-			"視覚障害者誘導用ブロック": "0: no, 1: yes, 9: unknown (tactile paving along the path/link)",
-			"補助施設の設置状況": "0: no, 1: escalator with wheelchair step, 2: stairlift, 3: vertical lift platform, 4: voice guidance device, 6: other feature, 9: unknown (do not include human assistance)",
-			"補助施設の緯度": "Latitude location for assistance",
-			"補助施設の経度": "Longitude location for assistance",
-			"エレベーター種別": "0: not included, 1: braille and audio, 2: wheelchair, 3: 1&2, 9: unknown",
-			"エレベーターの緯度": "Latitude location for elevator",
-			"エレベーターの経度": "Longitude location for elevator",
-			"信号の有無": "0: no signal, 1: staggered signal, 2: with push-button, 3: other, 9: unknown",
-			"信号の緯度": "Latitude location for traffic light",
-			"信号の経度": "Latitude location for traffic light",
-			"信号種別": "0: no sound, 1: acoustic, 9: unknown",
-			"日交通量": "fill only when data provided from census area, otherwise leave blank",
-			"主な利用者": "0: pedestrian, 1: vehicle",
-			"通り名称または交差点名称": "street name or intersection name",
-			"エスコートゾーン": "0: no, 1: yes, 9: unknown (tactile paving along crosswalk intersection)",
-			"リンク延長": "describe extension of the link (unnecessary for elevator and similar)"
+		"link": {
+			"link_id": {
+				"name": "Link ID",
+				"desc": "ID of a link"
+			},
+			"start_id": {
+				"name": "Source node ID",
+				"desc": "ID of a source node"
+			},
+			"end_id": {
+				"name": "Target node ID",
+				"desc": "ID of a target node"
+			},
+			"distance": {
+				"name": "Link length",
+				"desc": "Enter a link length up to the first decimal place (in meters). (No need to enter this item if the route type is an elevator.)"
+			},
+			"rt_struct": {
+				"name": "Route structure",
+				"desc": "1: physical separation provided between roadways and sidewalks, 2: no physical separation provided between roadways and sidewalks, 3: pedestrian crossing, 4: road crossing without road marking for pedestrian crossing, 5: underpass, 6: pedestrian crossing bridge, 99: other"
+			},
+			"route_type": {
+				"name": "Route type",
+				"desc": "0: no corresponding attribute information, 1: moving walkway, 2: railroad crossing, 3: elevator, 4: escalator, 5: stairs, 6: slope, 99: other"
+			},
+			"direction": {
+				"name": "Direction",
+				"desc": "0: both directions, 1: direction from source to target, 2: direction from target to source, 99: unknown"
+			},
+			"width": {
+				"name": "Width",
+				"desc": "0: less than 1.0 m (wheelchair inaccessible), 1: 1.0 m to less than 2.0 m (wheelchair accessible (difficult to pass each other)), 2: 2.0 m to less than 3.0 m (wheelchair accessible (possible to pass each other)), 3: 3.0 m or more (no problem in wheelchair accessibility), 99: unknown"
+			},
+			"vtcl_slope": {
+				"name": "Gradient",
+				"desc": "0: 5% or less (no problem in wheelchair accessibility), 1: more than 5% (problem in wheelchair accessibility), 99: unknown"
+			},
+			"lev_diff": {
+				"name": "Step",
+				"desc": "0: 2 cm or less (no problem in wheelchair accessibility), 1: more than 2 cm (problem in wheelchair accessibility), 99: unknown"
+			},
+			"tfc_signal": {
+				"name": "Signals for pedestrians",
+				"desc": "0: without signals for pedestrians, 1: with pedestrian-vehicle separated signals, 2: with pedestrian-control signals, 3: other signals than these, 99: unknown"
+			},
+			"tfc_s_type": {
+				"name": "Types of signals for pedestrians",
+				"desc": "0: without sound equipment, 1: with sound equipment (without a button for visually impaired person), 2: with sound equipment (with a button for visually impaired person), 99: unknown"
+			},
+			"brail_tile": {
+				"name": "Tactile walking surface indicators",
+				"desc": "0: without tactile walking surface indicators, etc., 1: with tactile walking surface indicators, etc., 99: unknown"
+			},
+			"elevator": {
+				"name": "Elevator type",
+				"desc": "0: without elevator, 1: with elevator (not accessible), 2: with elevator (accessible), 99: unknown"
+			},
+			"start_time": {
+				"name": "Service start time",
+				"desc": "Enter service start time if the service time is limited. Leave this field blank if the service time is not limited. Enter \"99\" if it is unknown. The format is \"HH-MM.\""
+			},
+			"end_time": {
+				"name": "Service end time",
+				"desc": "Enter service end time if the service time is limited. Leave this field blank if the service time is not limited. Enter \"99\" if it is unknown. The format is \"HH-MM.\""
+			},
+			"start_date": {
+				"name": "Service start date",
+				"desc": "Enter a service start date if network data is to be developed before the services start of a road or passage. Leave this field blank if the road is already in service. Enter \"99\" if it is unknown. The format is \"YYYY-MM-DD.\""
+			},
+			"end_date": {
+				"name": "Service end date",
+				"desc": "Enter a service end date if the service end of a road or passage is planned. Leave this field blank if the service end is not planned. Enter \"99\" if it is unknown. The format is \"YYYY-MM-DD.\""
+			},
+			"no_serv_d": {
+				"name": "Service closing days",
+				"desc": "Enter non-service days if the service days of the week are limited. Omitted if the service days of the week are not limited. Convert the days of the week into numbers (1: Monday to 7: Sunday) and enter numbers consecutively in an ascending order if there are more than one. Leave this field blank if there is no service closing day. Enter \"99\" if it is unknown."
+			},
+			"tfc_restr": {
+				"name": "Restricted traffic",
+				"desc": "0: freely accessible, 1: access undesirable (private space), 2: fare payment required, 99: unknown"
+			},
+			"w_min": {
+				"name": "Minimum width",
+				"desc": "Enter the minimum width in a link up to the first decimal place (in meters)."
+			},
+			"w_min_lat": {
+				"name": "Latitude at minimum width",
+				"desc": "Latitude of a point at the minimum width. Enter a value in decimal notation (e.g., 35.6755310)."
+			},
+			"w_min_lon": {
+				"name": "Longitude at minimum width",
+				"desc": "Longitude of a point at the minimum width. Enter a value in decimal notation (e.g., 139.7512700)."
+			},
+			"vSlope_max": {
+				"name": "Maximum gradient",
+				"desc": "Enter the maximum gradient in a link as an integer (in percent)."
+			},
+			"vSlope_lat": {
+				"name": "Gradient latitude",
+				"desc": "Latitude of a point at the maximum gradient in a link. Enter a value in decimal notation (e.g., 35.6755310)."
+			},
+			"vSlope_lon": {
+				"name": "Gradient longitude",
+				"desc": "Longitude of a point at the maximum gradient in a link. Enter a value in decimal notation (e.g., 139.7512700)."
+			},
+			"hSlope_max": {
+				"name": "Maximum crossfall",
+				"desc": "Enter the maximum gradient in a link as an integer (in percent)."
+			},
+			"hSlope_lat": {
+				"name": "Crossfall latitude",
+				"desc": "Latitude of a point at the maximum crossfall in a link. Enter a value in decimal notation (e.g., 35.6755310)."
+			},
+			"hSlope_lon": {
+				"name": "Crossfall longitude",
+				"desc": "Longitude of a point at the maximum crossfall in a link. Enter a value in decimal notation (e.g., 139.7512700)."
+			},
+			"condition": {
+				"name": "Road surface condition",
+				"desc": "0: no problem in accessibility, 1: soil, 2: gravel, 3: other, 99: unknown"
+			},
+			"levDif_max": {
+				"name": "Maximum step height",
+				"desc": "Enter the maximum step height in a link as an integer (in centimeters)."
+			},
+			"levDif_lat": {
+				"name": "Step latitude",
+				"desc": "Latitude of a point at the maximum step height in a link. Enter a value in decimal notation (e.g., 35.6755310)."
+			},
+			"levDif_lon": {
+				"name": "Step longitude",
+				"desc": "Longitude of a point at the maximum step height in a link. Enter a value in decimal notation (e.g., 139.7512700)."
+			},
+			"stair": {
+				"name": "Number of steps of stairs",
+				"desc": "Enter a number of steps as an integer."
+			},
+			"handrail": {
+				"name": "Handrail",
+				"desc": "0: none, 1: on the right, 2: on the left, 3: on both sides, 99: unknown (The direction is as seen from the source.)"
+			},
+			"roof": {
+				"name": "Roof",
+				"desc": "0: none, 1: yes, 99: unknown"
+			},
+			"waterway": {
+				"name": "Uncovered street gutter or ditch",
+				"desc": "0: none, 1: yes, 99: unknown"
+			},
+			"bus_stop": {
+				"name": "Bus stop",
+				"desc": "0: none, 1: yes, 99: unknown"
+			},
+			"bus_s_lat": {
+				"name": "Latitude of a bus stop",
+				"desc": "Latitude of a bus stop in a link if any. Enter a value in decimal notation (e.g., 35.6755310)."
+			},
+			"bus_s_lon": {
+				"name": "Longitude of a bus stop",
+				"desc": "Longitude of a bus stop in a link if any. Enter a value in decimal notation (e.g., 139.7512700)."
+			},
+			"facility": {
+				"name": "Support equipment",
+				"desc": "0: none, 1: accessible escalator for wheelchair, 2: stair lift, 3: step lift, 4: audio guidance device, 5: other support equipment, 99: unknown (Equipment requiring human intervention is excluded.)"
+			},
+			"facil_lat": {
+				"name": "Latitude of support equipment",
+				"desc": "Latitude of support equipment in a link if any. Enter a value in decimal notation (e.g., 35.6755310)."
+			},
+			"facil_lon": {
+				"name": "Longitude of support equipment",
+				"desc": "Longitude of support equipment in a link if any. Enter a value in decimal notation (e.g., 139.7512700)."
+			},
+			"elev_lat": {
+				"name": "Latitude of an elevator",
+				"desc": "Latitude of an elevator in a link if any. Enter a value in decimal notation (e.g., 35.6755310)."
+			},
+			"elev_lon": {
+				"name": "Longitude of an elevator",
+				"desc": "Longitude of an elevator in a link if any. Enter a value in decimal notation (e.g., 139.7512700)."
+			},
+			"door_type": {
+				"name": "Door type",
+				"desc": "0: none, 1: automatic door, 2: press-button automatic door, 3: manual sliding door, 4: manual door, 5: revolving door, 6: other door, 99: unknown"
+			},
+			"tfc_s_lat": {
+				"name": "Latitude of a traffic signal",
+				"desc": "Latitude of a traffic signal near a link if any. Enter a value in decimal notation (e.g., 35.6755310)."
+			},
+			"tfc_s_lon": {
+				"name": "Longitude of a traffic signal",
+				"desc": "Longitude of a traffic signal near a link if any. Enter a value in decimal notation (e.g., 139.7512700)."
+			},
+			"day_trfc": {
+				"name": "Daily traffic",
+				"desc": "Enter a daily traffic as an integer (Enter a value only for a census target section. Do not enter a value for a non-target section.)"
+			},
+			"main_user": {
+				"name": "Main users",
+				"desc": "0: pedestrian, 1: vehicle, 99: unknown"
+			},
+			"st_name": {
+				"name": "Name of a street or an intersection",
+				"desc": "Enter an alias if any (Enter an intersection name if the link is on an intersection). Leave this field blank if there is no alias, etc. Enter \"99\" if it is unknown."
+			}
 		},
-
-		"出入口情報": 
-		{
-			"出入口ID": "id of the doorway",
-			"対応ノードID": "id of corresponding node",
-			"対応施設ID": "id of corresponding facility",
-			"出入口の名称": "name of the doorway",
-			"出入口の有効幅員": "0: <1m, 1: 1m to 1.5m, 2: 1.5m to 2m, 3: >2m, 9: unknown",
-			"扉の種類": "0: no, 1: automatic, 2: automatic (with push-button), 3: manual sliding, 4: manual hinged, 5: revolving door, 6: other, 9: unknown",
-			"段差": "0: <2cm, 1: 2 to 5cm, 2: 5 to 10cm, 3: 10cm or more, 9: unknown"
-		},
-
-		"公共施設の情報": 
-		{
-			"施設ID": "id of the facility",
-			"名称": "name of facility",
-			"所在地": "address of the facility",
-			"電話番号": "telephone number of the facility",
-			"緯度経度桁数コード": "1: 1/10 second, 2: 1/100 second, 3: 1/1000 second",
-			"緯度": "latitude of facility center position",
-			"経度": "longitude of facility center position",
-			"階層": "hierarchy number",
-			"供用開始時間": "service start time (hh-mm) if exists",
-			"供用終了時間": "service end time (hh-mm) if exists",
-			"供用制限曜日": "service closing days (1: Monday to 7: Sunday) if exists. Collection if several.",
-			"多目的トイレ": "0: no, 1: yes (no colostomy support), 2: yes (support for colostomy)"
-		},
-
-		"公共用トイレの情報": 
-		{
-			"施設ID": "id of the toilet",
-			"緯度経度桁数コード": "1: 1/10 second, 2: 1/100 second, 3: 1/1000 second",
-			"緯度": "latitude of hospital center position",
-			"経度": "longitude of hospital center position",
-			"階層": "hierarchy number",
-			"男女別": "1: man, 2: woman, 3: shared",
-			"有料無料の別": "1: free, 2: paying",
-			"多目的トイレ": "0: no, 1: yes (no colostomy support), 2: yes (support for colostomy)",
-			"ベビーベッド": "0: no, 1: yes",
-			"供用開始時間": "toilet start time (hh-mm) if exists",
-			"供用終了時間": "toilet end time (hh-mm) if exists",
-			"供用制限曜日": "toilet closing days (1: Monday to 7: Sunday) if exists. Collection if several."
-		},
-
-		"指定避難所の情報": 
-		{
-			"施設ID": "id of the facility",
-			"施設種別": "1: large area (defined by government), 9: other",
-			"地区名": "district name of the shelter",
-			"名称": "shelter name",
-			"所在地": "location of the shelter",
-			"電話番号": "telephone number of the shelter",
-			"緯度経度桁数コード": "1: 1/10 second, 2: 1/100 second, 3: 1/1000 second",
-			"緯度": "latitude of shelter center position",
-			"経度": "longitude of shelter center position",
-			"階層": "hierarchy number",
-			"風水害対応": "0: yes, 1: no",
-			"多目的トイレ": "0: no, 1: yes (no colostomy support), 2: yes (support for colostomy)"
-		},
-
-		"病院の情報": 
-		{
-			"施設ID": "id of the hospital",
-			"名称": "name of the hospital",
-			"所在地": "location of the hospital",
-			"電話番号": "telephone number of the hospital",
-			"緯度経度桁数コード": "1: 1/10 second, 2: 1/100 second, 3: 1/1000 second",
-			"緯度": "latitude of hospital center position",
-			"経度": "longitude of hospital center position",
-			"階層": "hierarchy number",
-			"診療科目": "1: internal medicine, 2: pediatrics, 3: surgery, 4: obstetrics and gynecology, 8: others",
-			"休診日": "closing days (1: Monday to 7: Sunday) if exists. Collection if several.",
-			"多目的トイレ": "0: no, 1: yes (no colostomy support), 2: yes (support for colostomy)"
+		"facil": {
+			"facil_id": {
+				"name": "Facility ID",
+				"desc": "Facility ID"
+			},
+			"facil_type": {
+				"name": "Facility type",
+				"desc": "1：Public offices, etc., 2： Educational and cultural facilities, etc., 3：Medical facilities, 4：Health and welfare facilities, 5：Commercial facilities, 6：Accommodations, 7： Parks and athletic facilities, 8：Tourist facilities, 9：Transport facilities, 10： Public toilets (standalone), 99：Other facilities"
+			},
+			"evacuation": {
+				"name": "Evacuation center and area",
+				"desc": "0: none designated, 1: designated emergency evacuation center, 2: designated evacuation center, 3: welfare evacuation site, 4: both 1 and 2, 5: both 1 and 3, 6: both 2 and 3, 7: all of 1, 2, and 3, 99: unknown"
+			},
+			"temporary": {
+				"name": "Temporary stay facility",
+				"desc": "0: none designated, 1: designated, 99: unknown"
+			},
+			"name_ja": {
+				"name": "Name (Japanese)",
+				"desc": "Facility name. Leave this field blank if there is no name. Enter \"99\" if it is unknown."
+			},
+			"name_en": {
+				"name": "Name (English)",
+				"desc": "Facility name in English. Leave this field blank if there is no name. Enter \"99\" if it is unknown."
+			},
+			"address": {
+				"name": "Address",
+				"desc": "Facility location. Enter \"99\" if it is unknown."
+			},
+			"tel": {
+				"name": "Telephone number",
+				"desc": "Facility telephone number. Leave this field blank if there is no telephone number. Enter \"99\" if it is unknown."
+			},
+			"lat": {
+				"name": "Latitude",
+				"desc": "Latitude of the center position. Enter a value in decimal notation (e.g., 35.6755310)."
+			},
+			"lon": {
+				"name": "Longitude",
+				"desc": "Longitude of the center position. Enter a value in decimal notation (e.g., 139.7512700)."
+			},
+			"floors": {
+				"name": "Total number of floors",
+				"desc": "Total number of floors"
+			},
+			"toilet": {
+				"name": "Toilets",
+				"desc": "0: none, 1: general toilets, 2: multipurpose toilets (ostomate), 3: multipurpose toilets (baby changing station), 4: multipurpose toilets (ostomate, baby changing station, and others), 99: unknown"
+			},
+			"elevator": {
+				"name": "Elevators",
+				"desc": "0: without elevator, 1: with elevator (not wheelchair accessible), 2: with elevator (wheelchair accessible), 99: unknown"
+			},
+			"escalator": {
+				"name": "Escalators",
+				"desc": "0: none, 1: yes, 99: unknown"
+			},
+			"parking": {
+				"name": "Accessible parking",
+				"desc": "0: none, 1: parking for general visitors, 2: wheelchair accessible parking, 3: both 1 and 2, 99: unknown"
+			},
+			"barrier": {
+				"name": "Wheelchair accessible entrance",
+				"desc": "0: none, 1: with wheelchair accessible entrance, 99: unknown (If the step at the entrance is approximately 2 cm or less or there is a slope, enter \"1: with wheelchair accessible entrance.\")"
+			},
+			"nursing": {
+				"name": "Nursing rooms",
+				"desc": "0: none, 1: yes, 99: unknown"
+			},
+			"brail_tile": {
+				"name": "Tactile walking surface indicators",
+				"desc": "0: none, 1: yes, 99: unknown"
+			},
+			"info": {
+				"name": "Information offices",
+				"desc": "0: none, 1: yes (not accessible to hearing-impaired persons), 2: yes (accessible to hearing-impaired persons), 99: unknown"
+			},
+			"info_board": {
+				"name": "Information board",
+				"desc": "0: none, 1: yes (not accessible to visually impaired persons), 2: yes (accessible to visually impaired persons), 99: unknown"
+			},
+			"name_hira": {
+				"name": "Name (hiragana)",
+				"desc": "Enter a facility name in hiragana. Leave this field blank if there is no facility name. Enter \"99\" if it is unknown."
+			},
+			"fax": {
+				"name": "Fax number",
+				"desc": "Facility fax number. Leave this field blank if there is no fax number. Enter \"99\" if it is unknown."
+			},
+			"mail": {
+				"name": "E-Mail",
+				"desc": "Facility e-mail address. Leave this field blank if there is no e-mail address. Enter \"99\" if it is unknown."
+			},
+			"start_time": {
+				"name": "Service start time",
+				"desc": "Enter service start time if the service time is limited. Leave this field blank if the service time is not limited. Enter \"99\" if it is unknown. The format is \"HH-MM.\""
+			},
+			"end_time": {
+				"name": "Service end time",
+				"desc": "Enter service end time if the service time is limited. Leave this field blank if the service time is not limited. Enter \"99\" if it is unknown. The format is \"HH-MM.\""
+			},
+			"no_serv_d": {
+				"name": "Service closing days",
+				"desc": "Enter non-service days if the service days of the week are limited. Omitted if the service days of the week are not limited. Convert the days of the week into numbers (1: Monday to 7: Sunday) and enter numbers consecutively in an ascending order if there are more than one. Leave this field blank if there is no service closing day. Enter \"99\" if it is unknown."
+			},
+			"sex": {
+				"name": "Sex",
+				"desc": "1: male, 2: female, 3: shared, 99: unknown"
+			},
+			"fee": {
+				"name": "Fee",
+				"desc": "1: free, 2: charged, 99: unknown"
+			},
+			"subject": {
+				"name": "Subject of medical treatment",
+				"desc": "1: internal medicine, 2: pediatrics, 3: surgery, 4: obstetrics and gynecology, 5: other, 99: unknown Enter numbers consecutively in an ascending order if there is more than one department."
+			},
+			"close_day": {
+				"name": "Closing days",
+				"desc": "If there are closing days, convert the closing days of the week into numbers (1: Monday to 7: Sunday) and enter numbers consecutively in an ascending order if there are more than one. (If closing days differ between hospital departments, handle them as different facilities.) Leave this field blank if there is no closing day. Enter \"99\" if it is unknown."
+			},
+			"med_dept": {
+				"name": "District name",
+				"desc": "Facility district name, 99: unknown"
+			},
+			"flood": {
+				"name": "Designated for storm and flood damage",
+				"desc": "0: not possible, 1: possible, 99: unknown"
+			},
+			"ent#_lat": {
+				"name": "Latitude of entrance #",
+				"desc": "Latitude of the center position. Enter a value in decimal notation (e.g., 35.6755310)."
+			},
+			"ent#_lon": {
+				"name": "Longitude of entrance #",
+				"desc": "Longitude of the center position. Enter a value in decimal notation (e.g., 139.7512700)."
+			},
+			"ent#_n": {
+				"name": "Name of entrance #",
+				"desc": "Enter an entrance name (Leave this field blank if there is no entrance name. Enter \"99\" if it is unknown.)"
+			},
+			"ent#_w": {
+				"name": "Width of entrance #",
+				"desc": "0: less than 1.0 m, 1: 1.0 m to less than 1.5 m, 2: 1.5 m to less than 2.0 m, 3: 2.0 m or more, 99: unknown (Evaluate the minimum width in a relevant link.)"
+			},
+			"ent#_d": {
+				"name": "Door type of entrance #",
+				"desc": "0: none, 1: automatic door, 2: press-button automatic door, 3: manual sliding door, 4: manual door, 5: revolving door, 6: other door, 99: unknown"
+			},
+			"ent#_brr": {
+				"name": "Wheelchair accessible entrance #",
+				"desc": "0: none, 1: with wheelchair accessible entrance, 99: unknown (If the step at the entrance is approximately 2 cm or less or there is a slope, enter \"1: with wheelchair accessible entrance.\")"
+			},
+			"ent#_fl": {
+				"name": "Floor number of entrance #",
+				"desc": "Enter the floor number of a node near the entrance."
+			},
+			"ent#_node": {
+				"name": "Node ID of entrance #",
+				"desc": "Node ID of entrance"
+			}
 		}
 	}
 }

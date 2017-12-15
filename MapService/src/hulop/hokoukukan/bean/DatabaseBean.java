@@ -29,7 +29,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -37,7 +36,6 @@ import java.util.zip.ZipOutputStream;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.wink.json4j.JSON;
 import org.apache.wink.json4j.JSONArray;
 import org.apache.wink.json4j.JSONException;
 import org.apache.wink.json4j.JSONObject;
@@ -46,9 +44,8 @@ import hulop.hokoukukan.servlet.FileFilter;
 import hulop.hokoukukan.utils.CloudUtils;
 import hulop.hokoukukan.utils.CloudantAdapter;
 import hulop.hokoukukan.utils.DBAdapter;
-import hulop.hokoukukan.utils.GmlUtils;
+import hulop.hokoukukan.utils.Hokoukukan;
 import hulop.hokoukukan.utils.MongoAdapter;
-import hulop.hokoukukan.utils.NavCogUtils;
 
 public class DatabaseBean {
 	public static final DBAdapter adapter = getDBAdapter();
@@ -99,41 +96,17 @@ public class DatabaseBean {
 		adapter.dropDB();
 	}
 
+	@Deprecated
 	private static void importGML(InputStream is, File file) {
-		adapter.prepare(file);
-		try {
-			GmlUtils.toJSON(is, file, new GmlUtils.JSONListener() {
-				@Override
-				public void onJSON(Object json) {
-					preInsert(json);
-					adapter.insert(json.toString());
-				}
-			});
-			adapter.flush();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		System.out.println(" " + adapter.getInsertCount() + " records");
+		System.err.println("importGML not supported");
 	}
 
+	@Deprecated
 	private static void importNavcogJSON(InputStream is, File file) {
-		adapter.prepare(file);
-		try {
-			new NavCogUtils((JSONObject) JSON.parse(is), file, new GmlUtils.JSONListener() {
-				@Override
-				public void onJSON(Object json) {
-					preInsert(json);
-					adapter.insert(json.toString());
-				}
-			}).convert();
-			adapter.flush();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		System.out.println(" " + adapter.getInsertCount() + " records");
+		System.err.println("importNavcogJSON not supported");
 	}
 
-	private static String[] ID_KEYS = new String[] { "ノードID", "リンクID", "施設ID", "出入口ID" };
+	private static String[] ID_KEYS = new String[] { "node_id", "link_id", "facil_id" };
 
 	private static void preInsert(Object json) {
 		if (json instanceof JSONObject) {
@@ -294,42 +267,30 @@ public class DatabaseBean {
 
 	public static Object getToilets(double[] point, double distance) throws JSONException {
 		JSONArray features = new JSONArray();
-		List<String> categories = new ArrayList<String>();
-		categories.add("公共用トイレの情報");
-		categories.add("出入口情報");
-		adapter.getGeometry(point, distance, null, features, categories);
+		adapter.getGeometry(point, distance, null, features, true);
 		JSONObject siteMap = new JSONObject();
+		JSONObject nodeMap = new JSONObject();
 		for (Object feature : features) {
 			JSONObject properties = ((JSONObject) feature).getJSONObject("properties");
-			if (properties.has("施設ID") && properties.has("多目的トイレ")) {
-				switch (properties.getString("多目的トイレ")) {
-				case "1":
-				case "2":
-					siteMap.put(properties.getString("施設ID"), feature);
+			if (properties.has("toilet") && Hokoukukan.getCategory(properties) == Hokoukukan.CATEGORY_TOILET) {
+				switch (properties.getInt("toilet")) {
+				case 2:
+				case 4:
+					siteMap.put(properties.getString("facil_id"), feature);
+					for (String ent_ : Hokoukukan.listEntrances(properties)) {
+						String nodeId = properties.getString(ent_ + "node");
+						if (!nodeMap.has(nodeId)) {
+							JSONObject node = adapter.find(nodeId);
+							if (node != null) {
+								nodeMap.put(nodeId, node);
+							}
+						}
+					}
 					break;
 				}
 			}
 		}
-		JSONArray exitList = new JSONArray();
-		JSONObject nodeMap = new JSONObject();
-		for (Object feature : features) {
-			JSONObject properties = ((JSONObject) feature).getJSONObject("properties");
-			if (properties.has("出入口ID") && properties.has("対応施設ID") && properties.has("対応ノードID")) {
-				String siteId = properties.getString("対応施設ID");
-				String nodeId = properties.getString("対応ノードID");
-				if (siteMap.has(siteId)) {
-					if (!nodeMap.has(nodeId)) {
-						JSONObject node = adapter.find(nodeId);
-						if (node != null) {
-							nodeMap.put(nodeId, node);
-						}
-					}
-					exitList.add(feature);
-				}
-			}
-		}
 		JSONObject result = new JSONObject();
-		result.put("exitList", exitList);
 		result.put("nodeMap", nodeMap);
 		result.put("siteMap", siteMap);
 		return result;

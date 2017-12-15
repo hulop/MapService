@@ -782,7 +782,7 @@ $hulop.map = function() {
 		appendLabel({
 			'display_title' : getDestinationName(),
 			'title' : getDestinationName(true)
-		}, getLatLng(obj.geometry.coordinates), Number((obj.properties['高さ'] || '').replace("B", "-")), "STRAIGHT");
+		}, getLatLng(obj.geometry.coordinates), obj.properties['floor'] || 0, "STRAIGHT");
 
 		// Create step buttons
 		var tbody = $('<tbody>');
@@ -1256,7 +1256,7 @@ $hulop.map = function() {
 		var select_from = $('#from'), select_to = $('#to');
 		landmarks.forEach(function(obj) {
 			var id = obj.node;
-			var poi_id = obj.properties && obj.properties['施設ID'];
+			var poi_id = obj.properties && obj.properties['facil_id'];
 			if (poi_id) {
 				// id += ':' + poi_id;
 			}

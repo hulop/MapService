@@ -75,13 +75,13 @@ $hulop.editor = function() {
 							messages += '-------------------\n';
 						}
 						if (q) {
-							messages += '[ユーザー ' + log.time + ']: ';
+							messages += '[User ' + log.time + ']: ';
 							messages += q + '\n';
 						}
-						messages += '[システム ' + log.time + ']: '
+						messages += '[System ' + log.time + ']: '
 						messages += log.output.text.join('\n');
 						if (log.context.navi && log.context.dest_info) {
-							messages += '\n【' + log.context.dest_info.name + ': ' + log.context.dest_info.nodes + '】';
+							messages += '\n[' + log.context.dest_info.name + ': ' + log.context.dest_info.nodes + ']';
 							dest_name = log.context.dest_info.name;
 						}
 						messages += '\n\n';

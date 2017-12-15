@@ -34,12 +34,13 @@ import org.apache.wink.json4j.JSONException;
 import org.apache.wink.json4j.JSONObject;
 
 import hulop.hokoukukan.utils.DBAdapter;
+import hulop.hokoukukan.utils.Hokoukukan;
 
 public class RouteData {
 
 	private static final long CACHE_EXPIRE = 60 * 60 * 1000;
 	private static final DBAdapter adapter = DatabaseBean.adapter;
-	private final JSONObject mNodeMap, mExitNodes;
+	private final JSONObject mNodeMap;
 	private final JSONArray mFeatures, mDoors;
 	private final Map<String, JSONArray> mLandMarks;
 	private final Set<String> mElevatorNodes;
@@ -115,33 +116,43 @@ public class RouteData {
 		mCenter = center;
 		mRange = distance;
 		mNodeMap = new JSONObject();
-		mExitNodes = new JSONObject();
 		mFeatures = new JSONArray();
 		mDoors = new JSONArray();
 		mLandMarks = new HashMap<String, JSONArray>();
 		mElevatorNodes = new HashSet<String>();
-		adapter.getGeometry(center, distance, mNodeMap, mFeatures, null);
+		adapter.getGeometry(center, distance, mNodeMap, mFeatures, false);
 		for (Object feature : mFeatures) {
-			JSONObject node = (JSONObject) feature;
-			JSONObject properties = node.getJSONObject("properties");
-			if ("リンクの情報".equals(properties.getString("category")) && "10".equals(properties.getString("経路の種類"))) {
-				mElevatorNodes.add(properties.getString("起点ノードID"));
-				mElevatorNodes.add(properties.getString("終点ノードID"));
-			}
-			if ("出入口情報".equals(properties.getString("category"))) {
-				if (properties.has("対応施設ID")) {
-					mExitNodes.append(properties.getString("対応施設ID"), node);
-				}
-				if (properties.has("対応ノードID") && properties.has("扉の種類")) {
-					String door = properties.getString("扉の種類");
-					switch (door) {
-					case "":
-					case "0":
-						break;
-					default:
-						mDoors.add(properties);
+			try {
+				JSONObject properties = ((JSONObject) feature).getJSONObject("properties");
+				switch (Hokoukukan.getCategory(properties)) {
+				case Hokoukukan.CATEGORY_LINK:
+					if (properties.getInt("route_type") == 3) {
+						mElevatorNodes.add(properties.getString("start_id"));
+						mElevatorNodes.add(properties.getString("end_id"));
 					}
+					break;
+				case Hokoukukan.CATEGORY_FACILITY:
+				case Hokoukukan.CATEGORY_HOSPITAL:
+				case Hokoukukan.CATEGORY_TOILET:
+					for (String ent_ : Hokoukukan.listEntrances(properties)) {
+						String ent_d = ent_ + "d";
+						if (properties.has(ent_d)) {
+							int door = properties.getInt(ent_d);
+							switch (door) {
+							case 0:
+							case 99:
+								break;
+							default:
+								mDoors.add(new JSONObject().append("node", properties.getString(ent_ + "node"))
+										.append("door", door));
+								break;
+							}
+						}
+					}
+					break;
 				}
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
 		mLastRef = System.currentTimeMillis();
@@ -191,49 +202,28 @@ public class RouteData {
 		for (Object feature : mFeatures) {
 			JSONObject json = (JSONObject) feature;
 			JSONObject properties = json.getJSONObject("properties");
-			String category = properties.getString("category"), name = null, name_pron = null;
+			String name = null, name_pron = null;
 			Object node = null;
-			switch (category) {
-			case "出入口情報":
-				if (i18.hasI18n(properties, "出入口の名称") && properties.has("対応ノードID") && !properties.has("対応施設ID")) {
-					name = i18.getI18n(properties, "出入口の名称");
-					name_pron = i18.getI18nPron(properties, "出入口の名称");
-					node = properties.getString("対応ノードID");
-					result.add(new JSONObject().put("category", category).put("name", name).put("name_pron", name_pron)
-							.put("node", node));
-				}
-				break;
-			default:
-				if (properties.has("施設ID")) {
-					name = i18.getI18n(properties, "名称");
-					name_pron = i18.getI18nPron(properties, "名称");
-					String siteId = properties.getString("施設ID");
-					if (mExitNodes.has(siteId)) {
-						node = mExitNodes.get(siteId);
-						for (JSONObject obj : (List<JSONObject>) node) {
-							JSONObject p = obj.getJSONObject("properties");
-							String n = null;
-							if (p.has("対応ノードID")) {
-								n = p.getString("対応ノードID");
-							} else if (p.has("出入口ノード")) {
-								n = p.getString("出入口ノード");
-							}
-							if (n != null) {
-								JSONObject poi = new JSONObject().put("category", category).put("name", name)
-										.put("name_pron", name_pron).put("node", n).put("properties", properties);
-								poi.put("geometry", json.get("geometry"));
-								if (i18.hasI18n(p, "出入口の名称")) {
-									String exit = i18.getI18n(p, "出入口の名称");
-									String exit_pron = i18.getI18nPron(p, "出入口の名称");
-									if (!"#".equals(exit)) {
-										poi.put("exit", exit).put("exit_pron", exit_pron);
-										result.add(poi);
-									}
-								} else {
-									result.add(poi);
-								}
-							}
+			switch (Hokoukukan.getCategory(properties)) {
+			case Hokoukukan.CATEGORY_FACILITY:
+			case Hokoukukan.CATEGORY_HOSPITAL:
+			case Hokoukukan.CATEGORY_TOILET:
+				name = i18.getI18n(properties, "name");
+				name_pron = i18.getI18nPron(properties, "name");
+				for (String ent_ : Hokoukukan.listEntrances(properties)) {
+					String ent_n = ent_ + "n";
+					JSONObject poi = new JSONObject().put("name", name).put("name_pron", name_pron)
+							.put("node", properties.getString(ent_ + "node")).put("properties", properties);
+					poi.put("geometry", json.get("geometry"));
+					if (i18.hasI18n(properties, ent_n)) {
+						String exit = i18.getI18n(properties, ent_n);
+						String exit_pron = i18.getI18nPron(properties, ent_n);
+						if (!"#".equals(exit)) {
+							poi.put("exit", exit).put("exit_pron", exit_pron);
+							result.add(poi);
 						}
+					} else {
+						result.add(poi);
 					}
 				}
 				break;
@@ -244,8 +234,7 @@ public class RouteData {
 			try {
 				JSONObject node = mNodeMap.getJSONObject(obj.getString("node"));
 				obj.put("node_coordinates", node.getJSONObject("geometry").getJSONArray("coordinates"));
-				obj.put("node_height",
-						Float.parseFloat(node.getJSONObject("properties").getString("高さ").replace("B", "-")));
+				obj.put("node_height", node.getJSONObject("properties").getDouble("floor"));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -266,13 +255,13 @@ public class RouteData {
 		}
 
 		public String getI18n(JSONObject properties, String key) throws JSONException {
-			return hasLangString(properties, key) ? properties.getString(key + ":" + mLang)
+			return hasLangString(properties, key) ? properties.getString(key + "_" + mLang)
 					: properties.has(key) ? properties.getString(key) : "";
 		}
 
 		public boolean hasLangString(JSONObject properties, String key) {
 			try {
-				return properties.has(key + ":" + mLang) && properties.getString(key + ":" + mLang).length() > 0;
+				return properties.has(key + "_" + mLang) && properties.getString(key + "_" + mLang).length() > 0;
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
@@ -280,14 +269,12 @@ public class RouteData {
 		}
 
 		public String getI18nPron(JSONObject properties, String key) throws JSONException {
-			return hasPronString(properties, key) ? properties.getString(key + ":" + mLang + "-Pron")
-					: getI18n(properties, key);
+			return hasPronString(properties, key) ? properties.getString(key + "_hira") : getI18n(properties, key);
 		}
 
 		public boolean hasPronString(JSONObject properties, String key) {
 			try {
-				return properties.has(key + ":" + mLang + "-Pron")
-						&& properties.getString(key + ":" + mLang + "-Pron").length() > 0;
+				return properties.has(key + "_hira") && properties.getString(key + "_hira").length() > 0;
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}

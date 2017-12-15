@@ -48,9 +48,9 @@ public interface DBAdapter {
 
 	void dropDB();
 
-	void getGeometry(double[] center, double radius, JSONObject nodeMap, JSONArray features, List<String> categories);
+	void getGeometry(double[] center, double radius, JSONObject nodeMap, JSONArray features, boolean toilet);
 
-	String findNearestNode(double[] point, List<String> floors);
+	String findNearestNode(double[] point, List<Double> floors);
 
 	JSONObject find(String id);
 

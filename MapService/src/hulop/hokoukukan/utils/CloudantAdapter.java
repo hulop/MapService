@@ -60,7 +60,7 @@ public class CloudantAdapter implements DBAdapter {
 	private final List<JsonElement> insertList = new ArrayList<JsonElement>();
 	private final List<JsonElement> insertLogList = new ArrayList<JsonElement>();
 	private JSONArray resultList = new JSONArray();
-	private static final String NAVI_DB = "navi_db", USER_DB = "user_db", LOG_DB = "log_db", FILE_DB = "file_db",
+	private static final String NAVI_DB = "h29navi_db", USER_DB = "user_db", LOG_DB = "log_db", FILE_DB = "file_db",
 			ENTRY_DB = "entry_db";
 	private int insertCount = 0;
 	private static final Replay429Interceptor REPLAY429_INTERCEPTOR = new Replay429Interceptor(3, 250l);
@@ -207,24 +207,23 @@ public class CloudantAdapter implements DBAdapter {
 	}
 
 	@Override
-	public void getGeometry(double[] center, double radius, JSONObject nodeMap, JSONArray features,
-			List<String> categories) {
+	public void getGeometry(double[] center, double radius, JSONObject nodeMap, JSONArray features, boolean toilet) {
 		int limit = 200;
-		if (getGeometryRows(center, radius, limit * 100, 1, categories).size() > 0) {
+		if (getGeometryRows(center, radius, limit * 100, 1, toilet).size() > 0) {
 			System.err.println("more than 100 API calls expected");
 			return;
 		}
 		long start = System.currentTimeMillis();
 		try {
 			for (int skip = 0;; skip += limit) {
-				JsonArray rows = getGeometryRows(center, radius, skip, limit, categories);
+				JsonArray rows = getGeometryRows(center, radius, skip, limit, toilet);
 				for (int i = 0; i < rows.size(); i++) {
 					JsonObject row = (JsonObject) rows.get(i);
 					try {
 						JSONObject json = new JSONObject(row.get("doc").toString());
 						JSONObject properties = json.getJSONObject("properties");
-						if ("ノード情報".equals(properties.get("category"))) {
-							nodeMap.put(properties.getString("ノードID"), json);
+						if (properties.has("node_id")) {
+							nodeMap.put(properties.getString("node_id"), json);
 						} else {
 							features.add(json);
 						}
@@ -252,7 +251,7 @@ public class CloudantAdapter implements DBAdapter {
 	}
 
 	@Override
-	public String findNearestNode(double[] point, List<String> floors) {
+	public String findNearestNode(double[] point, List<Double> floors) {
 		try {
 			int limit = floors == null ? 1 : 200;
 			for (int skip = 0; skip < 1000; skip += limit) {
@@ -261,8 +260,8 @@ public class CloudantAdapter implements DBAdapter {
 					JsonObject row = (JsonObject) rows.get(i);
 					JsonObject doc = (JsonObject) row.get("doc");
 					JsonObject properties = (JsonObject) doc.get("properties");
-					if (floors == null || floors.indexOf(properties.get("高さ").getAsString()) != -1) {
-						return properties.get("ノードID").getAsString();
+					if (floors == null || floors.indexOf(properties.get("floor").getAsDouble()) != -1) {
+						return properties.get("node_id").getAsString();
 					}
 				}
 				if (rows.size() < limit) {
@@ -324,18 +323,11 @@ public class CloudantAdapter implements DBAdapter {
 
 	}
 
-	private JsonArray getGeometryRows(double[] center, double radius, int skip, int limit, List<String> categories) {
-		String index = "geoIndex";
-		if (categories != null) {
-			if (categories.contains("公共用トイレの情報")) {
-				index = "toiletIndex";
-			} else if (categories.contains("リンクの情報")) {
-				index = "linkIndex";
-			}
-		}
+	private JsonArray getGeometryRows(double[] center, double radius, int skip, int limit, boolean toilet) {
 		return (JsonArray) navi_db.findAny(JsonObject.class, String.format(
 				"%s/_design/geo/_geo/%s?lon=%f&lat=%f8&radius=%f&relation=intersects&skip=%d&limit=%d&include_docs=true",
-				navi_db.getDBUri(), index, center[0], center[1], radius, skip, limit)).get("rows");
+				navi_db.getDBUri(), toilet ? "toiletIndex" : "geoIndex", center[0], center[1], radius, skip, limit))
+				.get("rows");
 	}
 
 	private JsonArray getNearestRows(double[] point, int skip, int limit) {

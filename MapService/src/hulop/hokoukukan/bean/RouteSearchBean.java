@@ -25,9 +25,12 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.wink.json4j.JSONArray;
 import org.apache.wink.json4j.JSONException;
@@ -143,26 +146,25 @@ public class RouteSearchBean {
 		public void add(Object feature) throws JSONException {
 			JSONObject json = (JSONObject) feature;
 			JSONObject properties = json.getJSONObject("properties");
-			switch (properties.getString("category")) {
-			case "リンクの情報":
+			if (properties.has("link_id")) {
 				double weight = 10.0f;
 				try {
-					weight = Double.parseDouble(properties.getString("リンク延長"));
-					if (properties.has("road_low_priority") && "1".equals(properties.getString("road_low_priority"))) {
+					weight = properties.getDouble("distance");
+					if (properties.getInt("hulop_road_low_priority") == 1) {
 						weight *= 1.25;
 					}
 				} catch (Exception e) {
 				}
 				weight = adjustAccWeight(properties, conditions, weight);
 				if (weight == WEIGHT_IGNORE) {
-					break;
+					return;
 				}
 				String start, end;
 				try {
-					start = properties.getString("起点ノードID");
-					end = properties.getString("終点ノードID");
+					start = properties.getString("start_id");
+					end = properties.getString("end_id");
 				} catch (Exception e) {
-					break;
+					return;
 				}
 				if (from == null) {
 					try {
@@ -171,17 +173,17 @@ public class RouteSearchBean {
 					} catch (Exception e) {
 					}
 					result.add(json);
-					break;
+					return;
 				}
 				g.addVertex(start);
 				g.addVertex(end);
 
 				DefaultWeightedEdge startEnd = null, endStart = null;
-				switch (properties.getString("方向性")) {
-				case "1":
+				switch (properties.getInt("direction")) {
+				case 1:
 					startEnd = g.addEdge(start, end);
 					break;
-				case "2":
+				case 2:
 					endStart = g.addEdge(end, start);
 					break;
 				default:
@@ -199,7 +201,6 @@ public class RouteSearchBean {
 					g.setEdgeWeight(endStart, weight + add);
 					linkMap.put(endStart, json);
 				}
-				break;
 			}
 		}
 
@@ -240,18 +241,18 @@ public class RouteSearchBean {
 								JSONObject properties = link.getJSONObject("properties");
 								String edgeSource = g.getEdgeSource(edge);
 								String edgeTarget = g.getEdgeTarget(edge);
-								String sourceDoor = getDoor(edgeSource);
-								String targetDoor = getDoor(edgeTarget);
+								int sourceDoor = getDoor(edgeSource);
+								int targetDoor = getDoor(edgeTarget);
 								properties.put("sourceNode", edgeSource);
 								properties.put("targetNode", edgeTarget);
 								properties.put("sourceHeight", getHeight(edgeSource));
 								properties.put("targetHeight", getHeight(edgeTarget));
-								if (sourceDoor != null) {
+								if (sourceDoor != 100) {
 									properties.put("sourceDoor", sourceDoor);
 								} else {
 									properties.remove("sourceDoor");
 								}
-								if (targetDoor != null) {
+								if (targetDoor != 100) {
 									properties.put("targetDoor", targetDoor);
 								} else {
 									properties.remove("targetDoor");
@@ -277,162 +278,143 @@ public class RouteSearchBean {
 		private double adjustAccWeight(JSONObject properties, Map<String, String> conditions, double weight)
 				throws JSONException {
 
-			String linkType = properties.has("経路の種類") ? properties.getString("経路の種類") : "";
-			switch (linkType) {
-			case "10": // Elevator
+			int route_type = getCode(properties, "route_type", 100);
+			switch (route_type) {
+			case 3: // Elevator
 				weight = 0.0f;
 				break;
-			case "7": // Moving walkway
+			case 1: // Moving walkway
 				weight *= 0.5f;
 				break;
-			case "11": // Escalator
+			case 4: // Escalator
 				weight = ESCALATOR_WEIGHT;
 				break;
-			case "12": // Stairs
+			case 5: // Stairs
 				weight = STAIR_WEIGHT;
 				break;
 			}
 			double penarty = Math.max(weight, 10.0f) * 9;
 
-			String width = properties.has("有効幅員") ? properties.getString("有効幅員") : "";
-			// 0: less than 1m,
-			// 1: >1m & <1.5m,
-			// 2: >1.5m & <2m,
-			// 3: >2m
-			// 9: unknown
+			int width = getCode(properties, "width", 100);
+			// 0: less than 1.0 m (wheelchair inaccessible),
+			// 1: 1.0 m to less than 2.0 m (wheelchair accessible (difficult to pass each
+			// other)),
+			// 2: 2.0 m to less than 3.0 m (wheelchair accessible (possible to pass each
+			// other)),
+			// 3: 3.0 m or more (no problem in wheelchair accessibility),
+			// 99: unknown
 			switch (conditions.get("min_width")) {
-			case "1": // >2m
-				if (width.equals("0") || width.equals("1") || width.equals("2") || width.equals("9")) {
+			case "1": // >3.0m
+				if (width < 3) {
 					return WEIGHT_IGNORE;
 				}
 				break;
-			case "2": // >1.5m
-				if (width.equals("0") || width.equals("1") || width.equals("9")) {
+			case "2": // >2.0m
+				if (width < 2) {
 					return WEIGHT_IGNORE;
 				}
 				break;
 			case "3": // >1.0m
-				if (width.equals("0") || width.equals("9")) {
+				if (width < 1) {
 					return WEIGHT_IGNORE;
 				}
 				break;
 			case "8": // Avoid
-				if (width.equals("0") || width.equals("1") || width.equals("2") || width.equals("9")) {
+				if (width < 3) {
 					weight += penarty;
 				}
 				break;
 			}
 
-			float slope = 0;
-			try {
-				slope = Float.parseFloat(properties.getString("縦断勾配1"));
-			} catch (Exception e) {
-			}
-			// Maximum slope value (%) along the link
+			int vtcl_slope = getCode(properties, "vtcl_slope", 100);
+			// 0: 5% or less (no problem in wheelchair accessibility),
+			// 1: more than 5% (problem in wheelchair accessibility),
+			// 99: unknown
 			switch (conditions.get("slope")) {
-			case "1": // <8%
-				if (slope >= 8.0) {
-					return WEIGHT_IGNORE;
-				}
-				break;
-			case "2": // <10%
-				if (slope >= 10.0) {
+			case "1": // <5%
+				if (vtcl_slope == 1) {
 					return WEIGHT_IGNORE;
 				}
 				break;
 			case "8": // Avoid
-				if (slope >= 8.0) {
+				if (vtcl_slope == 1) {
 					weight += penarty;
 				}
 				break;
 			}
 
-			String road = properties.has("路面状況") ? properties.getString("路面状況") : "";
-			// 0: no problem, 1: dirt, 2: gravel, 3: other, 9: unknown
+			int condition = getCode(properties, "condition", 100);
+			// 0: no problem in accessibility, 1: soil, 2: gravel, 3: other, 99: unknown
 			switch (conditions.get("road_condition")) {
 			case "1": // No problem
-				if (road.equals("1") || road.equals("2") || road.equals("3") || road.equals("9")) {
+				if (condition == 1 || condition == 2 || condition == 3) {
 					return WEIGHT_IGNORE;
 				}
 				break;
 			case "8": // Avoid
-				if (road.equals("1") || road.equals("2") || road.equals("3") || road.equals("9")) {
+				if (condition == 1 || condition == 2 || condition == 3) {
 					weight += penarty;
 				}
 				break;
 			}
 
-			String bump = properties.has("段差") ? properties.getString("段差") : "";
-			// 0: less than 2cm, 1: 2~5cm, 2: 5~10cm, 3: more than 10cm, 9: unknown
-			// (assign max bump height for whole link)
+			int lev_diff = getCode(properties, "lev_diff", 100);
+			// 0: 2 cm or less (no problem in wheelchair accessibility),
+			// 1: more than 2 cm (problem in wheelchair accessibility),
+			// 99: unknown
+
 			switch (conditions.get("deff_LV")) {
 			case "1": // <2cm
-				if (bump.equals("1") || bump.equals("2") || bump.equals("3") || bump.equals("9")) {
-					return WEIGHT_IGNORE;
-				}
-				break;
-			case "2": // <5cm
-				if (bump.equals("2") || bump.equals("3") || bump.equals("9")) {
-					return WEIGHT_IGNORE;
-				}
-				break;
-			case "3": // <10cm
-				if (bump.equals("3") || bump.equals("9")) {
+				if (lev_diff == 1) {
 					return WEIGHT_IGNORE;
 				}
 				break;
 			case "8": // Avoid
-				if (bump.equals("1") || bump.equals("2") || bump.equals("3") || bump.equals("9")) {
+				if (lev_diff == 1) {
 					weight += penarty;
 				}
 				break;
 			}
 
-			int steps = 0;
-			try {
-				steps = Integer.parseInt(properties.getString("最小階段段数"));
-			} catch (Exception e) {
-			}
-			// number of steps along a stairway
-			// if (linkType.equals("12") && steps == 0) {
-			// System.out.println("Error: steps should > 0");
-			// }
-			String rail = properties.has("手すり") ? properties.getString("手すり") : "";
-			// 0: no, 1: on the right, 2: on the left, 3: both sides, 9: unknown
-			// (link direction - start node to end node)
+			int handrail = getCode(properties, "handrail", 100);
+			// 0: none, 1: on the right, 2: on the left, 3: on both sides, 99: unknown
+			// (The direction is as seen from the source.)
 			switch (conditions.get("stairs")) {
 			case "1": // Do not use
-				if (steps > 0) {
+				if (route_type == 5) {
 					return WEIGHT_IGNORE;
 				}
 				break;
 			case "2": // Use with hand rail
-				if (steps > 0 && !(rail.equals("1") || rail.equals("2") || rail.equals("3"))) {
+				if (route_type == 5 && !(handrail == 1 || handrail == 2 || handrail == 3)) {
 					return WEIGHT_IGNORE;
 				}
 				break;
 			case "8": // Avoid
-				if (steps > 0) {
+				if (route_type == 5) {
 					weight += penarty;
 				}
 				break;
 			}
 
-			String elevator = properties.has("エレベーター種別") ? properties.getString("エレベーター種別") : "";
-			// 0: not included, 1: braille and audio, 2: wheelchair, 3: 1&2, 9:
-			// unknown
+			int elevator = route_type == 3 ? 1 : 100;
+			try {
+				elevator = properties.getInt("elevator");
+			} catch (Exception e) {
+			}
+			// 0: without elevator, 1: with elevator (not accessible), 2: with elevator
+			// (accessible), 99: unknown
 			switch (conditions.get("elv")) {
 			case "1": // Do not use
-				if (elevator.equals("0") || elevator.equals("1") || elevator.equals("2") || elevator.equals("3")
-						|| elevator.equals("9")) {
+				if (elevator == 1 || elevator == 2) {
 					return WEIGHT_IGNORE;
 				}
 			case "2": // Wheel chair supported
-				if (elevator.equals("0") || elevator.equals("1") || elevator.equals("9")) {
+				if (elevator == 1) {
 					return WEIGHT_IGNORE;
 				}
 			case "8": // Avoid
-				if (elevator.equals("0") || elevator.equals("1") || elevator.equals("9")) {
+				if (elevator == 1) {
 					weight += penarty;
 				}
 				break;
@@ -440,18 +422,20 @@ public class RouteSearchBean {
 
 			switch (conditions.get("esc")) {
 			case "1": // Do not use
-				if (linkType.equals("11")) {
+				if (route_type == 4) {
 					return WEIGHT_IGNORE;
 				}
 			case "8": // Avoid
-				if (linkType.equals("11")) {
+				if (route_type == 4) {
 					weight += penarty;
 				}
 				break;
 			}
 
-			if (properties.has("視覚障害者誘導用ブロック") && "1".equals(properties.getString("視覚障害者誘導用ブロック"))) {
-				// 0: no, 1: yes, 9: unknown (tactile paving along the path/link)
+			int brail_tile = getCode(properties, "brail_tile", 100);
+			// 0: without tactile walking surface indicators, etc., 1: with tactile walking
+			// surface indicators, etc., 99: unknown
+			if (brail_tile == 1) {
 				if ("1".equals(conditions.get("tactile_paving"))) {
 					weight = weight / 3;
 				}
@@ -495,28 +479,30 @@ public class RouteSearchBean {
 		return tempNodeID.equals(id) ? mTempNode : mNodeMap.getJSONObject(id);
 	}
 
-	private float getHeight(String node) throws NumberFormatException, JSONException {
-		return Float.parseFloat(getNode(node).getJSONObject("properties").getString("高さ").replace("B", "-"));
+	private double getHeight(String node) throws JSONException {
+		return getNode(node).getJSONObject("properties").getDouble("floor");
 	}
 
-	private String getDoor(String node) throws JSONException {
+	private int getDoor(String node) throws JSONException {
 		if (countLinks(node) <= 2) {
 			for (Object p : mDoors) {
 				JSONObject properties = (JSONObject) p;
-				if (node.equals(properties.getString("対応ノードID"))) {
-					return properties.getString("扉の種類");
+				if (node.equals(properties.getString("node"))) {
+					return properties.getInt("door");
 				}
 			}
 		}
-		return null;
+		return 100;
 	}
+
+	private static final Pattern LINK_ID = Pattern.compile("link\\d+_id");
 
 	private int countLinks(String node) {
 		try {
 			int count = 0;
-			JSONObject properties = getNode(node).getJSONObject("properties");
-			for (int i = 1; i <= 10; i++) {
-				if (properties.has("接続リンクID" + i)) {
+			for (Iterator<String> it = getNode(node).getJSONObject("properties").keys(); it.hasNext();) {
+				Matcher m = LINK_ID.matcher(it.next());
+				if (m.matches()) {
 					count++;
 				}
 			}
@@ -540,8 +526,6 @@ public class RouteSearchBean {
 		return METERS_PER_DEGREE * Math.acos(dist) * 180.0 / Math.PI;
 	}
 
-	static final String INVALID_LINKS = "|7|10|11|";
-
 	private String findNearestLink(JSONObject fromPoint) {
 		try {
 			List<String> floors = fromPoint.has("floors") ? fromPoint.getJSONArray("floors") : null;
@@ -551,18 +535,19 @@ public class RouteSearchBean {
 				JSONObject properties = json.getJSONObject("properties");
 				String startID, endID;
 				try {
-					startID = properties.getString("起点ノードID");
-					endID = properties.getString("終点ノードID");
+					startID = properties.getString("start_id");
+					endID = properties.getString("end_id");
 				} catch (Exception e) {
 					continue;
 				}
-				if (INVALID_LINKS.indexOf("|" + properties.getString("経路の種類") + "|") == -1) {
+				int route_type = getCode(properties, "route_type", 100);
+				if (route_type != 1 && route_type != 3 && route_type != 4) {
 					if (isNode(startID) && isNode(endID)) {
 						if (floors == null) {
 							links.add(json);
 						} else {
-							String startHeight = getNode(startID).getJSONObject("properties").getString("高さ");
-							String endHeight = getNode(endID).getJSONObject("properties").getString("高さ");
+							double startHeight = getHeight(startID);
+							double endHeight = getHeight(endID);
 							if (floors.indexOf(startHeight) != -1 && floors.indexOf(endHeight) != -1) {
 								links.add(json);
 							}
@@ -630,17 +615,16 @@ public class RouteSearchBean {
 		}
 
 		// Create temp node
-		String tempFloor = point.has("floors") ? point.getJSONArray("floors").getString(0) : "0";
+		double tempFloor = point.has("floors") ? point.getJSONArray("floors").getDouble(0) : 0;
 		mTempNode = new JSONObject();
 		final JSONObject geometry = new JSONObject();
 		final JSONObject nodeProp = new JSONObject();
 		geometry.put("type", "Point");
 		geometry.put("coordinates", nodeCoord);
-		nodeProp.put("category", "ノード情報");
-		nodeProp.put("ノードID", tempNodeID);
-		nodeProp.put("高さ", tempFloor);
-		nodeProp.put("接続リンクID1", tempLink1ID);
-		nodeProp.put("接続リンクID2", tempLink2ID);
+		nodeProp.put("node_id", tempNodeID);
+		nodeProp.put("floor", tempFloor);
+		nodeProp.put("link2_id", tempLink1ID);
+		nodeProp.put("link2_id", tempLink2ID);
 		mTempNode.put("_id", tempNodeID);
 		mTempNode.put("type", "Feature");
 		mTempNode.put("geometry", geometry);
@@ -674,10 +658,10 @@ public class RouteSearchBean {
 
 		final JSONObject link1Prop = mTempLink1.getJSONObject("properties"),
 				link2Prop = mTempLink2.getJSONObject("properties");
-		link1Prop.put("リンクID", tempLink1ID);
-		link1Prop.put("終点ノードID", tempNodeID);
-		link2Prop.put("リンクID", tempLink2ID);
-		link2Prop.put("起点ノードID", tempNodeID);
+		link1Prop.put("link_id", tempLink1ID);
+		link1Prop.put("end_id", tempNodeID);
+		link2Prop.put("link_id", tempLink2ID);
+		link2Prop.put("end_id", tempNodeID);
 		setLength(mTempLink1);
 		setLength(mTempLink2);
 		return tempNodeID;
@@ -692,7 +676,7 @@ public class RouteSearchBean {
 			length += calcDistance(new double[] { from.getDouble(0), from.getDouble(1) },
 					new double[] { to.getDouble(0), to.getDouble(1) });
 		}
-		link.getJSONObject("properties").put("リンク延長", Double.toString(length));
+		link.getJSONObject("properties").put("distance", length);
 	}
 
 	private static Object getOrthoCenter(JSONArray line, JSONArray point, JSONObject linkProp) throws Exception {
@@ -709,9 +693,9 @@ public class RouteSearchBean {
 		double distCX = Line2D.ptSegDist(a.x, a.y, b.x, b.y, c.x, c.y);
 
 		if (distCA <= distCX && seg[0] == 0) {
-			return linkProp.getString("起点ノードID");
+			return linkProp.getString("start_id");
 		} else if (distCB <= distCX && seg[0] == line.length() - 2) {
-			return linkProp.getString("終点ノードID");
+			return linkProp.getString("end_id");
 		} else {
 			double distAB = Point2D.distance(a.x, a.y, b.x, b.y);
 			double distAX = Math.sqrt(distCA * distCA - distCX * distCX);
@@ -720,6 +704,14 @@ public class RouteSearchBean {
 			double x = (b.x - a.x) * timeAX + a.x;
 			double y = (b.y - a.y) * timeAX + a.y;
 			return new JSONObject().put("x", x).put("y", y).put("seg", seg[0]);
+		}
+	}
+
+	private int getCode(JSONObject properties, String key, int defVal) {
+		try {
+			return properties.getInt(key);
+		} catch (Exception e) {
+			return defVal;
 		}
 	}
 

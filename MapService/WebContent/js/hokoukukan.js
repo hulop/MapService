@@ -24,8 +24,9 @@ window.$hulop || eval('var $hulop={};');
 
 $hulop.route = function() {
 	/**
-	 * 歩行空間ネットワーク (Hokou-Kukan Network) related functions
-	 * 
+	 * Hokou-Kukan Network related functions
+	 * http://www.mlit.go.jp/common/001177504.pdf
+	 * http://www.mlit.go.jp/common/001177505.pdf
 	 */
 
 	var user = new Date().getTime();
@@ -35,7 +36,7 @@ $hulop.route = function() {
 	var naviCondition = {};
 
 	function isLink(obj) {
-		return obj.properties.category == 'リンクの情報';
+		return obj.properties.link_id;
 	}
 
 	function linkInfo(obj) {
@@ -82,8 +83,7 @@ $hulop.route = function() {
 			}
 			var accInfo = "";
 			if ($hulop.util.getPreferences(true).slope != '9') {
-				var slope = properties['縦断勾配1'];
-				if (slope && Number(slope) >= 3.33) {
+				if (properties['vtcl_slope'] == 1) {
 					if (accInfo) {
 						accInfo += ', ';
 					}
@@ -91,18 +91,14 @@ $hulop.route = function() {
 				}
 			}
 			if ($hulop.util.getPreferences(true).deff_LV != '9') {
-				switch (properties['段差']) {
-				case '1':
-				case '2':
-				case '3':
+				if (properties['lev_diff'] == 1) {
 					if (accInfo) {
 						accInfo += ', ';
 					}
 					accInfo += $m('ACC_STEP');
-					break;
 				}
 			}
-			var length = elevator ? 0 : Number(properties['リンク延長']);
+			var length = elevator ? 0 : properties['distance'];
 			if (length == 0 && !elevator) {
 				console.error('link length is 0');
 				console.error(obj);
@@ -133,14 +129,14 @@ $hulop.route = function() {
 				'poi_link' : poi_link,
 				'poi_start' : poi_start,
 				'poi_end' : poi_end,
-				'backward' : properties.sourceNode == obj.properties['終点ノードID']
+				'backward' : properties.sourceNode == obj.properties['end_id']
 			};
 		}
 	}
 
 	function dump(obj) {
 		if (isLink(obj)) {
-			console.log(getLinkInfo(obj).name + ': ' + (obj.properties['通り名称または交差点名称'] || ''))
+			console.log(getLinkInfo(obj).name + ': ' + (obj.properties['st_name'] || ''))
 		}
 		console.log(obj);
 	}
@@ -151,10 +147,10 @@ $hulop.route = function() {
 	}
 
 	function getLinkInfo(obj) {
-		var type = obj.properties['経路の種類'];
+		var type = obj.properties['route_type'];
 		var linkName = getText('LINK_TYPE_' + type);
 		var floorDiff = (obj.properties.targetHeight || 0) - (obj.properties.sourceHeight || 0);
-		if (floorDiff != 0 && type == '10') {
+		if (floorDiff != 0 && type == 3) {
 			var floor = (obj.properties.targetHeight || 0);
 			if (floor >= 0) {
 				floor = $m('FLOOR', floor == 0 ? 1 : floor);
@@ -178,17 +174,19 @@ $hulop.route = function() {
 	}
 
 	function getAfterPrefix(obj) {
+		if (obj.properties['rt_struct'] == 3) { // Crosswalk
+			return 'AFTER_CROSSWALK';
+		}
 		var floorDiff = (obj.properties.targetHeight || 0) - (obj.properties.sourceHeight || 0);
-		var type = obj.properties['経路の種類'];
+		var type = obj.properties['route_type'];
 		switch (type) {
-		case '5': // Crosswalk
-		case '7': // Moving walkway
-		case '9': // Railroad crossing
-		case '10': // Elevator
-		case '13': // Slope
+		case 1: // Moving walkway
+		case 2: // Railroad crossing
+		case 3: // Elevator
+		case 6: // Slope
 			return 'AFTER_' + type;
-		case '11': // Escalator
-		case '12': // Stairs
+		case 4: // Escalator
+		case 5: // Stairs
 			if (floorDiff > 0) {
 				return 'AFTER_' + type + '_UP';
 			} else if (floorDiff < 0) {
@@ -231,28 +229,21 @@ $hulop.route = function() {
 	function getStyle(feature) {
 		var floor = $hulop.indoor && $hulop.indoor.getCurrentFloor() || 0;
 		var properties = feature.getProperties();
-		switch (properties.category) {
-		case 'リンクの情報':
+		if (properties.link_id) {
 			if (floor) {
 				if (levelDiff(floor, properties['sourceHeight']) >= 1 && levelDiff(floor, properties['targetHeight']) >= 1) {
 					return null;
 				}
 			}
-			if (properties['エレベーター種別']) {
-				return styles.elevator;
-			} else {
-				return styles.link;
-			}
-			break;
-		case 'ノード情報':
+			return properties['route'] == 3 ? styles.elevator : styles.link;
+		} else if (properties.node_id) {
 			if (floor) {
-				var height = properties['高さ'];
-				if (!height || levelDiff(floor, Number(height.replace('B', '-'))) >= 1) {
+				var height = properties['floor'];
+				if (!height || levelDiff(floor, height) >= 1) {
 					return null;
 				}
 			}
 			return styles.node;
-			break;
 		}
 	}
 
@@ -312,23 +303,21 @@ $hulop.route = function() {
 		if (exit) {
 			name += ' ' + exit;
 		}
-		if (!name && obj.category == '公共用トイレの情報') {
+		if (!name && obj.properties && obj.properties.facil_type == 10) {
 			name = '';
-			if (obj.properties) {
-				switch (obj.properties['男女別']) {
-				case '1':
-					name += $m('FOR_MALE');
-					break;
-				case '2':
-					name += $m('FOR_FEMALE');
-					break;
-				}
-				switch (obj.properties['多目的トイレ']) {
-				case '1':
-				case '2':
-					name += $m('FOR_DISABLED');
-					break;
-				}
+			switch (obj.properties['sex']) {
+			case 1:
+				name += $m('FOR_MALE');
+				break;
+			case 2:
+				name += $m('FOR_FEMALE');
+				break;
+			}
+			switch (obj.properties['toilet']) {
+			case 2:
+			case 4:
+				name += $m('FOR_DISABLED');
+				break;
 			}
 			name += $m('TOILET');
 		}
