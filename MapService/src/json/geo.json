@@ -15,17 +15,17 @@
 
 		"nodeIndex": 
 		{
-			"index": "function (doc) { doc.geometry && doc.geometry.coordinates && doc.properties && doc.properties.category==\"ノード情報\" && st_index(doc.geometry); }"
+			"index": "function (doc) { doc.geometry && doc.geometry.coordinates && doc.properties && doc.properties.node_id && st_index(doc.geometry); }"
 		},
 
 		"linkIndex": 
 		{
-			"index": "function (doc) { doc.geometry && doc.geometry.coordinates && doc.properties && doc.properties.category==\"リンクの情報\" && st_index(doc.geometry); }"
+			"index": "function (doc) { doc.geometry && doc.geometry.coordinates && doc.properties && doc.properties.link_id && st_index(doc.geometry); }"
 		},
 
 		"toiletIndex": 
 		{
-			"index": "function (doc) { doc.geometry && doc.geometry.coordinates && doc.properties && (doc.properties.category==\"公共用トイレの情報\"　|| doc.properties.category==\"出入口情報\") && st_index(doc.geometry); }"
+			"index": "function (doc) { doc.geometry && doc.geometry.coordinates && doc.properties && doc.properties.facil_type==10 && st_index(doc.geometry); }"
 		}
 	}
 }

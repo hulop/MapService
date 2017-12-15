@@ -42,8 +42,8 @@ $hulop.editor = function() {
 				break;
 			}
 			properties.forEach(function(p) {
-				result.push(p + ':' + lang);
-				lang == 'ja' && result.push(p + ':' + lang + '-Pron');
+				result.push(p + '_' + lang);
+				lang == 'ja' && result.push(p + '_hira');
 			});
 		});
 		return result;
@@ -51,37 +51,32 @@ $hulop.editor = function() {
 
 	var PROPERTY_NAMES = {};
 
-	PROPERTY_NAMES['ノード情報'] = [ 'ノードID', '緯度経度桁数コード', '緯度', '経度', '接続リンクID1', '接続リンクID2', '接続リンクID3', '接続リンクID4', '接続リンクID5', '接続リンクID6', '接続リンクID7',
-			'接続リンクID8', '接続リンクID9', '接続リンクID10', '高さ' ];
+	PROPERTY_NAMES['node'] = [ 'node_id', 'lat', 'lon', 'floor', 'link1_id', 'link2_id', 'link3_id', 'link4_id', 'link5_id', 'link6_id', 'link7_id', 'link8_id', 'link9_id', 'link10_id' ];
 
-	PROPERTY_NAMES['リンクの情報'] = [ 'リンクID', '起点ノードID', '終点ノードID', 'リンク延長', '経路の種類', '方向性', '通行制限', '手すり', '屋根の有無', '蓋のない溝や水路の有無', '日交通量', '主な利用者', '通り名称または交差点名称' ]
-			.concat(i18nMenu([ '通り名称または交差点名称' ])).concat(
-					[ 'group:ROAD', '有効幅員', '有効幅員緯度', '有効幅員経度', '縦断勾配1', '縦断勾配1緯度', '縦断勾配1経度', '縦断勾配2', '横断勾配', '横断勾配緯度', '横断勾配経度', '路面状況', '段差', '段差緯度',
-							'段差経度', 'road_low_priority', 'group:STAIR', '最小階段段数', '最大階段段数', 'group:ELEVATOR', 'エレベーター種別', 'elevator_equipments', 'エレベーターの緯度', 'エレベーターの経度',
-							'group:A11Y', '視覚障害者誘導用ブロック', '補助施設の設置状況', '補助施設の緯度', '補助施設の経度', 'エスコートゾーン', 'group:TRAFFIC', 'バス停の有無', 'バス停の緯度', 'バス停の経度',
-							'信号の有無', '信号の緯度', '信号の経度', '信号種別', 'group:SERVICE', '供用開始時間', '供用終了時間', '供用開始日', '供用終了日', '供用制限曜日'
+	PROPERTY_NAMES['link'] = [ 'link_id', 'start_id', 'end_id', 'distance', 'rt_struct', 'route_type', 'direction', 'tfc_restr', 'handrail', 'roof', 'waterway', 'day_trfc', 'main_user', 'st_name' ]
+			.concat(i18nMenu([ 'st_name' ])).concat(
+					[ 'group:ROAD', 'width', 'w_min_lat', 'w_min_lon', 'vtcl_slope', 'vSlope_lat', 'vSlope_lon', 'vtcl_slope', 'vSlope_max', 'vSlope_lat', 'vSlope_lon', 'condition', 'lev_diff', 'levDif_lat',
+							'levDif_lon', 'road_low_priority', 'group:STAIR', 'stair', 'group:ELEVATOR', 'elevator', 'elevator_equipments', 'elev_lat', 'elev_lon',
+							'group:A11Y', 'brail_tile', 'facility', 'facil_lat', 'facil_lon', 'group:TRAFFIC', 'bus_stop', 'bus_s_lat', 'bus_s_lon',
+							'tfc_signal', 'tfc_s_type', 'tfc_s_lat', 'tfc_s_lon', 'group:SERVICE', 'start_time', 'end_time', 'start_date', 'end_date', 'no_serv_d'
 							 ]);
-	PROPERTY_NAMES['出入口情報'] = [ '出入口ID', '対応ノードID', '対応施設ID', '出入口の名称', '出入口の有効幅員', '扉の種類', '段差' ].concat(i18nMenu([ '出入口の名称' ]));
-
-	PROPERTY_NAMES['公共施設の情報'] = [ '施設ID', '緯度経度桁数コード', '緯度', '経度', '名称', '所在地', '電話番号', '階層', '供用開始時間', '供用終了時間', '供用制限曜日', '多目的トイレ', 'group:EXT', 'building',
-			'major_category', 'sub_category', 'minor_category', 'heading', 'angle', 'height', 'long_description' ].concat(i18nMenu([ '名称', '所在地',
+	PROPERTY_NAMES['facility'] = [ 'facil_id', 'lat', 'lon', 'name_ja', 'name_en', 'address', 'tel', 'floors', 'start_time', 'end_time', 'no_serv_d', 'toilet', 'group:EXT', 'building',
+			'major_category', 'sub_category', 'minor_category', 'heading', 'angle', 'height', 'long_description' ].concat(i18nMenu([ 'name', 'address',
 			'long_description' ]));
 
-	PROPERTY_NAMES['公共用トイレの情報'] = [ '施設ID', '緯度経度桁数コード', '緯度', '経度', '階層', '男女別', '有料無料の別', '多目的トイレ', 'ベビーベッド', '供用開始時間', '供用終了時間', '供用制限曜日', 'group:EXT',
-			'building' ];
+	PROPERTY_NAMES['toilet'] = [ 'sex', 'fee' ];
 
-	PROPERTY_NAMES['指定避難所の情報'] = [ '施設ID', '緯度経度桁数コード', '緯度', '経度', '施設種別', '地区名', '名称', '所在地', '電話番号', '階層', '風水害対応', '多目的トイレ' ].concat(i18nMenu([ '地区名',
-			'名称', '所在地' ]));
+	PROPERTY_NAMES['evacuation'] = [ 'med_dept', 'flood' ].concat(i18nMenu([ 'med_dept' ]));
 
-	PROPERTY_NAMES['病院の情報'] = [ '施設ID', '緯度経度桁数コード', '緯度', '経度', '名称', '所在地', '電話番号', '階層', '診療科目', '休診日', '多目的トイレ' ].concat(i18nMenu([ '名称', '所在地' ]));
+	PROPERTY_NAMES['hospital'] = [ 'subject', 'close_day' ];
 
 	console.log(PROPERTY_NAMES);
 
 	var OPTIONAL_NAMES = {};
-	OPTIONAL_NAMES['ノード情報'] = [ '接続リンクID1', '接続リンクID2', '接続リンクID3', '接続リンクID4', '接続リンクID5', '接続リンクID6', '接続リンクID7', '接続リンクID8', '接続リンクID9', '接続リンクID10' ];
+	OPTIONAL_NAMES['node'] = [ 'link1_id', 'link2_id', 'link3_id', 'link4_id', 'link5_id', 'link6_id', 'link7_id', 'link8_id', 'link9_id', 'link10_id' ];
 
-	var READONLY_NAMES = [ 'ノードID', '緯度経度桁数コード', '緯度', '経度', 'リンクID', '起点ノードID', '終点ノードID', 'リンク延長', '出入口ID', '対応ノードID', '対応施設ID', '施設ID', '接続リンクID1',
-			'接続リンクID2', '接続リンクID3', '接続リンクID4', '接続リンクID5', '接続リンクID6', '接続リンクID7', '接続リンクID8', '接続リンクID9', '接続リンクID10', 'geometry' ];
+	var READONLY_NAMES = [ 'node_id', 'lat', 'lon', 'link_id', 'start_id', 'end_id', 'distance', 'facil_id', 'link1_id', 'link2_id', 'link3_id', 'link4_id', 'link5_id', 'link6_id', 'link7_id',
+		'link8_id', 'link9_id', 'link10_id', 'geometry' ];
 	var EDITOR_FILE = 'EDITOR';
 	var downKey, keyState = {}, ADD_KEY = 65, DO_POI_KEY = 68, SPLIT_KEY = 83, COPY_KEY = 67, PASTE_KEY = 86;
 	var lastData, map, source, select, modify, callback, start_feature, poi_lines, editingFeature, editingProperty, clipboardFeature;
@@ -98,16 +93,17 @@ $hulop.editor = function() {
 	console.log(args);
 
 	var defaultLang = $hulop.messages.defaultLang == 'ja' ? 'ja' : 'en';
-	var messages = {}, keynames = {}, tooltips = {};
+	var messages = {}, information_items = {}, keynames = {}, tooltips = {};
 	$.ajax({
 		'type' : 'get',
 		// 'async' : false,
 		'url' : 'editor/messages_' + defaultLang + '.json',
 		'dataType' : 'json',
 		'success' : function(data) {
-			tooltips = data.tooltips;
-			messages = data.messages;
-			keynames = data.keynames;
+			tooltips = data.tooltips || {};
+			messages = data.messages || {};
+			keynames = data.keynames || {};
+			information_items = data.information_items || {};
 			console.log(data);
 			traverseTextNode(document.body, function(el) {
 				var text = el.nodeValue;
@@ -283,26 +279,26 @@ $hulop.editor = function() {
 				createNode(latLng);
 				break;
 			case DO_POI_KEY:
-				createPOI(latLng, '公共施設の情報');
+				createPOI(latLng);
 				break;
 			case 70: // F
-				createPOI(latLng, '病院の情報');
+				createPOI(latLng, 'hospital');
 				break;
 			case 71: // G
-				createPOI(latLng, '公共用トイレの情報');
+				createPOI(latLng, 'toilet');
 				break;
 			case 72: // H
-				createPOI(latLng, '指定避難所の情報');
+				createPOI(latLng, 'evacuation');
 				break;
 			case PASTE_KEY:
-				var category = clipboardFeature && clipboardFeature.get('施設ID') && clipboardFeature.get('category');
+				var category = clipboardFeature && clipboardFeature.get('facil_id') && getCategory(clipboardFeature);
 				category && copyProperties(clipboardFeature, createPOI(latLng, category))
 				break;
 			default:
 				var feature = getEventFeature(event);
 				if (feature) {
-					if (feature.get('リンクID')) {
-						var editable = source.getFeatureById(feature.get('起点ノードID')) && source.getFeatureById(feature.get('終点ノードID'));
+					if (feature.get('link_id')) {
+						var editable = source.getFeatureById(feature.get('start_id')) && source.getFeatureById(feature.get('end_id'));
 						if (!editable) {
 							showProperty(feature);
 							return false;
@@ -314,7 +310,7 @@ $hulop.editor = function() {
 					}
 					if (keyState.shiftKey) {
 						var last_feature = start_feature;
-						if (feature.get('ノードID') || feature.get('施設ID')) {
+						if (feature.get('node_id') || feature.get('facil_id')) {
 							if (start_feature) {
 								connectFeatures(start_feature, feature);
 							} else {
@@ -325,8 +321,8 @@ $hulop.editor = function() {
 							return;
 						}
 					}
-					var newLink = downKey == SPLIT_KEY && feature.get('リンクID') && source.getFeatureById(feature.get('起点ノードID'))
-							&& source.getFeatureById(feature.get('終点ノードID')) && splitLink(event);
+					var newLink = downKey == SPLIT_KEY && feature.get('link_id') && source.getFeatureById(feature.get('start_id'))
+							&& source.getFeatureById(feature.get('end_id')) && splitLink(event);
 					newLink && (feature = newLink);
 					showProperty(feature);
 					downKey == COPY_KEY && (clipboardFeature = feature);
@@ -463,10 +459,10 @@ $hulop.editor = function() {
 
 	function splitLink(event) {
 		var feature = getEventFeature(event);
-		if (feature && feature.get('リンクID')) {
+		if (feature && feature.get('link_id')) {
 			var coordinates = feature.getGeometry().getCoordinates();
 			if (coordinates.length == 2) {
-				var nodes = [ '起点ノードID', '終点ノードID' ].map(function(key) {
+				var nodes = [ 'start_id', 'end_id' ].map(function(key) {
 					var nodeID = feature.get(key);
 					return nodeID && source.getFeatureById(nodeID);
 				});
@@ -496,23 +492,23 @@ $hulop.editor = function() {
 	}
 
 	function reconnectLink(link, from, to) {
-		var linkId = link.get('リンクID');
+		var linkId = link.get('link_id');
 		var array = link.getGeometry().getCoordinates();
-		var fromNode = from.get('ノードID');
-		var toNode = to.get('ノードID');
-		var isStart = fromNode == link.get('起点ノードID');
+		var fromNode = from.get('node_id');
+		var toNode = to.get('node_id');
+		var isStart = fromNode == link.get('start_id');
 		array[isStart ? 0 : array.length - 1] = to.getGeometry().getCoordinates();
 		link.setGeometry(new ol.geom.LineString(array));
-		link.set(isStart ? '起点ノードID' : '終点ノードID', toNode);
+		link.set(isStart ? 'start_id' : 'end_id', toNode);
 		for (var i = 1; i <= 10; i++) {
-			if (from.get('接続リンクID' + i) == linkId) {
-				from.unset('接続リンクID' + i);
+			if (from.get('link' + i + '_id') == linkId) {
+				from.unset('link' + i + '_id');
 				break;
 			}
 		}
 		for (var i = 1; i <= 10; i++) {
-			if (!to.get('接続リンクID' + i)) {
-				to.set('接続リンクID' + i, linkId);
+			if (!to.get('link' + i + '_id')) {
+				to.set('link' + i + '_id', linkId);
 				break;
 			}
 		}
@@ -784,8 +780,8 @@ $hulop.editor = function() {
 	}
 
 	function findExit(feature) {
-		var nodeID = feature.get('ノードID')
-		var poiID = feature.get('施設ID');
+		var nodeID = feature.get('node_id')
+		var poiID = feature.get('facil_id');
 		var exitList = (nodeID && getNodeExit(nodeID)) || (poiID && getPoiExit(poiID)) || [];
 		return exitList.map(function(id) {
 			return source.getFeatureById(id);
@@ -795,7 +791,7 @@ $hulop.editor = function() {
 	}
 
 	function hasNodeExit(node) {
-		var exitList = getNodeExit(node.get('ノードID'));
+		var exitList = getNodeExit(node.get('node_id'));
 		return exitList && exitList.length > 0;
 	}
 
@@ -812,7 +808,7 @@ $hulop.editor = function() {
 	}
 
 	function hasPoiExit(node) {
-		var exitList = getPoiExit(node.get('施設ID'));
+		var exitList = getPoiExit(node.get('facil_id'));
 		return exitList && exitList.length > 0;
 	}
 
@@ -839,19 +835,18 @@ $hulop.editor = function() {
 	}
 
 	function connectFeatures(f1, f2) {
-		if (f1.get('ノードID') && f2.get('ノードID')) {
+		if (f1.get('node_id') && f2.get('node_id')) {
 			createLink(f1, f2) != false && hideLine();
-		} else if (f1.get('ノードID') || f2.get('ノードID')) {
+		} else if (f1.get('node_id') || f2.get('node_id')) {
 			createExit(f1, f2) != false && hideLine();
 		}
 	}
 
 	function createNode(latlng) {
 		var p = {
-			'category' : 'ノード情報'
 		};
-		p['ノードID'] = newID('node');
-		p['高さ'] = '' + getFloor();
+		p['node_id'] = newID('node');
+		p['floor'] = getFloor();
 		var obj = newGeoJSON(p, latlng);
 		var feature = newFeature(obj);
 		showProperty(feature);
@@ -859,12 +854,12 @@ $hulop.editor = function() {
 	}
 
 	function canRemoveNode(node) {
-		var nodeID = node.get('ノードID');
+		var nodeID = node.get('node_id');
 		if (!nodeID || hasNodeExit(node)) {
 			return false;
 		}
 		for (var i = 1; i <= 10; i++) {
-			var linkId = node.get('接続リンクID' + i);
+			var linkId = node.get('link' + i + '_id');
 			if (linkId && source.getFeatureById(linkId)) {
 				return false;
 			}
@@ -881,14 +876,10 @@ $hulop.editor = function() {
 		return true;
 	}
 
-	function createPOI(latlng, category) {
+	function createPOI(latlng, subcategory) {
 		var p = {
-			'category' : category
 		};
-		p['施設ID'] = newID('poi');
-		if (category != '公共用トイレの情報') {
-			p['名称'] = '';
-		}
+		p['facil_id'] = newID('poi');
 		var obj = newGeoJSON(p, latlng);
 		var feature = newFeature(obj);
 		showProperty(feature);
@@ -896,7 +887,7 @@ $hulop.editor = function() {
 	}
 
 	function canRemovePOI(poi) {
-		var poiID = poi.get('施設ID');
+		var poiID = poi.get('facil_id');
 		return poiID && !hasPoiExit(poi);
 	}
 
@@ -910,10 +901,10 @@ $hulop.editor = function() {
 	}
 
 	function createExit(node, poi) {
-		if (poi && poi.get('ノードID')) {
+		if (poi && poi.get('node_id')) {
 			poi = [ node, node = poi ][0];
 		}
-		var nodeID = node.get('ノードID');
+		var nodeID = node.get('node_id');
 		var exit, exitID;
 		getNodeExit(nodeID).forEach(function(id) {
 			if (!exit) {
@@ -928,7 +919,6 @@ $hulop.editor = function() {
 			exitID = newID('exit');
 			addNodeExit(nodeID, exitID);
 			var p = {
-				'category' : '出入口情報'
 			};
 			p['出入口ID'] = exitID;
 			p['対応ノードID'] = nodeID;
@@ -937,7 +927,7 @@ $hulop.editor = function() {
 			exit = newFeature(obj);
 		}
 		if (poi) {
-			var poiID = poi.get('施設ID');
+			var poiID = poi.get('facil_id');
 			exit.set('対応施設ID', poiID);
 			addPoiExit(poiID, exitID);
 		}
@@ -974,30 +964,22 @@ $hulop.editor = function() {
 		var linkID = newID('link');
 		[ node1, node2 ].forEach(function(node) {
 			for (var i = 1; i <= 10; i++) {
-				if (!node.get('接続リンクID' + i)) {
-					node.set('接続リンクID' + i, linkID)
+				if (!node.get('link' + i + '_id')) {
+					node.set('link' + i + '_id', linkID)
 					break;
 				}
 			}
 		});
 		var p = {
-			'category' : 'リンクの情報'
 		};
-		p['リンクID'] = linkID;
-		p['起点ノードID'] = node1.get('ノードID');
-		p['終点ノードID'] = node2.get('ノードID');
-		p['経路の種類'] = '8';
-		p['方向性'] = '0';
-		p['通行制限'] = '0';
-		p['手すり'] = '0';
-		p['屋根の有無'] = '0';
-		p['蓋のない溝や水路の有無'] = '0';
-		p['主な利用者'] = '0';
-		p['縦断勾配1'] = '0';
-		p['縦断勾配2'] = '0';
-		p['横断勾配'] = '0';
-		p['路面状況'] = '0';
-		p['段差'] = '0';
+		p['link_id'] = linkID;
+		p['start_id'] = node1.get('node_id');
+		p['end_id'] = node2.get('node_id');
+		p['rt_struct'] = 1;
+		p['direction'] = 0;
+		p['vtcl_slope'] = 0;
+		p['width'] = 99;
+		p['lev_diff'] = 0;
 		var obj = newGeoJSON(p, ol.proj.transform(node1.getGeometry().getCoordinates(), 'EPSG:3857', 'EPSG:4326'), ol.proj.transform(node2.getGeometry()
 				.getCoordinates(), 'EPSG:3857', 'EPSG:4326'));
 		var feature = newFeature(obj);
@@ -1006,9 +988,9 @@ $hulop.editor = function() {
 	}
 
 	function canRemoveLink(link) {
-		var linkID = link.get('リンクID');
+		var linkID = link.get('link_id');
 		if (linkID) {
-			var nodes = [ '起点ノードID', '終点ノードID' ].map(function(key) {
+			var nodes = [ 'start_id', 'end_id' ].map(function(key) {
 				var nodeID = link.get(key);
 				return nodeID && source.getFeatureById(nodeID);
 			});
@@ -1021,11 +1003,11 @@ $hulop.editor = function() {
 		if (!nodes) {
 			return false;
 		}
-		var linkID = link.get('リンクID');
+		var linkID = link.get('link_id');
 		nodes.forEach(function(node) {
 			for (var i = 1; i <= 10; i++) {
-				if (node.get('接続リンクID' + i) == linkID) {
-					node.unset('接続リンクID' + i);
+				if (node.get('link' + i + '_id') == linkID) {
+					node.unset('link' + i + '_id');
 					setModified(node);
 					break;
 				}
@@ -1109,7 +1091,7 @@ $hulop.editor = function() {
 		if (heights.length > 0 && heights[0] > 0) {
 			odd = !odd;
 		}
-		if (feature.get('ノードID')) {
+		if (feature.get('node_id')) {
 			var exit = hasNodeExit(feature);
 			style = new ol.style.Style({
 				'image' : new ol.style.Circle({
@@ -1124,8 +1106,8 @@ $hulop.editor = function() {
 				}),
 				'zIndex' : 1
 			});
-		} else if (feature.get('リンクID')) {
-			if (feature.get('エレベーター種別')) {
+		} else if (feature.get('link_id')) {
+			if (feature.get('route_type') == 3) {
 				var anchor = [ 0.5, 1 ];
 				if (floor != 0 && heights.length == 2 && (heights[0] < floor || heights[1] < floor)) {
 					anchor = [ 0, 0 ];
@@ -1155,9 +1137,9 @@ $hulop.editor = function() {
 						'width' : 6
 					})
 				})];
-				var dir = feature.get('方向性');
+				var dir = feature.get('direction');
 				
-				if (dir == '1' || dir == '2') {
+				if (dir == 1 || dir == 2) {
 				var geometry = feature.getGeometry();
 				  geometry.forEachSegment(function(start, end) {
 				    var dx = end[0] - start[0];
@@ -1165,12 +1147,12 @@ $hulop.editor = function() {
 				    var rotation = Math.atan2(dy, dx);
 				    // arrows
 				    style.push(new ol.style.Style({
-				      geometry: new ol.geom.Point((dir=='1')?end:start),
+				      geometry: new ol.geom.Point((dir==1)?end:start),
 				      image: new ol.style.Icon({
 				        src: 'images/arrow.png',
 				        anchor: [1.5, 0.5],
 				        rotateWithView: false,
-				        rotation: (dir=='1')?-rotation:-rotation+Math.PI
+				        rotation: (dir==1)?-rotation:-rotation+Math.PI
 				      })
 				    }));
 				  });
@@ -1210,7 +1192,7 @@ $hulop.editor = function() {
 				}),
 				'zIndex' : -1
 			});
-		} else if (feature.get('施設ID')) {
+		} else if (feature.get('facil_id')) {
 			style = styles.marker;
 		} else {
 			console.log(feature);
@@ -1238,31 +1220,31 @@ $hulop.editor = function() {
 	function getHeights(feature) {
 		var heights = [];
 		function addNode(node) {
-			var h = Number(node.get('高さ').replace('B', '-'));
+			var h = node.get('floor');
 			heights.indexOf(h) == -1 && heights.push(h);
 		}
 		function addLink(link) {
-			[ '起点ノードID', '終点ノードID' ].forEach(function(key) {
+			[ 'start_id', 'end_id' ].forEach(function(key) {
 				var node = source.getFeatureById(link.get(key));
 				node && addNode(node);
 			});
 		}
-		if (feature.get('ノードID')) {
+		if (feature.get('node_id')) {
 			addNode(feature);
 			for (var i = 1; i <= 10; i++) {
-				var linkID = feature.get('接続リンクID' + i);
+				var linkID = feature.get('link' + i + '_id');
 				var link = linkID && source.getFeatureById(linkID);
 				link && addLink(link);
 			}
-		} else if (feature.get('リンクID')) {
+		} else if (feature.get('link_id')) {
 			addLink(feature);
-		} else if (feature.get('施設ID')) {
+		} else if (feature.get('facil_id')) {
 			var h = feature.get('height');
 			if (h) {
 				h = Number(h.replace('B', '-'));
 				heights.indexOf(h) == -1 && heights.push(h);
 			}
-			getPoiExit(feature.get('施設ID')).forEach(function(exitID) {
+			getPoiExit(feature.get('facil_id')).forEach(function(exitID) {
 				var exit = source.getFeatureById(exitID);
 				var nodeID = exit && exit.get('対応ノードID');
 				var node = nodeID && source.getFeatureById(nodeID);
@@ -1276,21 +1258,21 @@ $hulop.editor = function() {
 		// console.log('geometryChanged: ' + feature.getId() + ' ' +
 		// feature.getGeometry().getType() + ' ' +
 		// feature.getGeometry().getCoordinates());
-		var nodeID = feature.get('ノードID');
+		var nodeID = feature.get('node_id');
 		if (nodeID) {
 			var nodeCoordinate = feature.getGeometry().getCoordinates();
 			var latlng = ol.proj.transform(nodeCoordinate, 'EPSG:3857', 'EPSG:4326');
 			for (var i = 1; i <= 10; i++) {
-				var linkID = feature.get('接続リンクID' + i);
+				var linkID = feature.get('link' + i + '_id');
 				var link = linkID && source.getFeatureById(linkID);
 				if (link && link != dragPoint) {
-					var isStart = nodeID == link.get('起点ノードID');
+					var isStart = nodeID == link.get('start_id');
 					var geometry = null;
 					var linkCoordinates = link.getGeometry().getCoordinates();
 					if (isNaN(linkCoordinates[0])) {
 						var other = linkCoordinates[isStart ? linkCoordinates.length - 1 : 0];
 						var otherLatlng = ol.proj.transform(other, 'EPSG:3857', 'EPSG:4326');
-						if (keyState.shiftKey || !link.get('エレベーター種別') || $hulop.util.computeDistanceBetween(latlng, otherLatlng) > 1) {
+						if (keyState.shiftKey || link.get('route_type') != 3 || $hulop.util.computeDistanceBetween(latlng, otherLatlng) > 1) {
 							var array = linkCoordinates;
 							array[isStart ? 0 : array.length - 1] = nodeCoordinate;
 							geometry = new ol.geom.LineString(array);
@@ -1305,12 +1287,12 @@ $hulop.editor = function() {
 				exit.setGeometry(new ol.geom.Point(nodeCoordinate));
 			});
 		}
-		var linkID = feature.get('リンクID');
+		var linkID = feature.get('link_id');
 		var link = linkID && source.getFeatureById(linkID);
 		if (link && link.getGeometry().getType() == 'Point') {
 			var geometry = link.getGeometry();
 			// Fix elevator nodes
-			[ '起点ノードID', '終点ノードID' ].forEach(function(key) {
+			[ 'start_id', 'end_id' ].forEach(function(key) {
 				var nodeID = feature.get(key);
 				var node = nodeID && source.getFeatureById(nodeID);
 				node && setGeometry(node, geometry.clone());
@@ -1341,21 +1323,20 @@ $hulop.editor = function() {
 
 	function syncLatlng(feature) {
 		var coordinates = feature.getGeometry().getCoordinates();
-		if (feature.get('ノードID') || feature.get('施設ID')) {
+		if (feature.get('node_id') || feature.get('facil_id')) {
 			var latlng = ol.proj.transform(coordinates, 'EPSG:3857', 'EPSG:4326');
-			feature.set('緯度経度桁数コード', '3');
-			feature.set('緯度', $hulop.util.toDMS(latlng[1]));
-			feature.set('経度', $hulop.util.toDMS(latlng[0]));
-		} else if (feature.get('リンクID')) {
+			feature.set('lat', latlng[1]);
+			feature.set('lon', latlng[0]);
+		} else if (feature.get('link_id')) {
 			var geometry = feature.getGeometry();
 			if (geometry.getType() == 'LineString') {
 				var coords = [];
 				geometry.getCoordinates().forEach(function(coord) {
 					coords.push(ol.proj.transform(coord, 'EPSG:3857', 'EPSG:4326'));
 				});
-				feature.set('リンク延長', '' + Math.round($hulop.util.computeLength(coords) * 10) / 10);
+				feature.set('distance', Math.round($hulop.util.computeLength(coords) * 10) / 10);
 			} else {
-				feature.set('リンク延長', '0');
+				feature.set('distance', 0);
 			}
 		}
 	}
@@ -1453,7 +1434,7 @@ $hulop.editor = function() {
 				return;
 			}
 			var path = [];
-			var key = feature.get('ノードID') ? '対応施設ID' : '対応ノードID';
+			var key = feature.get('node_id') ? '対応施設ID' : '対応ノードID';
 			nodes.forEach(function(exit) {
 				var id = exit.get(key);
 				var target = id && source.getFeatureById(id);
@@ -1503,28 +1484,28 @@ $hulop.editor = function() {
 	function switchMonitor(feature) {
 		console.log('switchMonitor ' + (editingFeature && editingFeature.getId()));
 		if (editingFeature && editingFeature.getGeometry().getCoordinates) {
-			var editLink = editingFeature.get('リンクID');
-			var clickNode = feature.get('ノードID');
+			var editLink = editingFeature.get('link_id');
+			var clickNode = feature.get('node_id');
 			if (editLink && clickNode) {
 				var array = editingFeature.getGeometry().getCoordinates();
 				if (start_point) {
-					var fromNode = from_feature.get('ノードID');
-					var isStart = fromNode == editingFeature.get('起点ノードID');
-					if (editingFeature.get(!isStart ? '起点ノードID' : '終点ノードID') == clickNode) {
+					var fromNode = from_feature.get('node_id');
+					var isStart = fromNode == editingFeature.get('start_id');
+					if (editingFeature.get(!isStart ? 'start_id' : 'end_id') == clickNode) {
 						return;
 					}
 					array[isStart ? 0 : array.length - 1] = feature.getGeometry().getCoordinates();
 					editingFeature.setGeometry(new ol.geom.LineString(array));
-					editingFeature.set(isStart ? '起点ノードID' : '終点ノードID', clickNode);
+					editingFeature.set(isStart ? 'start_id' : 'end_id', clickNode);
 					for (var i = 1; i <= 10; i++) {
-						if (from_feature.get('接続リンクID' + i) == editLink) {
-							from_feature.unset('接続リンクID' + i);
+						if (from_feature.get('link' + i + '_id') == editLink) {
+							from_feature.unset('link' + i + '_id');
 							break;
 						}
 					}
 					for (var i = 1; i <= 10; i++) {
-						if (!feature.get('接続リンクID' + i)) {
-							feature.set('接続リンクID' + i, editLink);
+						if (!feature.get('link' + i + '_id')) {
+							feature.set('link' + i + '_id', editLink);
 							break;
 						}
 					}
@@ -1533,7 +1514,7 @@ $hulop.editor = function() {
 					setModified(feature);
 					hideSwitchLine();
 				} else {
-					var isStart = clickNode == editingFeature.get('起点ノードID');
+					var isStart = clickNode == editingFeature.get('start_id');
 					start_point = array[isStart ? 1 : array.length - 2];
 					from_feature = feature;
 				}
@@ -1566,7 +1547,7 @@ $hulop.editor = function() {
 
 	function addFeatureList(obj) {
 		var p = obj.properties;
-		var id = p['ノードID'] || p['リンクID'] || p['施設ID'] || p['出入口ID'];
+		var id = p['node_id'] || p['link_id'] || p['facil_id'];
 		if (source.getFeatureById(id)) {
 			console.error('Duplicated id' + id);
 			return;
@@ -1583,8 +1564,8 @@ $hulop.editor = function() {
 		});
 		source.addFeature(feature);
 		var properties
-		if (feature.get('category') == 'リンクの情報' && feature.get('経路の種類') == 10 && feature.get('リンク延長') != '0') {
-			console.error('Invalid リンク延長 for elevator: ' + feature.get('リンク延長'));
+		if (feature.get('route_type') == 3 && feature.get('distance') > 0) {
+			console.error('Invalid distance for elevator: ' + feature.get('distance'));
 			console.error(obj.properties);
 		}
 		$('<tr>', {
@@ -1618,12 +1599,12 @@ $hulop.editor = function() {
 		var selectFeatures = select.getFeatures();
 		var editable;
 		if (feature) {
-			if (feature.get('リンクID')) {
-				var start = feature.get('起点ノードID');
-				var end = feature.get('終点ノードID');
+			if (feature.get('link_id')) {
+				var start = feature.get('start_id');
+				var end = feature.get('end_id');
 				editable = start && end && source.getFeatureById(start) && source.getFeatureById(end);
 			} else {
-				editable = feature.get('ノードID') || feature.get('施設ID');
+				editable = feature.get('node_id') || feature.get('facil_id');
 			}
 			showPropertyTable(feature);
 			var exitList = findExit(feature); // Exit informations
@@ -1695,7 +1676,7 @@ $hulop.editor = function() {
 			return true;
 		}
 
-		var category = feature.get('category');
+		var category = getCategory(feature);
 		var optional = OPTIONAL_NAMES[category] || [];
 		(PROPERTY_NAMES[category] || []).forEach(function(name) {
 			var params = name.split(':');
@@ -1735,11 +1716,11 @@ $hulop.editor = function() {
 		}
 		function resetView() {
 			var noCollapse = [ M('GROUP_ROAD') ];
-			switch (feature.get('経路の種類')) {
-			case '10':
+			switch (feature.get('route_type')) {
+			case 3:
 				noCollapse.push(M('GROUP_ELEVATOR'));
 				break;
-			case '12':
+			case 5:
 				noCollapse.push(M('GROUP_STAIR'));
 				break;
 			}
@@ -1769,7 +1750,7 @@ $hulop.editor = function() {
 	}
 
 	function propertyRow(feature, name, value) {
-		var tips = tooltips[feature.get('category')];
+		var tips = tooltips[getCategory(feature)];
 		var editable = READONLY_NAMES.indexOf(name) == -1;
 		if (name.startsWith('_NAVCOG_')) {
 			if (value.startsWith('{"')) {
@@ -1832,7 +1813,7 @@ $hulop.editor = function() {
 	}
 
 	function getDisplayName(feature, short) {
-		var category = feature.get('category');
+		var category = getCategory(feature);
 		return keynames[short ? category + '_SHORT' : category] || category;
 	}
 
@@ -1847,15 +1828,15 @@ $hulop.editor = function() {
 		source.getFeatures().forEach(function(feature) {
 			var errors = [];
 			var id = feature.getId();
-			var category = feature.get('category');
+			var category = getCategory(feature);
 			switch (category) {
-			case 'ノード情報':
+			case 'node':
 				for (var i = 1; i <= 10; i++) {
-					var linkId = feature.get('接続リンクID' + i);
+					var linkId = feature.get('link' + i + '_id');
 					if (linkId) {
 						var link = source.getFeatureById(linkId);
 						if (link) {
-							if (id != link.get('起点ノードID') && id != link.get('終点ノードID')) {
+							if (id != link.get('start_id') && id != link.get('end_id')) {
 								errors.push('connect link ID' + i + ' ' + linkId + ' does not connect to ' + id);
 								link.error = true;
 							}
@@ -1865,8 +1846,8 @@ $hulop.editor = function() {
 					}
 				}
 				break;
-			case 'リンクの情報':
-				var node1 = feature.get('起点ノードID'), node2 = feature.get('終点ノードID');
+			case 'link':
+				var node1 = feature.get('start_id'), node2 = feature.get('end_id');
 				if (node1 == node2) {
 					errors.push('Start node = End node ' + node1);
 				}
@@ -1900,6 +1881,27 @@ $hulop.editor = function() {
 				getFeatureRow(feature.getId()).css('background-color', '#c0c0c0');
 			}
 		});
+	}
+	
+	function getCategory(feature) {
+		if (feature.get('node_id')) {
+			return 'node';
+		}
+		if (feature.get("link_id")) {
+			return 'link';
+		}
+		if (feature.get("facil_id")) {
+			return 'facility';
+		}
+	}
+	
+	function getSubCategory(feature) {
+		switch (properties.get("facil_type")) {
+		case 3:
+			return 'hospital';
+		case 10:
+			return 'toilet';
+		}
 	}
 
 	return {

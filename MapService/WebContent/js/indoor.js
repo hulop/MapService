@@ -150,7 +150,7 @@ $hulop.indoor = function() {
 					if (node && site) {
 						var lat = site.geometry.coordinates[1];
 						var lng = site.geometry.coordinates[0];
-						var floor = Number(node.properties['高さ'].replace('B', '-'));
+						var floor = node.properties['floor'];
 						var marker = new ol.Feature({
 							'geometry' : new ol.geom.Point(ol.proj.transform([ lng, lat ], 'EPSG:4326', 'EPSG:3857'))
 						});
