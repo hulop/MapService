@@ -432,16 +432,20 @@ public class RouteSearchBean {
 				break;
 			}
 
-			switch (conditions.get("mvw")) {
-			case "1": // Do not use
-				if (route_type == 1) {
-					return WEIGHT_IGNORE;
+			try {
+				switch (conditions.get("mvw")) {
+				case "1": // Do not use
+					if (route_type == 1) {
+						return WEIGHT_IGNORE;
+					}
+				case "8": // Avoid
+					if (route_type == 1) {
+						weight += penarty;
+					}
+					break;
 				}
-			case "8": // Avoid
-				if (route_type == 1) {
-					weight += penarty;
-				}
-				break;
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 
 			int brail_tile = getCode(properties, "brail_tile", 100);
