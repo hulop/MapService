@@ -327,8 +327,6 @@ public class RouteSearchBean {
 					break;
 				}
 			} catch (NullPointerException npe) {
-			} catch (Exception e) {
-				e.printStackTrace();
 			}
 
 			int vtcl_slope = getCode(properties, "vtcl_slope", 100);
@@ -349,8 +347,6 @@ public class RouteSearchBean {
 					break;
 				}
 			} catch (NullPointerException npe) {
-			} catch (Exception e) {
-				e.printStackTrace();
 			}
 
 			int condition = getCode(properties, "condition", 100);
@@ -369,8 +365,6 @@ public class RouteSearchBean {
 					break;
 				}
 			} catch (NullPointerException npe) {
-			} catch (Exception e) {
-				e.printStackTrace();
 			}
 
 			int lev_diff = getCode(properties, "lev_diff", 100);
@@ -392,15 +386,12 @@ public class RouteSearchBean {
 					break;
 				}
 			} catch (NullPointerException npe) {
-			} catch (Exception e) {
-				e.printStackTrace();
 			}
 
 			int handrail = getCode(properties, "handrail", 100);
 			// 0: none, 1: on the right, 2: on the left, 3: on both sides, 99: unknown
 			// (The direction is as seen from the source.)
 			try {
-			} catch (NullPointerException npe) {
 				switch (conditions.get("stairs")) {
 				case "1": // Do not use
 					if (route_type == 5) {
@@ -418,8 +409,7 @@ public class RouteSearchBean {
 					}
 					break;
 				}
-			} catch (Exception e) {
-				e.printStackTrace();
+			} catch (NullPointerException npe) {
 			}
 
 			int elevator = route_type == 3 ? 1 : 100;
@@ -446,8 +436,6 @@ public class RouteSearchBean {
 					break;
 				}
 			} catch (NullPointerException npe) {
-			} catch (Exception e) {
-				e.printStackTrace();
 			}
 
 			try {
@@ -463,8 +451,6 @@ public class RouteSearchBean {
 					break;
 				}
 			} catch (NullPointerException npe) {
-			} catch (Exception e) {
-				e.printStackTrace();
 			}
 
 			try {
@@ -480,8 +466,6 @@ public class RouteSearchBean {
 					break;
 				}
 			} catch (NullPointerException npe) {
-			} catch (Exception e) {
-				e.printStackTrace();
 			}
 
 			int brail_tile = getCode(properties, "brail_tile", 100);
