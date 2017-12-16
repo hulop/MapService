@@ -450,16 +450,20 @@ public class RouteSearchBean {
 				break;
 			}
 
-			switch (conditions.get("mvw")) {
-			case "1": // Do not use
-				if (linkType.equals("7")) {
-					return WEIGHT_IGNORE;
+			try {
+				switch (conditions.get("mvw")) {
+				case "1": // Do not use
+					if (linkType.equals("7")) {
+						return WEIGHT_IGNORE;
+					}
+				case "8": // Avoid
+					if (linkType.equals("7")) {
+						weight += penarty;
+					}
+					break;
 				}
-			case "8": // Avoid
-				if (linkType.equals("7")) {
-					weight += penarty;
-				}
-				break;
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 
 			if (properties.has("視覚障害者誘導用ブロック") && "1".equals(properties.getString("視覚障害者誘導用ブロック"))) {
