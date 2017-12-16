@@ -217,6 +217,13 @@ if (id == null || (agreeBean.isAgreementSupported() && !agreeBean.getAgreed(id))
 					<option value="9" i18n selected>ESC_9</option>
 			</select>
 
+			<label for="mvw" i18n>MVW</label>
+			<select data-mini="true" id="mvw" name="mvw">
+					<option value="1" i18n>MVW_1</option>
+					<!--option value="8" i18n>MVW_8</option-->
+					<option value="9" i18n selected>MVW_9</option>
+			</select>
+
 			<label for="elv" i18n>ELV</label>
 			<select data-mini="true" id="elv" name="elv">
 					<option value="1" i18n>ELV_1</option>

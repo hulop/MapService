@@ -58,6 +58,7 @@ $hulop.util = function() {
 				'stairs' : $('#stairs').val(),
 				'deff_LV' : $('#deff_LV').val(),
 				'esc' : $('#esc').val(),
+				'mvw' : $('#mvw').val(),
 				'elv' : $('#elv').val()
 			};
 			if (window.localStorage) {
@@ -96,6 +97,7 @@ $hulop.util = function() {
 				$('#stairs').val('9');
 				$('#deff_LV').val('9');
 				$('#esc').val('9');
+				$('#mvw').val('9');
 				$('#elv').val('9');
 				break;
 			case '2':
@@ -105,6 +107,7 @@ $hulop.util = function() {
 				$('#stairs').val('1');
 				$('#deff_LV').val('2');
 				$('#esc').val('1');
+				$('#mvw').val('1');
 				$('#elv').val('2');
 				break;
 			}

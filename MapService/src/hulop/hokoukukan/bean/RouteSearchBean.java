@@ -283,7 +283,7 @@ public class RouteSearchBean {
 				weight = 0.0f;
 				break;
 			case "7": // Moving walkway
-				weight *= 0.5f;
+				weight *= 0.75f;
 				break;
 			case "11": // Escalator
 				weight = ESCALATOR_WEIGHT;
@@ -445,6 +445,18 @@ public class RouteSearchBean {
 				}
 			case "8": // Avoid
 				if (linkType.equals("11")) {
+					weight += penarty;
+				}
+				break;
+			}
+
+			switch (conditions.get("mvw")) {
+			case "1": // Do not use
+				if (linkType.equals("7")) {
+					return WEIGHT_IGNORE;
+				}
+			case "8": // Avoid
+				if (linkType.equals("7")) {
 					weight += penarty;
 				}
 				break;
