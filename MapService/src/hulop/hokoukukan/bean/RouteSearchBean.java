@@ -300,27 +300,30 @@ public class RouteSearchBean {
 			// 2: >1.5m & <2m,
 			// 3: >2m
 			// 9: unknown
-			switch (conditions.get("min_width")) {
-			case "1": // >2m
-				if (width.equals("0") || width.equals("1") || width.equals("2") || width.equals("9")) {
-					return WEIGHT_IGNORE;
+			try {
+				switch (conditions.get("min_width")) {
+				case "1": // >2m
+					if (width.equals("0") || width.equals("1") || width.equals("2") || width.equals("9")) {
+						return WEIGHT_IGNORE;
+					}
+					break;
+				case "2": // >1.5m
+					if (width.equals("0") || width.equals("1") || width.equals("9")) {
+						return WEIGHT_IGNORE;
+					}
+					break;
+				case "3": // >1.0m
+					if (width.equals("0") || width.equals("9")) {
+						return WEIGHT_IGNORE;
+					}
+					break;
+				case "8": // Avoid
+					if (width.equals("0") || width.equals("1") || width.equals("2") || width.equals("9")) {
+						weight += penarty;
+					}
+					break;
 				}
-				break;
-			case "2": // >1.5m
-				if (width.equals("0") || width.equals("1") || width.equals("9")) {
-					return WEIGHT_IGNORE;
-				}
-				break;
-			case "3": // >1.0m
-				if (width.equals("0") || width.equals("9")) {
-					return WEIGHT_IGNORE;
-				}
-				break;
-			case "8": // Avoid
-				if (width.equals("0") || width.equals("1") || width.equals("2") || width.equals("9")) {
-					weight += penarty;
-				}
-				break;
+			} catch (NullPointerException npe) {
 			}
 
 			float slope = 0;
@@ -329,63 +332,72 @@ public class RouteSearchBean {
 			} catch (Exception e) {
 			}
 			// Maximum slope value (%) along the link
-			switch (conditions.get("slope")) {
-			case "1": // <8%
-				if (slope >= 8.0) {
-					return WEIGHT_IGNORE;
+			try {
+				switch (conditions.get("slope")) {
+				case "1": // <8%
+					if (slope >= 8.0) {
+						return WEIGHT_IGNORE;
+					}
+					break;
+				case "2": // <10%
+					if (slope >= 10.0) {
+						return WEIGHT_IGNORE;
+					}
+					break;
+				case "8": // Avoid
+					if (slope >= 8.0) {
+						weight += penarty;
+					}
+					break;
 				}
-				break;
-			case "2": // <10%
-				if (slope >= 10.0) {
-					return WEIGHT_IGNORE;
-				}
-				break;
-			case "8": // Avoid
-				if (slope >= 8.0) {
-					weight += penarty;
-				}
-				break;
+			} catch (NullPointerException npe) {
 			}
 
 			String road = properties.has("路面状況") ? properties.getString("路面状況") : "";
 			// 0: no problem, 1: dirt, 2: gravel, 3: other, 9: unknown
-			switch (conditions.get("road_condition")) {
-			case "1": // No problem
-				if (road.equals("1") || road.equals("2") || road.equals("3") || road.equals("9")) {
-					return WEIGHT_IGNORE;
+			try {
+				switch (conditions.get("road_condition")) {
+				case "1": // No problem
+					if (road.equals("1") || road.equals("2") || road.equals("3") || road.equals("9")) {
+						return WEIGHT_IGNORE;
+					}
+					break;
+				case "8": // Avoid
+					if (road.equals("1") || road.equals("2") || road.equals("3") || road.equals("9")) {
+						weight += penarty;
+					}
+					break;
 				}
-				break;
-			case "8": // Avoid
-				if (road.equals("1") || road.equals("2") || road.equals("3") || road.equals("9")) {
-					weight += penarty;
-				}
-				break;
+			} catch (NullPointerException npe) {
 			}
 
 			String bump = properties.has("段差") ? properties.getString("段差") : "";
 			// 0: less than 2cm, 1: 2~5cm, 2: 5~10cm, 3: more than 10cm, 9: unknown
 			// (assign max bump height for whole link)
-			switch (conditions.get("deff_LV")) {
-			case "1": // <2cm
-				if (bump.equals("1") || bump.equals("2") || bump.equals("3") || bump.equals("9")) {
-					return WEIGHT_IGNORE;
+			try {
+				switch (conditions.get("deff_LV")) {
+				case "1": // <2cm
+					if (bump.equals("1") || bump.equals("2") || bump.equals("3") || bump.equals("9")) {
+						return WEIGHT_IGNORE;
+					}
+					break;
+				case "2": // <5cm
+					if (bump.equals("2") || bump.equals("3") || bump.equals("9")) {
+						return WEIGHT_IGNORE;
+					}
+					break;
+				case "3": // <10cm
+					if (bump.equals("3") || bump.equals("9")) {
+						return WEIGHT_IGNORE;
+					}
+					break;
+				case "8": // Avoid
+					if (bump.equals("1") || bump.equals("2") || bump.equals("3") || bump.equals("9")) {
+						weight += penarty;
+					}
+					break;
 				}
-				break;
-			case "2": // <5cm
-				if (bump.equals("2") || bump.equals("3") || bump.equals("9")) {
-					return WEIGHT_IGNORE;
-				}
-				break;
-			case "3": // <10cm
-				if (bump.equals("3") || bump.equals("9")) {
-					return WEIGHT_IGNORE;
-				}
-				break;
-			case "8": // Avoid
-				if (bump.equals("1") || bump.equals("2") || bump.equals("3") || bump.equals("9")) {
-					weight += penarty;
-				}
-				break;
+			} catch (NullPointerException npe) {
 			}
 
 			int steps = 0;
@@ -400,54 +412,63 @@ public class RouteSearchBean {
 			String rail = properties.has("手すり") ? properties.getString("手すり") : "";
 			// 0: no, 1: on the right, 2: on the left, 3: both sides, 9: unknown
 			// (link direction - start node to end node)
-			switch (conditions.get("stairs")) {
-			case "1": // Do not use
-				if (steps > 0) {
-					return WEIGHT_IGNORE;
+			try {
+				switch (conditions.get("stairs")) {
+				case "1": // Do not use
+					if (steps > 0) {
+						return WEIGHT_IGNORE;
+					}
+					break;
+				case "2": // Use with hand rail
+					if (steps > 0 && !(rail.equals("1") || rail.equals("2") || rail.equals("3"))) {
+						return WEIGHT_IGNORE;
+					}
+					break;
+				case "8": // Avoid
+					if (steps > 0) {
+						weight += penarty;
+					}
+					break;
 				}
-				break;
-			case "2": // Use with hand rail
-				if (steps > 0 && !(rail.equals("1") || rail.equals("2") || rail.equals("3"))) {
-					return WEIGHT_IGNORE;
-				}
-				break;
-			case "8": // Avoid
-				if (steps > 0) {
-					weight += penarty;
-				}
-				break;
+			} catch (NullPointerException npe) {
 			}
 
 			String elevator = properties.has("エレベーター種別") ? properties.getString("エレベーター種別") : "";
 			// 0: not included, 1: braille and audio, 2: wheelchair, 3: 1&2, 9:
 			// unknown
-			switch (conditions.get("elv")) {
-			case "1": // Do not use
-				if (elevator.equals("0") || elevator.equals("1") || elevator.equals("2") || elevator.equals("3")
-						|| elevator.equals("9")) {
-					return WEIGHT_IGNORE;
+			try {
+				switch (conditions.get("elv")) {
+				case "1": // Do not use
+					if (elevator.equals("0") || elevator.equals("1") || elevator.equals("2") || elevator.equals("3")
+							|| elevator.equals("9")) {
+						return WEIGHT_IGNORE;
+					}
+				case "2": // Wheel chair supported
+					if (elevator.equals("0") || elevator.equals("1") || elevator.equals("9")) {
+						return WEIGHT_IGNORE;
+					}
+				case "8": // Avoid
+					if (elevator.equals("0") || elevator.equals("1") || elevator.equals("9")) {
+						weight += penarty;
+					}
+					break;
 				}
-			case "2": // Wheel chair supported
-				if (elevator.equals("0") || elevator.equals("1") || elevator.equals("9")) {
-					return WEIGHT_IGNORE;
-				}
-			case "8": // Avoid
-				if (elevator.equals("0") || elevator.equals("1") || elevator.equals("9")) {
-					weight += penarty;
-				}
-				break;
+			} catch (NullPointerException npe) {
 			}
 
-			switch (conditions.get("esc")) {
-			case "1": // Do not use
-				if (linkType.equals("11")) {
-					return WEIGHT_IGNORE;
+			try {
+				switch (conditions.get("esc")) {
+				case "1": // Do not use
+					if (linkType.equals("11")) {
+						return WEIGHT_IGNORE;
+					}
+				case "8": // Avoid
+					if (linkType.equals("11")) {
+						weight += penarty;
+					}
+					break;
 				}
-			case "8": // Avoid
-				if (linkType.equals("11")) {
-					weight += penarty;
-				}
-				break;
+			} catch (NullPointerException npe) {
 			}
 
 			try {
@@ -462,8 +483,7 @@ public class RouteSearchBean {
 					}
 					break;
 				}
-			} catch (Exception e) {
-				e.printStackTrace();
+			} catch (NullPointerException npe) {
 			}
 
 			if (properties.has("視覚障害者誘導用ブロック") && "1".equals(properties.getString("視覚障害者誘導用ブロック"))) {
