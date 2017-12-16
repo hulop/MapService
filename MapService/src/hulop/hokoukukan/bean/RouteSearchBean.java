@@ -303,59 +303,74 @@ public class RouteSearchBean {
 			// other)),
 			// 3: 3.0 m or more (no problem in wheelchair accessibility),
 			// 99: unknown
-			switch (conditions.get("min_width")) {
-			case "1": // >3.0m
-				if (width < 3) {
-					return WEIGHT_IGNORE;
+			try {
+				switch (conditions.get("min_width")) {
+				case "1": // >3.0m
+					if (width < 3) {
+						return WEIGHT_IGNORE;
+					}
+					break;
+				case "2": // >2.0m
+					if (width < 2) {
+						return WEIGHT_IGNORE;
+					}
+					break;
+				case "3": // >1.0m
+					if (width < 1) {
+						return WEIGHT_IGNORE;
+					}
+					break;
+				case "8": // Avoid
+					if (width < 3) {
+						weight += penarty;
+					}
+					break;
 				}
-				break;
-			case "2": // >2.0m
-				if (width < 2) {
-					return WEIGHT_IGNORE;
-				}
-				break;
-			case "3": // >1.0m
-				if (width < 1) {
-					return WEIGHT_IGNORE;
-				}
-				break;
-			case "8": // Avoid
-				if (width < 3) {
-					weight += penarty;
-				}
-				break;
+			} catch (NullPointerException npe) {
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 
 			int vtcl_slope = getCode(properties, "vtcl_slope", 100);
 			// 0: 5% or less (no problem in wheelchair accessibility),
 			// 1: more than 5% (problem in wheelchair accessibility),
 			// 99: unknown
-			switch (conditions.get("slope")) {
-			case "1": // <5%
-				if (vtcl_slope == 1) {
-					return WEIGHT_IGNORE;
+			try {
+				switch (conditions.get("slope")) {
+				case "1": // <5%
+					if (vtcl_slope == 1) {
+						return WEIGHT_IGNORE;
+					}
+					break;
+				case "8": // Avoid
+					if (vtcl_slope == 1) {
+						weight += penarty;
+					}
+					break;
 				}
-				break;
-			case "8": // Avoid
-				if (vtcl_slope == 1) {
-					weight += penarty;
-				}
-				break;
+			} catch (NullPointerException npe) {
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 
 			int condition = getCode(properties, "condition", 100);
 			// 0: no problem in accessibility, 1: soil, 2: gravel, 3: other, 99: unknown
-			switch (conditions.get("road_condition")) {
-			case "1": // No problem
-				if (condition == 1 || condition == 2 || condition == 3) {
-					return WEIGHT_IGNORE;
+			try {
+				switch (conditions.get("road_condition")) {
+				case "1": // No problem
+					if (condition == 1 || condition == 2 || condition == 3) {
+						return WEIGHT_IGNORE;
+					}
+					break;
+				case "8": // Avoid
+					if (condition == 1 || condition == 2 || condition == 3) {
+						weight += penarty;
+					}
+					break;
 				}
-				break;
-			case "8": // Avoid
-				if (condition == 1 || condition == 2 || condition == 3) {
-					weight += penarty;
-				}
-				break;
+			} catch (NullPointerException npe) {
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 
 			int lev_diff = getCode(properties, "lev_diff", 100);
@@ -363,38 +378,48 @@ public class RouteSearchBean {
 			// 1: more than 2 cm (problem in wheelchair accessibility),
 			// 99: unknown
 
-			switch (conditions.get("deff_LV")) {
-			case "1": // <2cm
-				if (lev_diff == 1) {
-					return WEIGHT_IGNORE;
+			try {
+				switch (conditions.get("deff_LV")) {
+				case "1": // <2cm
+					if (lev_diff == 1) {
+						return WEIGHT_IGNORE;
+					}
+					break;
+				case "8": // Avoid
+					if (lev_diff == 1) {
+						weight += penarty;
+					}
+					break;
 				}
-				break;
-			case "8": // Avoid
-				if (lev_diff == 1) {
-					weight += penarty;
-				}
-				break;
+			} catch (NullPointerException npe) {
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 
 			int handrail = getCode(properties, "handrail", 100);
 			// 0: none, 1: on the right, 2: on the left, 3: on both sides, 99: unknown
 			// (The direction is as seen from the source.)
-			switch (conditions.get("stairs")) {
-			case "1": // Do not use
-				if (route_type == 5) {
-					return WEIGHT_IGNORE;
+			try {
+			} catch (NullPointerException npe) {
+				switch (conditions.get("stairs")) {
+				case "1": // Do not use
+					if (route_type == 5) {
+						return WEIGHT_IGNORE;
+					}
+					break;
+				case "2": // Use with hand rail
+					if (route_type == 5 && !(handrail == 1 || handrail == 2 || handrail == 3)) {
+						return WEIGHT_IGNORE;
+					}
+					break;
+				case "8": // Avoid
+					if (route_type == 5) {
+						weight += penarty;
+					}
+					break;
 				}
-				break;
-			case "2": // Use with hand rail
-				if (route_type == 5 && !(handrail == 1 || handrail == 2 || handrail == 3)) {
-					return WEIGHT_IGNORE;
-				}
-				break;
-			case "8": // Avoid
-				if (route_type == 5) {
-					weight += penarty;
-				}
-				break;
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 
 			int elevator = route_type == 3 ? 1 : 100;
@@ -404,32 +429,42 @@ public class RouteSearchBean {
 			}
 			// 0: without elevator, 1: with elevator (not accessible), 2: with elevator
 			// (accessible), 99: unknown
-			switch (conditions.get("elv")) {
-			case "1": // Do not use
-				if (elevator == 1 || elevator == 2) {
-					return WEIGHT_IGNORE;
+			try {
+				switch (conditions.get("elv")) {
+				case "1": // Do not use
+					if (elevator == 1 || elevator == 2) {
+						return WEIGHT_IGNORE;
+					}
+				case "2": // Wheel chair supported
+					if (elevator == 1) {
+						return WEIGHT_IGNORE;
+					}
+				case "8": // Avoid
+					if (elevator == 1) {
+						weight += penarty;
+					}
+					break;
 				}
-			case "2": // Wheel chair supported
-				if (elevator == 1) {
-					return WEIGHT_IGNORE;
-				}
-			case "8": // Avoid
-				if (elevator == 1) {
-					weight += penarty;
-				}
-				break;
+			} catch (NullPointerException npe) {
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 
-			switch (conditions.get("esc")) {
-			case "1": // Do not use
-				if (route_type == 4) {
-					return WEIGHT_IGNORE;
+			try {
+				switch (conditions.get("esc")) {
+				case "1": // Do not use
+					if (route_type == 4) {
+						return WEIGHT_IGNORE;
+					}
+				case "8": // Avoid
+					if (route_type == 4) {
+						weight += penarty;
+					}
+					break;
 				}
-			case "8": // Avoid
-				if (route_type == 4) {
-					weight += penarty;
-				}
-				break;
+			} catch (NullPointerException npe) {
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 
 			try {
@@ -444,6 +479,7 @@ public class RouteSearchBean {
 					}
 					break;
 				}
+			} catch (NullPointerException npe) {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
