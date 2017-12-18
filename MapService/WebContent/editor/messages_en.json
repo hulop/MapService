@@ -287,7 +287,7 @@
 				"desc": "Enter an alias if any (Enter an intersection name if the link is on an intersection). Leave this field blank if there is no alias, etc. Enter \"99\" if it is unknown."
 			}
 		},
-		"facil": {
+		"facility": {
 			"facil_id": {
 				"name": "Facility ID",
 				"desc": "Facility ID"

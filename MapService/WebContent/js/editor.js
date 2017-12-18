@@ -60,9 +60,9 @@ $hulop.editor = function() {
 							'group:A11Y', 'brail_tile', 'facility', 'facil_lat', 'facil_lon', 'group:TRAFFIC', 'bus_stop', 'bus_s_lat', 'bus_s_lon',
 							'tfc_signal', 'tfc_s_type', 'tfc_s_lat', 'tfc_s_lon', 'group:SERVICE', 'start_time', 'end_time', 'start_date', 'end_date', 'no_serv_d'
 							 ]);
-	PROPERTY_NAMES['facility'] = [ 'facil_id', 'lat', 'lon', 'name_ja', 'name_en', 'address', 'tel', 'floors', 'start_time', 'end_time', 'no_serv_d', 'toilet', 'group:EXT', 'building',
-			'major_category', 'sub_category', 'minor_category', 'heading', 'angle', 'height', 'long_description' ].concat(i18nMenu([ 'name', 'address',
-			'long_description' ]));
+	PROPERTY_NAMES['facility'] = [ 'facil_id', 'lat', 'lon', 'name_ja', 'name_en', 'address', 'tel', 'floors', 'start_time', 'end_time', 'no_serv_d', 'toilet', 'group:EXT', 'hulop_building',
+			'hulop_major_category', 'hulop_sub_category', 'hulop_minor_category', 'hulop_heading', 'hulop_angle', 'hulop_height', 'hulop_long_description' ].concat(i18nMenu([ 'name', 'address',
+			'hulop_long_description' ]));
 
 	PROPERTY_NAMES['toilet'] = [ 'sex', 'fee' ];
 
@@ -575,11 +575,20 @@ $hulop.editor = function() {
 		lastData.node_exit = {};
 		lastData.poi_exit = {};
 		source.getFeatures().forEach(function(feature) {
-			var exitID = feature.get('出入口ID');
-			if (exitID) {
-				addNodeExit(feature.get('対応ノードID'), exitID);
-				addPoiExit(feature.get('対応施設ID'), exitID);
-			}
+			var poiID = feature.get('facil_id');
+			poiID && feature.getKeys().forEach(function(key) {
+				var m = /^ent(\d+)_node$/.exec(key);
+				if (m) {
+					var nodeID = feature.get(key);
+					var exit = {
+						'facil_id' : poiID,
+						'ent_index' : Number(m[1]),
+						'node_id' : nodeID
+					};
+					addNodeExit(nodeID, exit);
+					addPoiExit(poiID, exit);
+				}
+			});
 		});
 	}
 
@@ -782,12 +791,7 @@ $hulop.editor = function() {
 	function findExit(feature) {
 		var nodeID = feature.get('node_id')
 		var poiID = feature.get('facil_id');
-		var exitList = (nodeID && getNodeExit(nodeID)) || (poiID && getPoiExit(poiID)) || [];
-		return exitList.map(function(id) {
-			return source.getFeatureById(id);
-		}).filter(function(exit) {
-			return exit
-		});
+		return (nodeID && getNodeExit(nodeID)) || (poiID && getPoiExit(poiID)) || [];
 	}
 
 	function hasNodeExit(node) {
@@ -1158,11 +1162,9 @@ $hulop.editor = function() {
 				  });
 				}
 			}
-		} else if (feature.get('出入口ID')) {
-			style = null;
-		} else if (feature.get('major_category') == '_nav_poi_') {
-			var heading = parseFloat(feature.get('heading') || 0);
-			var angle = parseFloat(feature.get('angle') || 180);
+		} else if (feature.get('hulop_major_category') == '_nav_poi_') {
+			var heading = parseFloat(feature.get('hulop_heading') || 0);
+			var angle = parseFloat(feature.get('hulop_angle') || 180);
 			var path = 'M 20 21.6 L 20 20 ';
 			var size = Math.min(20, 12 * Math.sqrt(180 / angle));
 			for (var i = -angle; i < angle + 10; i += 10) {
@@ -1239,15 +1241,12 @@ $hulop.editor = function() {
 		} else if (feature.get('link_id')) {
 			addLink(feature);
 		} else if (feature.get('facil_id')) {
-			var h = feature.get('height');
+			var h = feature.get('hulop_height');
 			if (h) {
-				h = Number(h.replace('B', '-'));
 				heights.indexOf(h) == -1 && heights.push(h);
 			}
-			getPoiExit(feature.get('facil_id')).forEach(function(exitID) {
-				var exit = source.getFeatureById(exitID);
-				var nodeID = exit && exit.get('対応ノードID');
-				var node = nodeID && source.getFeatureById(nodeID);
+			getPoiExit(feature.get('facil_id')).forEach(function(exit) {
+				var node = exit.node_id && source.getFeatureById(exit.node_id);
 				node && addNode(node);
 			});
 		}
@@ -1434,10 +1433,9 @@ $hulop.editor = function() {
 				return;
 			}
 			var path = [];
-			var key = feature.get('node_id') ? '対応施設ID' : '対応ノードID';
+			var key = feature.get('node_id') ? 'facil_id' : 'node_id';
 			nodes.forEach(function(exit) {
-				var id = exit.get(key);
-				var target = id && source.getFeatureById(id);
+				var target = source.getFeatureById(exit[key]);
 				if (target) {
 					path.push(feature.getGeometry().getCoordinates());
 					path.push(target.getGeometry().getCoordinates());
@@ -1610,8 +1608,8 @@ $hulop.editor = function() {
 			var exitList = findExit(feature); // Exit informations
 			exitList.length == 0 && addRemoveButton(feature);
 			exitList.forEach(function(exit) {
-				showPropertyTable(exit);
-				addRemoveButton(exit);
+//				showPropertyTable(exit);
+//				addRemoveButton(exit);
 			});
 		}
 		if (editable) {
@@ -1750,6 +1748,7 @@ $hulop.editor = function() {
 	}
 
 	function propertyRow(feature, name, value) {
+		var info = information_items[getCategory(feature)];
 		var tips = tooltips[getCategory(feature)];
 		var editable = READONLY_NAMES.indexOf(name) == -1;
 		if (name.startsWith('_NAVCOG_')) {
@@ -1757,18 +1756,18 @@ $hulop.editor = function() {
 				value = JSON.stringify(JSON.parse(value), null, '\t');
 			}
 		}
-		function objValue(obj, key, restore) {
-			var v = obj[key];
+		function objValue(key2, key1, restore) {
+			var v = info[key1] && info[key1][key2];
 			if (v) {
 				return v;
 			}
-			var m = key.match(/(.+?)([0-9]+)$/);
-			v = m && obj[m[1]];
+			var m = key1.match(/(.+?)([0-9]+)$/);
+			v = m && info[m[1]] && info[m[1]][key2];
 			if (v) {
 				return restore ? v + m[2] : v;
 			}
-			m = key.match(/(.+?)(:.+)$/);
-			v = m && obj[m[1]];
+			m = key1.match(/(.+?)(:.+)$/);
+			v = m && info[m[1]] && info[m[1]][key2];
 			if (v) {
 				return restore ? v + m[2] : v;
 			}
@@ -1777,9 +1776,9 @@ $hulop.editor = function() {
 		return $('<tr>', {
 			'class' : editable ? 'editable' : 'read_only'
 		}).append($('<td>', {
-			'text' : objValue(keynames, name, true) || name
+			'text' : objValue('name', name, true) || name
 		}), $('<td>', {
-			'title' : tips && objValue(tips, name),
+			'title' : objValue('desc', name),
 			'on' : {
 				'input' : function(event) {
 					editingProperty = true;
