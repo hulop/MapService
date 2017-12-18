@@ -37,7 +37,7 @@ public class Hokoukukan {
 	public static final String CATEGORY_TOILET = "toilet";
 	public static final String CATEGORY_HOSPITAL = "hospital";
 
-	private static final Pattern ENT_NODE = Pattern.compile("(ent\\d+_)node");
+	private static final Pattern ENT_NODE = Pattern.compile("^(ent\\d+_)node$");
 
 	public static List<String> listEntrances(JSONObject properties) {
 		List<String> entrances = new ArrayList<String>();

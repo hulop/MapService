@@ -143,26 +143,24 @@ $hulop.indoor = function() {
 				'dist' : toiletDist
 			}, function(data) {
 				console.log('Get Toilets: ' + (new Date().getTime() - start) + 'ms');
-				data.exitList.forEach(function(exit) {
-					var p = exit.properties;
-					var node = data.nodeMap[p['対応ノードID']];
-					var site = data.siteMap[p['対応施設ID']];
-					if (node && site) {
-						var lat = site.geometry.coordinates[1];
-						var lng = site.geometry.coordinates[0];
-						var floor = node.properties['floor'];
-						var marker = new ol.Feature({
-							'geometry' : new ol.geom.Point(ol.proj.transform([ lng, lat ], 'EPSG:4326', 'EPSG:3857'))
-						});
-						toiletMarkers.push({
-							'marker' : marker,
-							'floor' : floor,
-							'exit' : exit,
-							'node' : node,
-							'site' : site
-						});
+				for (var id in data) {
+					var site = data[id];
+					var properties = site.properties;
+					for (var key in properties) {
+						var m = /^(ent\d+_)fl$/.exec(key);
+						if (m) {
+							var lat = properties[m[1] + 'lat'];
+							var lng = properties[m[1] + 'lon'];
+							lat && lng && toiletMarkers.push({
+								'marker' : new ol.Feature({
+									'geometry' : new ol.geom.Point(ol.proj.transform([ lng, lat ], 'EPSG:4326', 'EPSG:3857'))
+								}),
+								'floor' : properties[key],
+								'site' : site
+							});
+						}
 					}
-				});
+				}
 				if (toiletMarkers.length > 0) {
 					showToilets(getCurrentFloor());
 					console.log(toiletMarkers.length + ' accessible toilets');
