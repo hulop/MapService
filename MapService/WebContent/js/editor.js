@@ -828,12 +828,12 @@ $hulop.editor = function() {
 		return removeValue('poi_exit', poiID, exitID);
 	}
 
-	function canRemoveFeature(feature) {
-		return canRemoveNode(feature) || canRemoveLink(feature) || canRemovePOI(feature) || canRemoveExit(feature);
+	function canRemoveFeature(feature, ent_index) {
+		return ent_index ? canRemoveExit(feature, ent_index) : canRemoveNode(feature) || canRemoveLink(feature) || canRemovePOI(feature);
 	}
 
-	function removeFeature(feature) {
-		var removed = removeNode(feature) || removeLink(feature) || removePOI(feature) || removeExit(feature);
+	function removeFeature(feature, ent_index) {
+		var removed = ent_index ? removeExit(feature, ent_index) : removeNode(feature) || removeLink(feature) || removePOI(feature);
 		removed && $('.modified').show();
 		return removed;
 	}
@@ -908,55 +908,54 @@ $hulop.editor = function() {
 		if (poi && poi.get('node_id')) {
 			poi = [ node, node = poi ][0];
 		}
-		var nodeID = node.get('node_id');
-		var exit, exitID;
-		getNodeExit(nodeID).forEach(function(id) {
-			if (!exit) {
-				var e = source.getFeatureById(id);
-				if (e && !e.get('対応施設ID')) {
-					exitID = id;
-					exit = e;
+		var nodeLatLng = ol.proj.transform(node.getGeometry().getCoordinates(), 'EPSG:3857', 'EPSG:4326');
+		var ent_index = 1;
+		for (var i = 1; i<= 10; i++) {
+			var lat = poi.get('ent' + i + '_lat');
+			var lon = poi.get('ent' + i + '_lon');
+			if (lat && lon) {
+				ent_index = i;
+				if (lat == nodeLatLng[1] && lon == nodeLatLng[0]) {
+					break;
 				}
+				ent_index++;
 			}
-		});
-		if (!exit) {
-			exitID = newID('exit');
-			addNodeExit(nodeID, exitID);
-			var p = {
-			};
-			p['出入口ID'] = exitID;
-			p['対応ノードID'] = nodeID;
-			p['出入口の名称'] = '';
-			var obj = newGeoJSON(p, ol.proj.transform(node.getGeometry().getCoordinates(), 'EPSG:3857', 'EPSG:4326'));
-			exit = newFeature(obj);
 		}
-		if (poi) {
-			var poiID = poi.get('facil_id');
-			exit.set('対応施設ID', poiID);
-			addPoiExit(poiID, exitID);
-		}
+
+		var nodeID = node.get('node_id');
+		var poiID = poi.get('facil_id');
+		poi.set('ent' + ent_index + '_lat', nodeLatLng[1]);
+		poi.set('ent' + ent_index + '_lon', nodeLatLng[0]);
+		poi.set('ent' + ent_index + '_node', nodeID);
+		poi.set('ent' + ent_index + '_n', '');
+		var exit = {
+			'facil_id' : poiID,
+			'ent_index' : ent_index,
+			'node_id' : nodeID
+		};
+		addNodeExit(nodeID, exit);
+		addPoiExit(poiID, exit);
 		showProperty(node);
 	}
 
-	function canRemoveExit(exit) {
-		var exitID = exit.get('出入口ID');
-		if (!exitID) {
-			return false;
-		}
-		var nodeID = exit.get('対応ノードID');
-		return nodeID && source.getFeatureById(nodeID);
+	function canRemoveExit(feature, ent_index) {
+		return true;
 	}
 
-	function removeExit(exit) {
-		var node = canRemoveExit(exit);
-		if (!node) {
-			return false;
+	function removeExit(feature, ent_index) {
+		var poiID = feature.get('facil_id');
+		var nodeID = feature.get('ent' + ent_index + '_node')
+		var re = new RegExp('^ent' + ent_index + '_.*$');
+		feature.getKeys().forEach(function(key) {
+			if (re.exec(key)) {
+				console.log(key);
+				feature.unset(key);
+			}
+		});
+		if (nodeID) {
+			removePoiExit(poiID, nodeID);
+			removeNodeExit(nodeID, poiID);
 		}
-		var exitID = exit.get('出入口ID');
-		var nodeID = exit.get('対応ノードID');
-		removePoiExit(exit.get('対応施設ID'), exitID);
-		removeNodeExit(nodeID, exitID);
-		source.removeFeature(exit);
 		showProperty(editingFeature);
 		return true;
 	}
@@ -1142,7 +1141,7 @@ $hulop.editor = function() {
 					})
 				})];
 				var dir = feature.get('direction');
-				
+
 				if (dir == 1 || dir == 2) {
 				var geometry = feature.getGeometry();
 				  geometry.forEachSegment(function(start, end) {
@@ -1210,7 +1209,7 @@ $hulop.editor = function() {
 		if (feature.error) {
 			if (Array.isArray(style)) {
 				style.forEach(function(s) {
-					s && s.getStroke() && s.getStroke().setColor('#c0c0c0');					
+					s && s.getStroke() && s.getStroke().setColor('#c0c0c0');
 				});
 			} else {
 				style && style.getStroke() && style.getStroke().setColor('#c0c0c0');
@@ -1568,9 +1567,7 @@ $hulop.editor = function() {
 		}
 		$('<tr>', {
 			'click' : function() {
-				var nodeID = feature.get('対応ノードID');
-				var node = nodeID && source.getFeatureById(nodeID);
-				showProperty(node || feature);
+				showProperty(feature);
 			}
 		}).append($('<td>', {
 			'text' : getDisplayName(feature, true)
@@ -1608,8 +1605,9 @@ $hulop.editor = function() {
 			var exitList = findExit(feature); // Exit informations
 			exitList.length == 0 && addRemoveButton(feature);
 			exitList.forEach(function(exit) {
-//				showPropertyTable(exit);
-//				addRemoveButton(exit);
+				var facility = source.getFeatureById(exit.facil_id);
+				showPropertyTable(facility, exit.ent_index);
+				addRemoveButton(facility, exit.ent_index);
 			});
 		}
 		if (editable) {
@@ -1627,7 +1625,7 @@ $hulop.editor = function() {
 		}
 	}
 
-	function showPropertyTable(feature) {
+	function showPropertyTable(feature, ent_index) {
 		var table = $('<table>').appendTo($('#properties'));
 		$('<caption>', {
 			'text' : getDisplayName(feature)
@@ -1647,19 +1645,6 @@ $hulop.editor = function() {
 			if (!added[name]) {
 				added[name] = true;
 				propertyRow(feature, name, value).appendTo(tbody);
-				if (value && name == '対応施設ID') {
-					var poi = source.getFeatureById(value);
-					var poiName = poi && poi.get('名称');
-					if (poiName) {
-						$('<tr>', {
-							'class' : 'read_only'
-						}).append($('<td>', {
-							'text' : M('CORRESPONDING_FACILITY')
-						}), $('<td>', {
-							'text' : poiName
-						})).appendTo(tbody)
-					}
-				}
 			}
 		}
 
@@ -1676,7 +1661,7 @@ $hulop.editor = function() {
 
 		var category = getCategory(feature);
 		var optional = OPTIONAL_NAMES[category] || [];
-		(PROPERTY_NAMES[category] || []).forEach(function(name) {
+		ent_index || (PROPERTY_NAMES[category] || []).forEach(function(name) {
 			var params = name.split(':');
 			if (params.length == 2 && params[0] == 'group' && appendGroup(params[1])) {
 				return;
@@ -1694,6 +1679,15 @@ $hulop.editor = function() {
 		var properties = feature.getProperties();
 		for ( var name in properties) {
 			if (name == 'geometry') {
+				continue;
+			}
+			var m = /^ent(\d+)_.*$/.exec(name);
+			if (ent_index) {
+				if (m && Number(m[1]) == ent_index) {
+					appendRow(name, properties[name]);
+				}
+				continue;
+			} else if (m) {
 				continue;
 			}
 			if (!appendOthers && !added[name]) {
@@ -1791,13 +1785,15 @@ $hulop.editor = function() {
 		}));
 	}
 
-	function addRemoveButton(feature) {
-		if (canRemoveFeature(feature)) {
+	function addRemoveButton(feature, ent_index) {
+		if (canRemoveFeature(feature, ent_index)) {
 			$('<button>', {
 				'text' : M('DELETE', getDisplayName(feature, true)),
 				'click' : function(event) {
 					var id = feature.getId();
-					removeFeature(feature) && getFeatureRow(id).remove();
+					if (removeFeature(feature, ent_index)) {
+						ent_index || getFeatureRow(id).remove();
+					}
 				}
 			}).appendTo($('#properties'));
 		}
@@ -1881,7 +1877,7 @@ $hulop.editor = function() {
 			}
 		});
 	}
-	
+
 	function getCategory(feature) {
 		if (feature.get('node_id')) {
 			return 'node';
@@ -1893,7 +1889,7 @@ $hulop.editor = function() {
 			return 'facility';
 		}
 	}
-	
+
 	function getSubCategory(feature) {
 		switch (properties.get("facil_type")) {
 		case 3:
