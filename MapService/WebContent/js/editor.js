@@ -198,10 +198,13 @@ $hulop.editor = function() {
 			if (fileText) {
 				try {
 					var features = JSON.parse(fileText);
-					if (features.type == 'FeatureCollection' && features.features && features.features.length > 0) {
-						var p = features.features[0].properties;
-						if (!(p['node_id'] || p['link_id'] || p['facil_id'])) {
-							alert('Unknown GeoJSON feature\n' + JSON.stringify(features.features[0], null, 4));
+					if (features.type == 'FeatureCollection' && features.features) {
+						var fmt = checkFeature(features);
+						if (fmt == 'H22' && $hulop.editor.importV1) {
+							features.features = $hulop.editor.importV1(features.features);
+							fmt = checkFeature(features);
+						}
+						if (fmt != 'H29') {
 							return;
 						}
 						var bounds;
@@ -439,6 +442,17 @@ $hulop.editor = function() {
 			});
 		});
 		initData();
+	}
+	
+	function checkFeature(features) {
+		if (features.type == 'FeatureCollection' && features.features && features.features.length > 0) {
+			var p = features.features[0].properties;
+			if (p['node_id'] || p['link_id'] || p['facil_id']) {
+				return 'H29';
+			} else if (p['ノードID'] || p['リンクID'] || p['施設ID'] || p['出入口ID']) {
+				return 'H22';
+			}
+		}
 	}
 
 	var vertex;

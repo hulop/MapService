@@ -20,9 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-$hulop.editor.exportV2 = function() {
-	var v1features = JSON.parse($hulop.editor.toFeatureCollection()).features;
-
+$hulop.editor.importV1 = function(v1features) {
 	// create index
 	var nodeMap = {}, entranceMap = {};
 	v1features.forEach(function(feature) {
@@ -34,10 +32,7 @@ $hulop.editor.exportV2 = function() {
 		}
 	});
 
-	return JSON.stringify({
-		'type' : 'FeatureCollection',
-		'features' : convert(v1features)
-	}, null, '\t');
+	return convert(v1features);
 
 	/*
 	 * convert from v1 to v2
