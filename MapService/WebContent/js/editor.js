@@ -536,8 +536,7 @@ $hulop.editor = function() {
 
 	function initData(nodemap, features) {
 		lastData = {
-			'node_exit' : {},
-			'facil_exit' : {},
+			'exit' : {},
 			'original' : {},
 			'modified' : []
 		};
@@ -570,8 +569,7 @@ $hulop.editor = function() {
 	}
 
 	function resetExit() {
-		lastData.node_exit = {};
-		lastData.facil_exit = {};
+		lastData.exit = {};
 		source.getFeatures().forEach(function(feature) {
 			var facilID = feature.get('facil_id');
 			facilID && feature.getKeys().forEach(function(key) {
@@ -583,8 +581,8 @@ $hulop.editor = function() {
 						'ent_index' : Number(m[1]),
 						'node_id' : nodeID
 					};
-					addNodeExit(nodeID, exit);
-					addFacilExit(facilID, exit);
+					addExit(nodeID, exit);
+					addExit(facilID, exit);
 				}
 			});
 		});
@@ -789,41 +787,24 @@ $hulop.editor = function() {
 	function findExit(feature) {
 		var nodeID = feature.get('node_id')
 		var facilID = feature.get('facil_id');
-		return (nodeID && getNodeExit(nodeID)) || (facilID && getFacilExit(facilID)) || [];
+		return (nodeID && getExit(nodeID)) || (facilID && getExit(facilID)) || [];
 	}
 
-	function hasNodeExit(node) {
-		var exitList = getNodeExit(node.get('node_id'));
+	function hasExit(feature) {
+		var exitList = findExit(feature);
 		return exitList && exitList.length > 0;
 	}
 
-	function getNodeExit(nodeID) {
-		return getValues('node_exit', nodeID);
+	function getExit(nodeID) {
+		return getValues('exit', nodeID);
 	}
 
-	function addNodeExit(nodeID, exitID) {
-		return addValue('node_exit', nodeID, exitID);
+	function addExit(nodeID, exitID) {
+		return addValue('exit', nodeID, exitID);
 	}
 
-	function removeNodeExit(nodeID, exitID) {
-		return removeValue('node_exit', nodeID, exitID);
-	}
-
-	function hasFacilExit(node) {
-		var exitList = getFacilExit(node.get('facil_id'));
-		return exitList && exitList.length > 0;
-	}
-
-	function getFacilExit(facilID) {
-		return getValues('facil_exit', facilID);
-	}
-
-	function addFacilExit(facilID, exitID) {
-		return addValue('facil_exit', facilID, exitID);
-	}
-
-	function removeFacilExit(facilID, exitID) {
-		return removeValue('facil_exit', facilID, exitID);
+	function removeExit(nodeID, exitID) {
+		return removeValue('exit', nodeID, exitID);
 	}
 
 	function canRemoveFeature(feature, ent_index) {
@@ -846,18 +827,17 @@ $hulop.editor = function() {
 
 	function createNode(latlng) {
 		var p = {
+			'node_id': newID('node'),
+			'floor': getFloor()
 		};
-		p['node_id'] = newID('node');
-		p['floor'] = getFloor();
-		var obj = newGeoJSON(p, latlng);
-		var feature = newFeature(obj);
+		var feature = newFeature(newGeoJSON(p, latlng));
 		showProperty(feature);
 		return feature;
 	}
 
 	function canRemoveNode(node) {
 		var nodeID = node.get('node_id');
-		if (!nodeID || hasNodeExit(node)) {
+		if (!nodeID || hasExit(node)) {
 			return false;
 		}
 		for (var i = 1; i <= 10; i++) {
@@ -904,15 +884,14 @@ $hulop.editor = function() {
 		default:
 			break;
 		}
-		var obj = newGeoJSON(p, latlng);
-		var feature = newFeature(obj);
+		var feature = newFeature(newGeoJSON(p, latlng));
 		showProperty(feature);
 		return feature;
 	}
 
 	function canRemoveFacility(facil) {
 		var facilID = facil.get('facil_id');
-		return facilID && !hasFacilExit(facil);
+		return facilID && !hasExit(facil);
 	}
 
 	function removeFacility(facil) {
@@ -953,8 +932,8 @@ $hulop.editor = function() {
 			'ent_index' : ent_index,
 			'node_id' : nodeID
 		};
-		addNodeExit(nodeID, exit);
-		addFacilExit(facilID, exit);
+		addExit(nodeID, exit);
+		addExit(facilID, exit);
 		showProperty(node);
 	}
 
@@ -973,8 +952,8 @@ $hulop.editor = function() {
 			}
 		});
 		if (nodeID) {
-			removeFacilExit(facilID, nodeID);
-			removeNodeExit(nodeID, facilID);
+			removeExit(facilID, nodeID);
+			removeExit(nodeID, facilID);
 		}
 		showProperty(editingFeature);
 		return true;
@@ -994,15 +973,15 @@ $hulop.editor = function() {
 			}
 		});
 		var p = {
+			'link_id': linkID,
+			'start_id': node1.get('node_id'),
+			'end_id': node2.get('node_id'),
+			'rt_struct': 1,
+			'direction': 0,
+			'vtcl_slope': 0,
+			'width': 99,
+			'lev_diff': 0
 		};
-		p['link_id'] = linkID;
-		p['start_id'] = node1.get('node_id');
-		p['end_id'] = node2.get('node_id');
-		p['rt_struct'] = 1;
-		p['direction'] = 0;
-		p['vtcl_slope'] = 0;
-		p['width'] = 99;
-		p['lev_diff'] = 0;
 		var obj = newGeoJSON(p, ol.proj.transform(node1.getGeometry().getCoordinates(), 'EPSG:3857', 'EPSG:4326'), ol.proj.transform(node2.getGeometry()
 				.getCoordinates(), 'EPSG:3857', 'EPSG:4326'));
 		var feature = newFeature(obj);
@@ -1115,7 +1094,7 @@ $hulop.editor = function() {
 			odd = !odd;
 		}
 		if (feature.get('node_id')) {
-			var exit = hasNodeExit(feature);
+			var exit = hasExit(feature);
 			style = new ol.style.Style({
 				'image' : new ol.style.Circle({
 					'radius' : exit ? 9 : 8,
@@ -1264,7 +1243,7 @@ $hulop.editor = function() {
 			if (h) {
 				heights.indexOf(h) == -1 && heights.push(h);
 			}
-			getFacilExit(feature.get('facil_id')).forEach(function(exit) {
+			getExit(feature.get('facil_id')).forEach(function(exit) {
 				var node = exit.node_id && source.getFeatureById(exit.node_id);
 				node && addNode(node);
 			});
