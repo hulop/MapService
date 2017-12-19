@@ -88,7 +88,7 @@
 		<div class="inner">
 			<fieldset>
 				<legend>GeoJSON</legend>
-				<button id="export_button">Export</button> | <button id="export_button_2017">Export 2017 Specification</button><hr>
+				<button id="export_button">Export</button><hr>
 				<input type="file" id="import_file">
 				<button id="import_button">Import</button>
 			</fieldset>

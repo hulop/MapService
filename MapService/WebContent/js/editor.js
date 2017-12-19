@@ -172,9 +172,6 @@ $hulop.editor = function() {
 		$('#export_button').on('click', function(event) {
 			downloadFile(toFeatureCollection(), 'MapData.geojson');
 		});
-		$('#export_button_2017').on('click', function(event) {
-			$hulop.editor.exportV2 && downloadFile($hulop.editor.exportV2(), 'SpatialNetwork2017.geojson');
-		});
 		$('#delete_button').on('click', function(event) {
 			source.getFeatures().forEach(function(feature) {
 				source.removeFeature(feature);
@@ -201,7 +198,12 @@ $hulop.editor = function() {
 			if (fileText) {
 				try {
 					var features = JSON.parse(fileText);
-					if (features.type == 'FeatureCollection' && features.features) {
+					if (features.type == 'FeatureCollection' && features.features && features.features.length > 0) {
+						var p = features.features[0].properties;
+						if (!(p['node_id'] || p['link_id'] || p['facil_id'])) {
+							alert('Unknown GeoJSON feature\n' + JSON.stringify(features.features[0], null, 4));
+							return;
+						}
 						var bounds;
 						function addCoords(crd) {
 							if (typeof (crd[0]) == 'number') {
@@ -1038,7 +1040,7 @@ $hulop.editor = function() {
 	}
 
 	function newGeoJSON(properties, p1, p2) {
-		properties.file = EDITOR_FILE;
+		properties.hulop_file = EDITOR_FILE;
 		return {
 			'type' : 'Feature',
 			'geometry' : p2 ? {
@@ -1648,7 +1650,7 @@ $hulop.editor = function() {
 		})).appendTo(thead);
 		var added = {
 			'category' : true,
-			'file' : true
+			'hulop_file' : true
 		};
 		function appendRow(name, value) {
 			if (!added[name]) {
@@ -1668,8 +1670,16 @@ $hulop.editor = function() {
 			return true;
 		}
 
-		var category = getCategory(feature);
-		ent_index || (PROPERTY_NAMES[category] || []).forEach(function(name) {
+		var names;
+		if (ent_index) {
+			var ent = 'ent' + ent_index;
+			names = [ ent + '_lat', ent + '_lon', ent + '_n', ent + '_w', ent + '_d', ent + '_brr', ent + '_fl', ent + '_node' ].
+			concat(i18nMenu([ ent + '_n' ]));
+		} else {
+			var category = getCategory(feature);
+			names = PROPERTY_NAMES[category];
+		}
+		(names || []).forEach(function(name) {
 			var params = name.split(':');
 			if (params.length == 2 && params[0] == 'group' && appendGroup(params[1])) {
 				return;
@@ -1683,25 +1693,18 @@ $hulop.editor = function() {
 			}
 			appendRow(name, value);
 		});
-		var appendOthers;
-		var properties = feature.getProperties();
-		for ( var name in properties) {
-			if (name == 'geometry') {
-				continue;
-			}
-			var m = /^ent(\d+)_.*$/.exec(name);
-			if (ent_index) {
-				if (m && Number(m[1]) == ent_index) {
-					appendRow(name, properties[name]);
+		if (!ent_index) {
+			var appendOthers;
+			var properties = feature.getProperties();
+			for ( var name in properties) {
+				if (/^(geometry|ent\d+_.*)$/.exec(name)) {
+					continue;
 				}
-				continue;
-			} else if (m) {
-				continue;
+				if (!appendOthers && !added[name]) {
+					appendOthers = appendGroup('OTHERS');
+				}
+				appendRow(name, properties[name]);
 			}
-			if (!appendOthers && !added[name]) {
-				appendOthers = appendGroup('OTHERS');
-			}
-			appendRow(name, properties[name]);
 		}
 
 		function expandGroup(tr, expand) {
