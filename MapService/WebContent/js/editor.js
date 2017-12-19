@@ -78,6 +78,7 @@ $hulop.editor = function() {
 	var READONLY_NAMES = [ 'node_id', 'lat', 'lon', 'link_id', 'start_id', 'end_id', 'distance', 'facil_id', 'link1_id', 'link2_id', 'link3_id', 'link4_id', 'link5_id', 'link6_id', 'link7_id',
 		'link8_id', 'link9_id', 'link10_id', 'geometry' ];
 	var EDITOR_FILE = 'EDITOR';
+	var STRING_PROPERTIES = /^(link_id|start_id|end_id|start_time|end_time|start_date|end_date|no_serv_d|st_name(_.+)?|node_id|link\d+_id|facil_id|name(_.+)?|address(_.+)?|tel|fax|mail|close_day|med_dept|ent\d+_n(_.+)?|ent\d+_node|hulop_file|hulop_elevator_equipments|hulop_long_description(_.+)?)$/;
 	var downKey, keyState = {}, ADD_KEY = 65, DO_POI_KEY = 68, SPLIT_KEY = 83, COPY_KEY = 67, PASTE_KEY = 86;
 	var lastData, map, source, select, modify, callback, start_feature, poi_lines, editingFeature, editingProperty, clipboardFeature;
 	var start_point, switch_line, from_feature;
@@ -1765,6 +1766,7 @@ $hulop.editor = function() {
 			}
 		}
 
+		var isString = STRING_PROPERTIES.exec(name);
 		return $('<tr>', {
 			'class' : editable ? 'editable' : 'read_only'
 		}).append($('<td>', {
@@ -1774,7 +1776,17 @@ $hulop.editor = function() {
 			'on' : {
 				'input' : function(event) {
 					editingProperty = true;
-					feature.set(name, $(event.target).text());
+					var text = $(event.target).text().trim();
+					if (isString) {
+						feature.set(name, text);
+					} else {
+						if (text == '' || isNaN(text)) {
+							feature.unset(name);
+						} else {
+							feature.set(name, Number(text));
+						}
+					}
+					console.log(name + ' = ' +  JSON.stringify(feature.get(name)));
 					editingProperty = false;
 				}
 			},
