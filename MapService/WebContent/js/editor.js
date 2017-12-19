@@ -93,16 +93,14 @@ $hulop.editor = function() {
 	console.log(args);
 
 	var defaultLang = $hulop.messages.defaultLang == 'ja' ? 'ja' : 'en';
-	var messages = {}, information_items = {}, keynames = {}, tooltips = {};
+	var messages = {}, information_items = {};
 	$.ajax({
 		'type' : 'get',
 		// 'async' : false,
 		'url' : 'editor/messages_' + defaultLang + '.json',
 		'dataType' : 'json',
 		'success' : function(data) {
-			tooltips = data.tooltips || {};
 			messages = data.messages || {};
-			keynames = data.keynames || {};
 			information_items = data.information_items || {};
 			console.log(data);
 			traverseTextNode(document.body, function(el) {
@@ -1743,7 +1741,6 @@ $hulop.editor = function() {
 
 	function propertyRow(feature, name, value) {
 		var info = information_items[getCategory(feature)];
-		var tips = tooltips[getCategory(feature)];
 		var editable = READONLY_NAMES.indexOf(name) == -1;
 		if (name.startsWith('_NAVCOG_')) {
 			if (value.startsWith('{"')) {
@@ -1809,7 +1806,7 @@ $hulop.editor = function() {
 
 	function getDisplayName(feature, short) {
 		var category = getCategory(feature);
-		return keynames[short ? category + '_SHORT' : category] || category;
+		return messages[category + (short ? '_SHORT' : '_LONG')] || category;
 	}
 
 	function getFloor() {
