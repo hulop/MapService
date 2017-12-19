@@ -53,32 +53,37 @@ $hulop.editor = function() {
 
 	PROPERTY_NAMES['node'] = [ 'node_id', 'lat', 'lon', 'floor', 'link1_id', 'link2_id', 'link3_id', 'link4_id', 'link5_id', 'link6_id', 'link7_id', 'link8_id', 'link9_id', 'link10_id' ];
 
-	PROPERTY_NAMES['link'] = [ 'link_id', 'start_id', 'end_id', 'distance', 'rt_struct', 'route_type', 'direction', 'tfc_restr', 'handrail', 'roof', 'waterway', 'day_trfc', 'main_user', 'st_name' ]
-			.concat(i18nMenu([ 'st_name' ])).concat(
-					[ 'group:ROAD', 'width', 'w_min_lat', 'w_min_lon', 'vtcl_slope', 'vSlope_lat', 'vSlope_lon', 'vtcl_slope', 'vSlope_max', 'vSlope_lat', 'vSlope_lon', 'condition', 'lev_diff', 'levDif_lat',
-							'levDif_lon', 'road_low_priority', 'group:STAIR', 'stair', 'group:ELEVATOR', 'elevator', 'elevator_equipments', 'elev_lat', 'elev_lon',
-							'group:A11Y', 'brail_tile', 'facility', 'facil_lat', 'facil_lon', 'group:TRAFFIC', 'bus_stop', 'bus_s_lat', 'bus_s_lon',
-							'tfc_signal', 'tfc_s_type', 'tfc_s_lat', 'tfc_s_lon', 'group:SERVICE', 'start_time', 'end_time', 'start_date', 'end_date', 'no_serv_d'
-							 ]);
-	PROPERTY_NAMES['facility'] = [ 'facil_id', 'lat', 'lon', 'name_ja', 'name_en', 'address', 'tel', 'floors', 'start_time', 'end_time', 'no_serv_d', 'toilet', 'group:EXT', 'hulop_building',
-			'hulop_major_category', 'hulop_sub_category', 'hulop_minor_category', 'hulop_heading', 'hulop_angle', 'hulop_height', 'hulop_long_description' ].concat(i18nMenu([ 'name', 'address',
-			'hulop_long_description' ]));
-
-	PROPERTY_NAMES['toilet'] = [ 'sex', 'fee' ];
-
-	PROPERTY_NAMES['evacuation'] = [ 'med_dept', 'flood' ].concat(i18nMenu([ 'med_dept' ]));
-
-	PROPERTY_NAMES['hospital'] = [ 'subject', 'close_day' ];
+	PROPERTY_NAMES['link'] = [ 'group:LAYER1', 
+		'link_id', 'start_id', 'end_id', 'distance', 'rt_struct', 'route_type', 'direction', 'width', 'vtcl_slope', 'lev_diff', 'tfc_signal', 'tfc_s_type', 'brail_tile', 'elevator', 
+		'group:LAYER2', 
+		'start_time', 'end_time', 'start_date', 'end_date', 'no_serv_d', 'tfc_restr', 'w_min', 'w_min_lat', 'w_min_lon', 'vSlope_max', 'vSlope_lat', 'vSlope_lon', 
+		'hSlope_max', 'hSlope_lat', 'hSlope_lon', 'condition', 'levDif_max', 'levDif_lat', 'levDif_lon', 'stair', 'handrail', 'roof', 'waterway', 'bus_stop', 'bus_s_lat', 'bus_s_lon', 
+		'facility', 'facil_lat', 'facil_lon', 'elev_lat', 'elev_lon', 'door_type', 'tfc_s_lat', 'tfc_s_lon', 'day_trfc', 'main_user', 'st_name', 
+		'group:LAYER3', 
+		'hulop_road_low_priority', 'hulop_elevator_equipments' ]
+		.concat(i18nMenu([ 'st_name' ]));
+	
+	PROPERTY_NAMES['facility'] = [ 'group:LAYER1',
+		'facil_id', 'facil_type', 'evacuation', 'temporary', 'name_ja', 'name_en', 'address', 'tel', 'lat', 'lon', 'floors', 'toilet', 'elevator', 'escalator', 'parking', 'barrier', 
+		'nursing', 'brail_tile', 'info', 'info_board', 
+		'group:LAYER2', 
+		'name_hira', 'fax', 'mail', 'start_time', 'end_time', 'no_serv_d', 
+		'group:TOILET', 
+		'sex', 'fee',
+		'group:HOSPITAL', 
+		'subject', 'close_day',
+		'group:EVACUATION', 
+		'med_dept', 'flood',
+		'group:LAYER3',
+		'hulop_building', 'hulop_major_category', 'hulop_sub_category', 'hulop_minor_category', 'hulop_heading', 'hulop_angle', 'hulop_height', 'hulop_long_description' ]
+		.concat(i18nMenu([ 'name', 'address', 'med_dept', 'hulop_long_description' ]));
 
 	console.log(PROPERTY_NAMES);
 
-	var OPTIONAL_NAMES = {};
-	OPTIONAL_NAMES['node'] = [ 'link1_id', 'link2_id', 'link3_id', 'link4_id', 'link5_id', 'link6_id', 'link7_id', 'link8_id', 'link9_id', 'link10_id' ];
-
-	var READONLY_NAMES = [ 'node_id', 'lat', 'lon', 'link_id', 'start_id', 'end_id', 'distance', 'facil_id', 'link1_id', 'link2_id', 'link3_id', 'link4_id', 'link5_id', 'link6_id', 'link7_id',
-		'link8_id', 'link9_id', 'link10_id', 'geometry' ];
 	var EDITOR_FILE = 'EDITOR';
-	var STRING_PROPERTIES = /^(link_id|start_id|end_id|start_time|end_time|start_date|end_date|no_serv_d|st_name(_.+)?|node_id|link\d+_id|facil_id|name(_.+)?|address(_.+)?|tel|fax|mail|close_day|med_dept|ent\d+_n(_.+)?|ent\d+_node|hulop_file|hulop_elevator_equipments|hulop_long_description(_.+)?)$/;
+	var OPTIONAL_KEYS = /^(link\d+_id)$/;			
+	var READONLY_KEYS = /^(node_id|lat|lon|link_id|start_id|end_id|distance|facil_id|link\d+_id|ent\d+_lat|ent\d+_lon|ent\d_node|geometry)$/;
+	var STRING_KEYS = /^(link_id|start_id|end_id|start_time|end_time|start_date|end_date|no_serv_d|st_name(_.+)?|node_id|link\d+_id|facil_id|name(_.+)?|address(_.+)?|tel|fax|mail|close_day|med_dept|ent\d+_n(_.+)?|ent\d+_node|hulop_file|hulop_elevator_equipments|hulop_long_description(_.+)?)$/;
 	var downKey, keyState = {}, ADD_KEY = 65, DO_POI_KEY = 68, SPLIT_KEY = 83, COPY_KEY = 67, PASTE_KEY = 86;
 	var lastData, map, source, select, modify, callback, start_feature, poi_lines, editingFeature, editingProperty, clipboardFeature;
 	var start_point, switch_line, from_feature;
@@ -484,7 +489,7 @@ $hulop.editor = function() {
 		var properties = from.getProperties();
 		for ( var name in properties) {
 			var value = properties[name];
-			if (READONLY_NAMES.indexOf(name) == -1) {
+			if (!READONLY_KEYS.exec(name)) {
 				to.set(name, value);
 			}
 		}
@@ -910,7 +915,7 @@ $hulop.editor = function() {
 		}
 		var nodeLatLng = ol.proj.transform(node.getGeometry().getCoordinates(), 'EPSG:3857', 'EPSG:4326');
 		var ent_index = 1;
-		for (var i = 1; i<= 10; i++) {
+		for (var i = 1; i <= 10; i++) {
 			var lat = facil.get('ent' + i + '_lat');
 			var lon = facil.get('ent' + i + '_lon');
 			if (lat && lon) {
@@ -1282,7 +1287,11 @@ $hulop.editor = function() {
 				}
 			}
 			findExit(feature).forEach(function(exit) {
-				exit.setGeometry(new ol.geom.Point(nodeCoordinate));
+				var facil = source.getFeatureById(exit.facil_id);
+				if (facil) {
+					facil.set('ent' + exit.ent_index + '_lat', latlng[1]);
+					facil.set('ent' + exit.ent_index + '_lon', latlng[0]);
+				}
 			});
 		}
 		var linkID = feature.get('link_id');
@@ -1660,7 +1669,6 @@ $hulop.editor = function() {
 		}
 
 		var category = getCategory(feature);
-		var optional = OPTIONAL_NAMES[category] || [];
 		ent_index || (PROPERTY_NAMES[category] || []).forEach(function(name) {
 			var params = name.split(':');
 			if (params.length == 2 && params[0] == 'group' && appendGroup(params[1])) {
@@ -1668,7 +1676,7 @@ $hulop.editor = function() {
 			}
 			var value = feature.get(name);
 			if (typeof value == 'undefined') {
-				if (optional.indexOf(name) != -1) {
+				if (OPTIONAL_KEYS.exec(name)) {
 					return;
 				}
 				value = '';
@@ -1707,15 +1715,7 @@ $hulop.editor = function() {
 			}
 		}
 		function resetView() {
-			var noCollapse = [ M('GROUP_ROAD') ];
-			switch (feature.get('route_type')) {
-			case 3:
-				noCollapse.push(M('GROUP_ELEVATOR'));
-				break;
-			case 5:
-				noCollapse.push(M('GROUP_STAIR'));
-				break;
-			}
+			var noCollapse = [ M('GROUP_LAYER1') ];
 			table.find('tbody tr.group').each(function() {
 				var tr = $(this);
 				if (noCollapse.indexOf(tr.text()) != -1) {
@@ -1743,30 +1743,48 @@ $hulop.editor = function() {
 
 	function propertyRow(feature, name, value) {
 		var info = information_items[getCategory(feature)];
-		var editable = READONLY_NAMES.indexOf(name) == -1;
+		var editable = !READONLY_KEYS.exec(name);
 		if (name.startsWith('_NAVCOG_')) {
 			if (value.startsWith('{"')) {
 				value = JSON.stringify(JSON.parse(value), null, '\t');
 			}
 		}
 		function objValue(key2, key1, restore) {
-			var v = info[key1] && info[key1][key2];
+			var v = info[key1];
 			if (v) {
+				return v[key2];
+			}
+			var m = /^(.+)(\d+)(.+?)$/.exec(key1);
+			var num;
+			if (m) {
+				v = info[m[1] + '#' + m[3]];
+				num = m[2];
+				if (v) {
+					v = v[key2];
+					if (v && restore) {
+						v = v.replace('#', num);
+					}
+					return v;
+				}
+				key1 = m[1] + '#' + m[3];
+			}
+			m = /^(.+)_(.+?)$/.exec(key1);
+			if (m) {
+				v = info[m[1]];
+				if (v) {
+					v = v[key2];
+					if (v && restore) {
+						if (num) {
+							v = v.replace('#', num);
+						}
+						v += ' (' + m[2] + ')';
+					}
+				}
 				return v;
-			}
-			var m = key1.match(/(.+?)([0-9]+)$/);
-			v = m && info[m[1]] && info[m[1]][key2];
-			if (v) {
-				return restore ? v + m[2] : v;
-			}
-			m = key1.match(/(.+?)(:.+)$/);
-			v = m && info[m[1]] && info[m[1]][key2];
-			if (v) {
-				return restore ? v + m[2] : v;
 			}
 		}
 
-		var isString = STRING_PROPERTIES.exec(name);
+		var isString = STRING_KEYS.exec(name);
 		return $('<tr>', {
 			'class' : editable ? 'editable' : 'read_only'
 		}).append($('<td>', {

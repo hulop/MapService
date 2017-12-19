@@ -44,17 +44,16 @@
 		"DATA_LIST": "データ一覧",
 		"DATA": "データ",
 		"DELETE": "%1を削除",
-		"GROUP_EXT": "拡張",
+		"GROUP_LAYER1": "第1層 (必須)",
+		"GROUP_LAYER2": "第2層 (任意)",
+		"GROUP_LAYER3": "第3層 (独自)",
 		"GROUP_I18N_EN": "国際化 (English)",
 		"GROUP_I18N_JA": "国際化 (Japanese)",
 		"GROUP_I18N_ES": "国際化 (Spanish)",
 		"GROUP_I18N_FR": "国際化 (French)",
-		"GROUP_ROAD": "幅員・勾配・段差",
-		"GROUP_STAIR": "階段",
-		"GROUP_ELEVATOR": "エレベーター",
-		"GROUP_A11Y": "障害者補助",
-		"GROUP_TRAFFIC": "バス停・信号",
-		"GROUP_SERVICE": "供用",
+		"GROUP_TOILET": "公共トイレ（単体）の情報",
+		"GROUP_HOSPITAL": "医療施設の情報",
+		"GROUP_EVACUATION": "避難場所・避難所の情報",
 		"GROUP_OTHERS": "その他"
 	},
 	"information_items": {
@@ -302,6 +301,10 @@
 			"temporary": {
 				"name": "帰宅困難者一時滞在施設",
 				"desc": "0：指定なし、1：指定あり、99：不明"
+			},
+			"name": {
+				"name": "名称",
+				"desc": "施設の名称、名称がない場合は空欄、不明の場合は「99」を記入"
 			},
 			"name_ja": {
 				"name": "名称",

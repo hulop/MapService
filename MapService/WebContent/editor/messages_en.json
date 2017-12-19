@@ -44,17 +44,16 @@
 		"DATA_LIST": "List of data",
 		"DATA": "Data",
 		"DELETE": "Delete %1",
-		"GROUP_EXT": "Extension",
+		"GROUP_LAYER1": "Layer 1 (mandatory)",
+		"GROUP_LAYER2": "Layer 2 (optional)",
+		"GROUP_LAYER3": "Layer 3 (extension)",
 		"GROUP_I18N_EN": "i18n (English)",
 		"GROUP_I18N_JA": "i18n (Japanese)",
 		"GROUP_I18N_ES": "i18n (Spanish)",
 		"GROUP_I18N_FR": "i18n (French)",
-		"GROUP_ROAD": "Road Width, Slope, Bump",
-		"GROUP_STAIR": "Stairway",
-		"GROUP_ELEVATOR": "Elevator",
-		"GROUP_A11Y": "Accessibility",
-		"GROUP_TRAFFIC": "Bus stop, Traffic light",
-		"GROUP_SERVICE": "Service",
+		"GROUP_TOILET": "Information of Public Toilet",
+		"GROUP_HOSPITAL": "Information of Hospital",
+		"GROUP_EVACUATION": "Information of Designated Shelter",
 		"GROUP_OTHERS": "Others"
 	},
 	"information_items": {
@@ -302,6 +301,10 @@
 			"temporary": {
 				"name": "Temporary stay facility",
 				"desc": "0: none designated, 1: designated, 99: unknown"
+			},
+			"name": {
+				"name": "Name",
+				"desc": "Facility name. Leave this field blank if there is no name. Enter \"99\" if it is unknown."
 			},
 			"name_ja": {
 				"name": "Name (Japanese)",
