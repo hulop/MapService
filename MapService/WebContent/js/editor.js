@@ -1637,7 +1637,7 @@ $hulop.editor = function() {
 	function showPropertyTable(feature, ent_index) {
 		var table = $('<table>').appendTo($('#properties'));
 		$('<caption>', {
-			'text' : getDisplayName(feature)
+			'text' : getDisplayName(feature, false, ent_index)
 		}).appendTo(table);
 		var thead = $('<thead>').appendTo(table);
 		var tbody = $('<tbody>').appendTo(table);
@@ -1816,7 +1816,7 @@ $hulop.editor = function() {
 	function addRemoveButton(feature, ent_index) {
 		if (canRemoveFeature(feature, ent_index)) {
 			$('<button>', {
-				'text' : M('DELETE', getDisplayName(feature, true)),
+				'text' : M('DELETE', getDisplayName(feature, true, ent_index)),
 				'click' : function(event) {
 					var id = feature.getId();
 					if (removeFeature(feature, ent_index)) {
@@ -1835,8 +1835,8 @@ $hulop.editor = function() {
 		return text;
 	}
 
-	function getDisplayName(feature, short) {
-		var category = getCategory(feature);
+	function getDisplayName(feature, short, ent_index) {
+		var category = ent_index ? 'entrance' : getCategory(feature);
 		return messages[category + (short ? '_SHORT' : '_LONG')] || category;
 	}
 
