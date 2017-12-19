@@ -277,20 +277,20 @@ $hulop.editor = function() {
 				createNode(latLng);
 				break;
 			case DO_POI_KEY:
-				createPOI(latLng);
+				createFacility(latLng);
 				break;
 			case 70: // F
-				createPOI(latLng, 'hospital');
+				createFacility(latLng, 'hospital');
 				break;
 			case 71: // G
-				createPOI(latLng, 'toilet');
+				createFacility(latLng, 'toilet');
 				break;
 			case 72: // H
-				createPOI(latLng, 'evacuation');
+				createFacility(latLng, 'evacuation');
 				break;
 			case PASTE_KEY:
 				var category = clipboardFeature && clipboardFeature.get('facil_id') && getCategory(clipboardFeature);
-				category && copyProperties(clipboardFeature, createPOI(latLng, category))
+				category && copyProperties(clipboardFeature, createFacility(latLng, category))
 				break;
 			default:
 				var feature = getEventFeature(event);
@@ -537,7 +537,7 @@ $hulop.editor = function() {
 	function initData(nodemap, features) {
 		lastData = {
 			'node_exit' : {},
-			'poi_exit' : {},
+			'facil_exit' : {},
 			'original' : {},
 			'modified' : []
 		};
@@ -571,20 +571,20 @@ $hulop.editor = function() {
 
 	function resetExit() {
 		lastData.node_exit = {};
-		lastData.poi_exit = {};
+		lastData.facil_exit = {};
 		source.getFeatures().forEach(function(feature) {
-			var poiID = feature.get('facil_id');
-			poiID && feature.getKeys().forEach(function(key) {
+			var facilID = feature.get('facil_id');
+			facilID && feature.getKeys().forEach(function(key) {
 				var m = /^ent(\d+)_node$/.exec(key);
 				if (m) {
 					var nodeID = feature.get(key);
 					var exit = {
-						'facil_id' : poiID,
+						'facil_id' : facilID,
 						'ent_index' : Number(m[1]),
 						'node_id' : nodeID
 					};
 					addNodeExit(nodeID, exit);
-					addPoiExit(poiID, exit);
+					addFacilExit(facilID, exit);
 				}
 			});
 		});
@@ -788,8 +788,8 @@ $hulop.editor = function() {
 
 	function findExit(feature) {
 		var nodeID = feature.get('node_id')
-		var poiID = feature.get('facil_id');
-		return (nodeID && getNodeExit(nodeID)) || (poiID && getPoiExit(poiID)) || [];
+		var facilID = feature.get('facil_id');
+		return (nodeID && getNodeExit(nodeID)) || (facilID && getFacilExit(facilID)) || [];
 	}
 
 	function hasNodeExit(node) {
@@ -809,29 +809,29 @@ $hulop.editor = function() {
 		return removeValue('node_exit', nodeID, exitID);
 	}
 
-	function hasPoiExit(node) {
-		var exitList = getPoiExit(node.get('facil_id'));
+	function hasFacilExit(node) {
+		var exitList = getFacilExit(node.get('facil_id'));
 		return exitList && exitList.length > 0;
 	}
 
-	function getPoiExit(poiID) {
-		return getValues('poi_exit', poiID);
+	function getFacilExit(facilID) {
+		return getValues('facil_exit', facilID);
 	}
 
-	function addPoiExit(poiID, exitID) {
-		return addValue('poi_exit', poiID, exitID);
+	function addFacilExit(facilID, exitID) {
+		return addValue('facil_exit', facilID, exitID);
 	}
 
-	function removePoiExit(poiID, exitID) {
-		return removeValue('poi_exit', poiID, exitID);
+	function removeFacilExit(facilID, exitID) {
+		return removeValue('facil_exit', facilID, exitID);
 	}
 
 	function canRemoveFeature(feature, ent_index) {
-		return ent_index ? canRemoveExit(feature, ent_index) : canRemoveNode(feature) || canRemoveLink(feature) || canRemovePOI(feature);
+		return ent_index ? canRemoveExit(feature, ent_index) : canRemoveNode(feature) || canRemoveLink(feature) || canRemoveFacility(feature);
 	}
 
 	function removeFeature(feature, ent_index) {
-		var removed = ent_index ? removeExit(feature, ent_index) : removeNode(feature) || removeLink(feature) || removePOI(feature);
+		var removed = ent_index ? removeExit(feature, ent_index) : removeNode(feature) || removeLink(feature) || removeFacility(feature);
 		removed && $('.modified').show();
 		return removed;
 	}
@@ -878,39 +878,61 @@ $hulop.editor = function() {
 		return true;
 	}
 
-	function createPOI(latlng, subcategory) {
+	function createFacility(latlng, subcategory) {
 		var p = {
+				'facil_id' : newID('facil'),
+				'facil_type': 99,
+				'evacuation': 99,
+				'temporary': 99
 		};
-		p['facil_id'] = newID('poi');
+		switch (subcategory) {
+		case 'toilet':
+			p['facil_type'] = 10;
+			p['sex'] = 99;
+			p['fee'] = 99;
+			break;
+		case 'hospital':
+			p['facil_type'] = 3;
+			p['subject'] = 99;
+			p['close_day'] = '99';
+			break;
+		case 'evacuation':
+			p['evacuation'] = 2;
+			p['med_dept'] = '99';
+			p['flood'] = 99;
+			break;
+		default:
+			break;
+		}
 		var obj = newGeoJSON(p, latlng);
 		var feature = newFeature(obj);
 		showProperty(feature);
 		return feature;
 	}
 
-	function canRemovePOI(poi) {
-		var poiID = poi.get('facil_id');
-		return poiID && !hasPoiExit(poi);
+	function canRemoveFacility(facil) {
+		var facilID = facil.get('facil_id');
+		return facilID && !hasFacilExit(facil);
 	}
 
-	function removePOI(poi) {
-		if (!canRemovePOI(poi)) {
+	function removeFacility(facil) {
+		if (!canRemoveFacility(facil)) {
 			return false;
 		}
-		source.removeFeature(poi);
+		source.removeFeature(facil);
 		showProperty();
 		return true;
 	}
 
-	function createExit(node, poi) {
-		if (poi && poi.get('node_id')) {
-			poi = [ node, node = poi ][0];
+	function createExit(node, facil) {
+		if (facil && facil.get('node_id')) {
+			facil = [ node, node = facil ][0];
 		}
 		var nodeLatLng = ol.proj.transform(node.getGeometry().getCoordinates(), 'EPSG:3857', 'EPSG:4326');
 		var ent_index = 1;
 		for (var i = 1; i<= 10; i++) {
-			var lat = poi.get('ent' + i + '_lat');
-			var lon = poi.get('ent' + i + '_lon');
+			var lat = facil.get('ent' + i + '_lat');
+			var lon = facil.get('ent' + i + '_lon');
 			if (lat && lon) {
 				ent_index = i;
 				if (lat == nodeLatLng[1] && lon == nodeLatLng[0]) {
@@ -921,18 +943,18 @@ $hulop.editor = function() {
 		}
 
 		var nodeID = node.get('node_id');
-		var poiID = poi.get('facil_id');
-		poi.set('ent' + ent_index + '_lat', nodeLatLng[1]);
-		poi.set('ent' + ent_index + '_lon', nodeLatLng[0]);
-		poi.set('ent' + ent_index + '_node', nodeID);
-		poi.set('ent' + ent_index + '_n', '');
+		var facilID = facil.get('facil_id');
+		facil.set('ent' + ent_index + '_lat', nodeLatLng[1]);
+		facil.set('ent' + ent_index + '_lon', nodeLatLng[0]);
+		facil.set('ent' + ent_index + '_node', nodeID);
+		facil.set('ent' + ent_index + '_n', '');
 		var exit = {
-			'facil_id' : poiID,
+			'facil_id' : facilID,
 			'ent_index' : ent_index,
 			'node_id' : nodeID
 		};
 		addNodeExit(nodeID, exit);
-		addPoiExit(poiID, exit);
+		addFacilExit(facilID, exit);
 		showProperty(node);
 	}
 
@@ -941,7 +963,7 @@ $hulop.editor = function() {
 	}
 
 	function removeExit(feature, ent_index) {
-		var poiID = feature.get('facil_id');
+		var facilID = feature.get('facil_id');
 		var nodeID = feature.get('ent' + ent_index + '_node')
 		var re = new RegExp('^ent' + ent_index + '_.*$');
 		feature.getKeys().forEach(function(key) {
@@ -951,8 +973,8 @@ $hulop.editor = function() {
 			}
 		});
 		if (nodeID) {
-			removePoiExit(poiID, nodeID);
-			removeNodeExit(nodeID, poiID);
+			removeFacilExit(facilID, nodeID);
+			removeNodeExit(nodeID, facilID);
 		}
 		showProperty(editingFeature);
 		return true;
@@ -1242,7 +1264,7 @@ $hulop.editor = function() {
 			if (h) {
 				heights.indexOf(h) == -1 && heights.push(h);
 			}
-			getPoiExit(feature.get('facil_id')).forEach(function(exit) {
+			getFacilExit(feature.get('facil_id')).forEach(function(exit) {
 				var node = exit.node_id && source.getFeatureById(exit.node_id);
 				node && addNode(node);
 			});
