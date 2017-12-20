@@ -34,8 +34,6 @@ public class Hokoukukan {
 	public static final String CATEGORY_NODE = "node";
 	public static final String CATEGORY_LINK = "link";
 	public static final String CATEGORY_FACILITY = "facility";
-	public static final String CATEGORY_TOILET = "toilet";
-	public static final String CATEGORY_HOSPITAL = "hospital";
 
 	private static final Pattern ENT_NODE = Pattern.compile("^(ent\\d+_)node$");
 
@@ -65,15 +63,6 @@ public class Hokoukukan {
 		}
 		try {
 			if (properties.getString("facil_id").length() > 0) {
-				try {
-					switch (properties.getInt("facil_type")) {
-					case 3:
-						return CATEGORY_HOSPITAL;
-					case 10:
-						return CATEGORY_TOILET;
-					}
-				} catch (Exception e) {
-				}
 				return CATEGORY_FACILITY;
 			}
 		} catch (Exception e) {

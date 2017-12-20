@@ -132,8 +132,6 @@ public class RouteData {
 					}
 					break;
 				case Hokoukukan.CATEGORY_FACILITY:
-				case Hokoukukan.CATEGORY_HOSPITAL:
-				case Hokoukukan.CATEGORY_TOILET:
 					for (String ent_ : Hokoukukan.listEntrances(properties)) {
 						String ent_d = ent_ + "d";
 						if (properties.has(ent_d)) {
@@ -206,8 +204,6 @@ public class RouteData {
 			Object node = null;
 			switch (Hokoukukan.getCategory(properties)) {
 			case Hokoukukan.CATEGORY_FACILITY:
-			case Hokoukukan.CATEGORY_HOSPITAL:
-			case Hokoukukan.CATEGORY_TOILET:
 				name = i18.getI18n(properties, "name");
 				name_pron = i18.getI18nPron(properties, "name");
 				for (String ent_ : Hokoukukan.listEntrances(properties)) {

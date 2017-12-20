@@ -270,14 +270,17 @@ public class DatabaseBean {
 		adapter.getGeometry(point, distance, null, features, true);
 		JSONObject siteMap = new JSONObject();
 		for (Object feature : features) {
-			JSONObject properties = ((JSONObject) feature).getJSONObject("properties");
-			if (properties.has("toilet") && Hokoukukan.getCategory(properties) == Hokoukukan.CATEGORY_TOILET) {
-				switch (properties.getInt("toilet")) {
-				case 2:
-				case 4:
-					siteMap.put(properties.getString("facil_id"), feature);
-					break;
+			try {
+				JSONObject properties = ((JSONObject) feature).getJSONObject("properties");
+				if (properties.getInt("facil_type") == 10) {
+					switch (properties.getInt("toilet")) {
+					case 2:
+					case 4:
+						siteMap.put(properties.getString("facil_id"), feature);
+						break;
+					}
 				}
+			} catch (Exception e) {
 			}
 		}
 		return siteMap;

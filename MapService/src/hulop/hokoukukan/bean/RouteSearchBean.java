@@ -491,10 +491,11 @@ public class RouteSearchBean {
 				JSONObject point = new JSONObject();
 				try {
 					if (params.length > 3) {
-						List<String> floors = new ArrayList<String>();
-						floors.add(params[3]);
-						if (params[3].equals("1")) {
-							floors.add("0");
+						List<Double> floors = new ArrayList<Double>();
+						double floor = Double.parseDouble(params[3]);
+						floors.add(floor);
+						if (floor == 1) {
+							floors.add(0d);
 						}
 						point.put("floors", floors);
 					}
@@ -564,7 +565,7 @@ public class RouteSearchBean {
 
 	private String findNearestLink(JSONObject fromPoint) {
 		try {
-			List<String> floors = fromPoint.has("floors") ? fromPoint.getJSONArray("floors") : null;
+			List<Double> floors = fromPoint.has("floors") ? fromPoint.getJSONArray("floors") : null;
 			List<JSONObject> links = new ArrayList<JSONObject>();
 			for (Object feature : mFeatures) {
 				JSONObject json = (JSONObject) feature;

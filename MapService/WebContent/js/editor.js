@@ -1935,15 +1935,6 @@ $hulop.editor = function() {
 		}
 	}
 
-	function getSubCategory(feature) {
-		switch (properties.get("facil_type")) {
-		case 3:
-			return 'hospital';
-		case 10:
-			return 'toilet';
-		}
-	}
-
 	return {
 		'toFeatureCollection': toFeatureCollection,
 		'downloadFile' : downloadFile,
