@@ -48,12 +48,10 @@ $hulop.route = function() {
 			var type = tmp.type;
 			var announce = true, elevator = false;
 			switch (type) {
-			case '1': // Sidewalk
-			case '3': // Park road
-			case '8': // Free passage
+			case 101: // Sidewalk, Pedestrian road, Garden path or Free passage
 				announce = false;
 				break;
-			case '10':
+			case 3: // Elevator 
 				elevator = true;
 				break;
 			}
@@ -147,7 +145,7 @@ $hulop.route = function() {
 	}
 
 	function getLinkInfo(obj) {
-		var type = obj.properties['route_type'];
+		var type = getRouteType(obj);
 		var linkName = getText('LINK_TYPE_' + type);
 		var floorDiff = (obj.properties.targetHeight || 0) - (obj.properties.sourceHeight || 0);
 		if (floorDiff != 0 && type == 3) {
@@ -174,12 +172,10 @@ $hulop.route = function() {
 	}
 
 	function getAfterPrefix(obj) {
-		if (obj.properties['rt_struct'] == 3) { // Crosswalk
-			return 'AFTER_CROSSWALK';
-		}
 		var floorDiff = (obj.properties.targetHeight || 0) - (obj.properties.sourceHeight || 0);
-		var type = obj.properties['route_type'];
+		var type = getRouteType(obj);
 		switch (type) {
+		case 103: // Crosswalk
 		case 1: // Moving walkway
 		case 2: // Railroad crossing
 		case 3: // Elevator
@@ -322,6 +318,15 @@ $hulop.route = function() {
 			name += $m('TOILET');
 		}
 		return name;
+	}
+
+	function getRouteType(obj) {
+		var type = obj.properties['route_type'];
+		var struct = obj.properties['rt_struct'];
+		if (struct != 99 && (type == 0 || type == 99)) {
+			return 100 + struct;
+		}
+		return type;
 	}
 
 	return {
