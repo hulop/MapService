@@ -527,8 +527,6 @@ $hulop.editor.importV1 = function(v1features) {
 			}
 		}
 
-		set(tp, 'toilet', toilet);
-
 		return {
 			'type' : 'Feature',
 			'geometry' : feature.geometry,
