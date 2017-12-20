@@ -532,8 +532,6 @@ $hulop.editor.exportV2 = function() {
 			}
 		}
 
-		set(tp, 'toilet', toilet);
-
 		return {
 			'type' : 'Feature',
 			'geometry' : feature.geometry,
