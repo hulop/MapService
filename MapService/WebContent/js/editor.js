@@ -82,8 +82,9 @@ $hulop.editor = function() {
 
 	var EDITOR_FILE = 'EDITOR';
 	var OPTIONAL_KEYS = /^(link\d+_id)$/;			
-	var READONLY_KEYS = /^(node_id|lat|lon|link_id|start_id|end_id|distance|facil_id|link\d+_id|ent\d+_lat|ent\d+_lon|ent\d_node|geometry)$/;
+	var READONLY_KEYS = /^(node_id|lat|lon|link_id|start_id|end_id|distance|facil_id|link\d+_id|ent\d+_lat|ent\d+_lon|ent\d_fl|ent\d_node|geometry)$/;
 	var STRING_KEYS = /^(link_id|start_id|end_id|start_time|end_time|start_date|end_date|no_serv_d|st_name(_.+)?|node_id|link\d+_id|facil_id|name(_.+)?|address(_.+)?|tel|fax|mail|close_day|med_dept|ent\d+_n(_.+)?|ent\d+_node|hulop_file|hulop_elevator_equipments|hulop_long_description(_.+)?)$/;
+	var MAX_INDEX = 99;
 	var downKey, keyState = {}, ADD_KEY = 65, DO_POI_KEY = 68, SPLIT_KEY = 83, COPY_KEY = 67, PASTE_KEY = 86;
 	var lastData, map, source, select, modify, callback, start_feature, poi_lines, editingFeature, editingProperty, clipboardFeature;
 	var start_point, switch_line, from_feature;
@@ -425,6 +426,7 @@ $hulop.editor = function() {
 			feature.getGeometry().on('change', function(event) {
 				geometryChanged(feature);
 			});
+			var nodeID = feature.get('node_id');
 			feature.on('propertychange', function(event) {
 				if (event.key == 'geometry') {
 					geometryChanged(feature);
@@ -432,6 +434,19 @@ $hulop.editor = function() {
 						geometryChanged(feature);
 					});
 				} else {
+					if (nodeID && event.key == 'floor') {
+						var floor = feature.get('floor');
+						getExitValues(nodeID).forEach(function(exit) {
+							var facil = source.getFeatureById(exit.facil_id);
+							if (facil) {
+								if (isNaN(floor)) {
+									facil.unset('ent' + exit.ent_index + '_fl');
+								} else {
+									facil.set('ent' + exit.ent_index + '_fl', floor);
+								}
+							}
+						});
+					}
 					// console.log(feature.getId() + ' ' + event.key + ': ' +
 					// event.oldValue + ' => ' + feature.get(event.key));
 					if (feature == editingFeature && feature.get(event.key) != event.oldValue && !editingProperty) {
@@ -520,13 +535,13 @@ $hulop.editor = function() {
 		array[isStart ? 0 : array.length - 1] = to.getGeometry().getCoordinates();
 		link.setGeometry(new ol.geom.LineString(array));
 		link.set(isStart ? 'start_id' : 'end_id', toNode);
-		for (var i = 1; i <= 10; i++) {
+		for (var i = 1; i <= MAX_INDEX; i++) {
 			if (from.get('link' + i + '_id') == linkId) {
 				from.unset('link' + i + '_id');
 				break;
 			}
 		}
-		for (var i = 1; i <= 10; i++) {
+		for (var i = 1; i <= MAX_INDEX; i++) {
 			if (!to.get('link' + i + '_id')) {
 				to.set('link' + i + '_id', linkId);
 				break;
@@ -603,8 +618,8 @@ $hulop.editor = function() {
 						'ent_index' : Number(m[1]),
 						'node_id' : nodeID
 					};
-					addExit(nodeID, exit);
-					addExit(facilID, exit);
+					addExitValue(nodeID, exit);
+					addExitValue(facilID, exit);
 				}
 			});
 		});
@@ -787,29 +802,10 @@ $hulop.editor = function() {
 		}
 	}
 
-	function getValues(name, key) {
-		return (key && lastData[name][key]) || [];
-	}
-
-	function addValue(name, key, value) {
-		if (key && value) {
-			var nodes = lastData[name][key] = (lastData[name][key] || []);
-			nodes.indexOf(value) < 0 && nodes.push(value);
-		}
-	}
-
-	function removeValue(name, key, value) {
-		if (key && value) {
-			var nodes = lastData[name][key];
-			var pos = nodes && nodes.indexOf(value);
-			pos >= 0 && nodes.splice(pos, 1);
-		}
-	}
-
 	function findExit(feature) {
 		var nodeID = feature.get('node_id')
 		var facilID = feature.get('facil_id');
-		return (nodeID && getExit(nodeID)) || (facilID && getExit(facilID)) || [];
+		return (nodeID && getExitValues(nodeID)) || (facilID && getExitValues(facilID)) || [];
 	}
 
 	function hasExit(feature) {
@@ -817,16 +813,35 @@ $hulop.editor = function() {
 		return exitList && exitList.length > 0;
 	}
 
-	function getExit(nodeID) {
-		return getValues('exit', nodeID);
+	function getExitValues(key) {
+		return (key && lastData.exit[key]) || [];
 	}
 
-	function addExit(nodeID, exitID) {
-		return addValue('exit', nodeID, exitID);
+	function addExitValue(key, value) {
+		if (key && value) {
+			var nodes = lastData.exit[key] = (lastData.exit[key] || []);
+			findExitIndex(nodes, value) < 0 && nodes.push(value) && nodes.sort(function(a,b) {return a.ent_index - b.ent_index;});
+		}
 	}
 
-	function removeExit(nodeID, exitID) {
-		return removeValue('exit', nodeID, exitID);
+	function removeExitValue(key, value) {
+		if (key && value) {
+			var nodes = lastData.exit[key];
+			var pos = nodes && findExitIndex(nodes, value);
+			pos >= 0 && nodes.splice(pos, 1);
+		}
+	}
+	
+	function findExitIndex(nodes, exit) {
+		for (var i = 0; i<nodes.length; i++) {
+			var node = nodes[i]; 
+			if (node.facil_id == exit.facil_id &&
+				node.node_id == exit.node_id &&
+				node.ent_index == exit.ent_index) {
+				return i;
+			}
+		}
+		return -1;
 	}
 
 	function canRemoveFeature(feature, ent_index) {
@@ -862,7 +877,7 @@ $hulop.editor = function() {
 		if (!nodeID || hasExit(node)) {
 			return false;
 		}
-		for (var i = 1; i <= 10; i++) {
+		for (var i = 1; i <= MAX_INDEX; i++) {
 			var linkId = node.get('link' + i + '_id');
 			if (linkId && source.getFeatureById(linkId)) {
 				return false;
@@ -931,7 +946,7 @@ $hulop.editor = function() {
 		}
 		var nodeLatLng = ol.proj.transform(node.getGeometry().getCoordinates(), 'EPSG:3857', 'EPSG:4326');
 		var ent_index = 1;
-		for (var i = 1; i <= 10; i++) {
+		for (var i = 1; i <= MAX_INDEX; i++) {
 			var lat = facil.get('ent' + i + '_lat');
 			var lon = facil.get('ent' + i + '_lon');
 			if (lat && lon) {
@@ -948,14 +963,15 @@ $hulop.editor = function() {
 		facil.set('ent' + ent_index + '_lat', nodeLatLng[1]);
 		facil.set('ent' + ent_index + '_lon', nodeLatLng[0]);
 		facil.set('ent' + ent_index + '_node', nodeID);
+		facil.set('ent' + ent_index + '_fl', node.get('floor'));
 		facil.set('ent' + ent_index + '_n', '');
 		var exit = {
 			'facil_id' : facilID,
 			'ent_index' : ent_index,
 			'node_id' : nodeID
 		};
-		addExit(nodeID, exit);
-		addExit(facilID, exit);
+		addExitValue(nodeID, exit);
+		addExitValue(facilID, exit);
 		showProperty(node);
 	}
 
@@ -974,8 +990,13 @@ $hulop.editor = function() {
 			}
 		});
 		if (nodeID) {
-			removeExit(facilID, nodeID);
-			removeExit(nodeID, facilID);
+			var exit = {
+				'facil_id' : facilID,
+				'ent_index' : ent_index,
+				'node_id' : nodeID
+			};
+			removeExitValue(facilID, exit);
+			removeExitValue(nodeID, exit);
 		}
 		showProperty(editingFeature);
 		return true;
@@ -987,7 +1008,7 @@ $hulop.editor = function() {
 		}
 		var linkID = newID('link');
 		[ node1, node2 ].forEach(function(node) {
-			for (var i = 1; i <= 10; i++) {
+			for (var i = 1; i <= MAX_INDEX; i++) {
 				if (!node.get('link' + i + '_id')) {
 					node.set('link' + i + '_id', linkID)
 					break;
@@ -1029,7 +1050,7 @@ $hulop.editor = function() {
 		}
 		var linkID = link.get('link_id');
 		nodes.forEach(function(node) {
-			for (var i = 1; i <= 10; i++) {
+			for (var i = 1; i <= MAX_INDEX; i++) {
 				if (node.get('link' + i + '_id') == linkID) {
 					node.unset('link' + i + '_id');
 					setModified(node);
@@ -1253,7 +1274,7 @@ $hulop.editor = function() {
 		}
 		if (feature.get('node_id')) {
 			addNode(feature);
-			for (var i = 1; i <= 10; i++) {
+			for (var i = 1; i <= MAX_INDEX; i++) {
 				var linkID = feature.get('link' + i + '_id');
 				var link = linkID && source.getFeatureById(linkID);
 				link && addLink(link);
@@ -1265,7 +1286,7 @@ $hulop.editor = function() {
 			if (h) {
 				heights.indexOf(h) == -1 && heights.push(h);
 			}
-			getExit(feature.get('facil_id')).forEach(function(exit) {
+			getExitValues(feature.get('facil_id')).forEach(function(exit) {
 				var node = exit.node_id && source.getFeatureById(exit.node_id);
 				node && addNode(node);
 			});
@@ -1281,7 +1302,7 @@ $hulop.editor = function() {
 		if (nodeID) {
 			var nodeCoordinate = feature.getGeometry().getCoordinates();
 			var latlng = ol.proj.transform(nodeCoordinate, 'EPSG:3857', 'EPSG:4326');
-			for (var i = 1; i <= 10; i++) {
+			for (var i = 1; i <= MAX_INDEX; i++) {
 				var linkID = feature.get('link' + i + '_id');
 				var link = linkID && source.getFeatureById(linkID);
 				if (link && link != dragPoint) {
@@ -1519,13 +1540,13 @@ $hulop.editor = function() {
 					array[isStart ? 0 : array.length - 1] = feature.getGeometry().getCoordinates();
 					editingFeature.setGeometry(new ol.geom.LineString(array));
 					editingFeature.set(isStart ? 'start_id' : 'end_id', clickNode);
-					for (var i = 1; i <= 10; i++) {
+					for (var i = 1; i <= MAX_INDEX; i++) {
 						if (from_feature.get('link' + i + '_id') == editLink) {
 							from_feature.unset('link' + i + '_id');
 							break;
 						}
 					}
-					for (var i = 1; i <= 10; i++) {
+					for (var i = 1; i <= MAX_INDEX; i++) {
 						if (!feature.get('link' + i + '_id')) {
 							feature.set('link' + i + '_id', editLink);
 							break;
@@ -1854,7 +1875,8 @@ $hulop.editor = function() {
 
 	function getDisplayName(feature, short, ent_index) {
 		var category = ent_index ? 'entrance' : getCategory(feature);
-		return messages[category + (short ? '_SHORT' : '_LONG')] || category;
+		var msg = messages[category + (short ? '_SHORT' : '_LONG')] || category;
+		return ent_index ? msg.replace('#', ent_index) : msg;
 	}
 
 	function getFloor() {
@@ -1871,7 +1893,7 @@ $hulop.editor = function() {
 			var category = getCategory(feature);
 			switch (category) {
 			case 'node':
-				for (var i = 1; i <= 10; i++) {
+				for (var i = 1; i <= MAX_INDEX; i++) {
 					var linkId = feature.get('link' + i + '_id');
 					if (linkId) {
 						var link = source.getFeatureById(linkId);
