@@ -105,7 +105,7 @@ $hulop.util = function() {
 				$('#slope').val('1');
 				$('#road_condition').val('1');
 				$('#stairs').val('1');
-				$('#deff_LV').val('2');
+				$('#deff_LV').val('1');
 				$('#esc').val('1');
 				$('#mvw').val('1');
 				$('#elv').val('2');
