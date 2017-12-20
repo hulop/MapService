@@ -181,7 +181,6 @@ if (id == null || (agreeBean.isAgreementSupported() && !agreeBean.getAgreed(id))
 			<label for='slope' i18n>SLOPE</label>
 			<select data-mini="true" id="slope" name="slope">
 					<option value="1" i18n>SLOPE_1</option>
-					<option value="2" i18n>SLOPE_2</option>
 					<option value="8" i18n>SLOPE_8</option>
 					<option value="9" i18n selected>SLOPE_9</option>
 			</select>
@@ -196,8 +195,6 @@ if (id == null || (agreeBean.isAgreementSupported() && !agreeBean.getAgreed(id))
 			<label for="deff_LV" i18n>DEFF_LV</label>
 			<select data-mini="true" id="deff_LV" name="deff_LV">
 					<option value="1" i18n>DEFF_LV_1</option>
-					<option value="2" i18n>DEFF_LV_2</option>
-					<option value="3" i18n>DEFF_LV_3</option>
 					<option value="8" i18n>DEFF_LV_8</option>
 					<option value="9" i18n selected>DEFF_LV_9</option>
 			</select>
