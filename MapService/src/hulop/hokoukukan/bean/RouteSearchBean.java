@@ -179,7 +179,7 @@ public class RouteSearchBean {
 				g.addVertex(end);
 
 				DefaultWeightedEdge startEnd = null, endStart = null;
-				switch (properties.getInt("direction")) {
+				switch (getCode(properties, "direction", 0)) {
 				case 1:
 					startEnd = g.addEdge(start, end);
 					break;
@@ -412,13 +412,12 @@ public class RouteSearchBean {
 			} catch (NullPointerException npe) {
 			}
 
-			int elevator = route_type == 3 ? 1 : 100;
-			try {
-				elevator = properties.getInt("elevator");
-			} catch (Exception e) {
-			}
+			int elevator = getCode(properties, "elevator", 100);
 			// 0: without elevator, 1: with elevator (not accessible), 2: with elevator
 			// (accessible), 99: unknown
+			if (elevator != 2 && route_type == 3) {
+				elevator = 1;
+			}
 			try {
 				switch (conditions.get("elv")) {
 				case "1": // Do not use
@@ -471,10 +470,8 @@ public class RouteSearchBean {
 			int brail_tile = getCode(properties, "brail_tile", 100);
 			// 0: without tactile walking surface indicators, etc., 1: with tactile walking
 			// surface indicators, etc., 99: unknown
-			if (brail_tile == 1) {
-				if ("1".equals(conditions.get("tactile_paving"))) {
-					weight = weight / 3;
-				}
+			if (brail_tile == 1 && "1".equals(conditions.get("tactile_paving"))) {
+				weight = weight / 3;
 			}
 			return weight;
 		}
@@ -532,16 +529,13 @@ public class RouteSearchBean {
 		return 100;
 	}
 
-	private static final Pattern LINK_ID = Pattern.compile("link\\d+_id");
+	private static final Pattern LINK_ID = Pattern.compile("^link\\d+_id$");
 
 	private int countLinks(String node) {
 		try {
 			int count = 0;
 			for (Iterator<String> it = getNode(node).getJSONObject("properties").keys(); it.hasNext();) {
-				Matcher m = LINK_ID.matcher(it.next());
-				if (m.matches()) {
-					count++;
-				}
+				count += (LINK_ID.matcher(it.next()).matches() ? 1 : 0);
 			}
 			return count;
 		} catch (Exception e) {
@@ -698,7 +692,7 @@ public class RouteSearchBean {
 		link1Prop.put("link_id", tempLink1ID);
 		link1Prop.put("end_id", tempNodeID);
 		link2Prop.put("link_id", tempLink2ID);
-		link2Prop.put("end_id", tempNodeID);
+		link2Prop.put("start_id", tempNodeID);
 		setLength(mTempLink1);
 		setLength(mTempLink2);
 		return tempNodeID;
