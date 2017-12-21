@@ -53,32 +53,47 @@ $hulop.editor = function() {
 
 	PROPERTY_NAMES['node'] = [ 'node_id', 'lat', 'lon', 'floor', 'link1_id', 'link2_id', 'link3_id', 'link4_id', 'link5_id', 'link6_id', 'link7_id', 'link8_id', 'link9_id', 'link10_id' ];
 
-	PROPERTY_NAMES['link'] = [ 'group:LAYER1', 
-		'link_id', 'start_id', 'end_id', 'distance', 'rt_struct', 'route_type', 'direction', 'width', 'vtcl_slope', 'lev_diff', 'tfc_signal', 'tfc_s_type', 'brail_tile', 'elevator', 
-		'group:LAYER2', 
-		'start_time', 'end_time', 'start_date', 'end_date', 'no_serv_d', 'tfc_restr', 'w_min', 'w_min_lat', 'w_min_lon', 'vSlope_max', 'vSlope_lat', 'vSlope_lon', 
-		'hSlope_max', 'hSlope_lat', 'hSlope_lon', 'condition', 'levDif_max', 'levDif_lat', 'levDif_lon', 'stair', 'handrail', 'roof', 'waterway', 'bus_stop', 'bus_s_lat', 'bus_s_lon', 
-		'facility', 'facil_lat', 'facil_lon', 'elev_lat', 'elev_lon', 'door_type', 'tfc_s_lat', 'tfc_s_lon', 'day_trfc', 'main_user', 'st_name', 
-		'group:LAYER3', 
+	PROPERTY_NAMES['link'] = [ 'group:LAYER1',
+		'link_id', 'start_id', 'end_id', 'distance', 'rt_struct', 'route_type', 'direction', 'width', 'vtcl_slope', 'lev_diff', 'tfc_signal', 'tfc_s_type', 'brail_tile', 'elevator',
+		'group:LAYER2',
+		'start_time', 'end_time', 'start_date', 'end_date', 'no_serv_d', 'tfc_restr', 'w_min', 'w_min_lat', 'w_min_lon', 'vSlope_max', 'vSlope_lat', 'vSlope_lon',
+		'hSlope_max', 'hSlope_lat', 'hSlope_lon', 'condition', 'levDif_max', 'levDif_lat', 'levDif_lon', 'stair', 'handrail', 'roof', 'waterway', 'bus_stop', 'bus_s_lat', 'bus_s_lon',
+		'facility', 'facil_lat', 'facil_lon', 'elev_lat', 'elev_lon', 'door_type', 'tfc_s_lat', 'tfc_s_lon', 'day_trfc', 'main_user', 'st_name',
+		'group:LAYER3',
 		'hulop_road_low_priority', 'hulop_elevator_equipments' ]
 		.concat(i18nMenu([ 'st_name' ]));
-	
+
 	PROPERTY_NAMES['facility'] = [ 'group:LAYER1',
-		'facil_id', 'facil_type', 'evacuation', 'temporary', 'name_ja', 'name_en', 'address', 'tel', 'lat', 'lon', 'floors', 'toilet', 'elevator', 'escalator', 'parking', 'barrier', 
-		'nursing', 'brail_tile', 'info', 'info_board', 
+		'facil_id', 'facil_type', 'evacuation', 'temporary', 'name_ja', 'name_en', 'address', 'tel', 'lat', 'lon', 'floors', 'toilet', 'elevator', 'escalator', 'parking', 'barrier',
+		'nursing', 'brail_tile', 'info', 'info_board',
 		'group:TOILET', 'sex', 'fee',
 		'group:HOSPITAL', 'subject', 'close_day',
 		'group:EVACUATION', 'med_dept', 'flood',
-		'group:LAYER2', 
-		'name_hira', 'fax', 'mail', 'start_time', 'end_time', 'no_serv_d', 
+		'group:LAYER2',
+		'name_hira', 'fax', 'mail', 'start_time', 'end_time', 'no_serv_d',
 		'group:LAYER3',
 		'hulop_building', 'hulop_major_category', 'hulop_sub_category', 'hulop_minor_category', 'hulop_heading', 'hulop_angle', 'hulop_height', 'hulop_long_description' ]
 		.concat(i18nMenu([ 'name', 'address', 'med_dept', 'hulop_long_description' ]));
 
 	console.log(PROPERTY_NAMES);
 
+	var EXTRA_TOILET = {
+		'facil_type': 10,
+		'toilet': 1,
+		'sex': 99,
+		'fee': 99
+	}, EXTRA_HOSPITAL = {
+		'facil_type': 3,
+		'subject': 99,
+		'close_day': '99'
+	}, EXTRA_EVACUATION = {
+		'evacuation': 2,
+		'med_dept': '99',
+		'flood': 99
+	};
+
 	var EDITOR_FILE = 'EDITOR';
-	var OPTIONAL_KEYS = /^(link\d+_id)$/;			
+	var OPTIONAL_KEYS = /^(link\d+_id)$/;
 	var READONLY_KEYS = /^(node_id|lat|lon|link_id|start_id|end_id|distance|facil_id|link\d+_id|ent\d+_lat|ent\d+_lon|ent\d_fl|ent\d_node|geometry)$/;
 	var STRING_KEYS = /^(link_id|start_id|end_id|start_time|end_time|start_date|end_date|no_serv_d|st_name(_.+)?|node_id|link\d+_id|facil_id|name(_.+)?|address(_.+)?|tel|fax|mail|close_day|med_dept|ent\d+_n(_.+)?|ent\d+_node|hulop_file|hulop_elevator_equipments|hulop_long_description(_.+)?)$/;
 	var MAX_INDEX = 99;
@@ -289,17 +304,16 @@ $hulop.editor = function() {
 				createFacility(latLng);
 				break;
 			case 70: // F
-				createFacility(latLng, 'hospital');
+				createFacility(latLng, EXTRA_HOSPITAL);
 				break;
 			case 71: // G
-				createFacility(latLng, 'toilet');
+				createFacility(latLng, EXTRA_TOILET);
 				break;
 			case 72: // H
-				createFacility(latLng, 'evacuation');
+				createFacility(latLng, EXTRA_EVACUATION);
 				break;
 			case PASTE_KEY:
-				var category = clipboardFeature && clipboardFeature.get('facil_id') && getCategory(clipboardFeature);
-				category && copyProperties(clipboardFeature, createFacility(latLng, category))
+				clipboardFeature && clipboardFeature.get('facil_id') && createFacility(latLng, clipboardFeature.getProperties());
 				break;
 			default:
 				var feature = getEventFeature(event);
@@ -455,7 +469,7 @@ $hulop.editor = function() {
 		});
 		initData();
 	}
-	
+
 	function checkFeature(features) {
 		if (features.type == 'FeatureCollection' && features.features && features.features.length > 0) {
 			var p = features.features[0].properties;
@@ -502,23 +516,11 @@ $hulop.editor = function() {
 					var latLng = ol.proj.transform(event.coordinate, 'EPSG:3857', 'EPSG:4326');
 					var newNode = createNode(latLng);
 					reconnectLink(feature, nodes[1], newNode);
-					var newLink = createLink(newNode, nodes[1]);
-					copyProperties(feature, newLink);
 					setModified(nodes[0]);
 					setModified(nodes[1]);
 					setModified(feature);
-					return newLink;
+					return createLink(newNode, nodes[1], feature.getProperties());
 				}
-			}
-		}
-	}
-
-	function copyProperties(from, to) {
-		var properties = from.getProperties();
-		for ( var name in properties) {
-			var value = properties[name];
-			if (!READONLY_KEYS.exec(name)) {
-				to.set(name, value);
 			}
 		}
 	}
@@ -828,10 +830,10 @@ $hulop.editor = function() {
 			pos >= 0 && nodes.splice(pos, 1);
 		}
 	}
-	
+
 	function findExitIndex(nodes, exit) {
 		for (var i = 0; i<nodes.length; i++) {
-			var node = nodes[i]; 
+			var node = nodes[i];
 			if (node.facil_id == exit.facil_id &&
 				node.node_id == exit.node_id &&
 				node.ent_index == exit.ent_index) {
@@ -892,7 +894,7 @@ $hulop.editor = function() {
 		return true;
 	}
 
-	function createFacility(latlng, subcategory) {
+	function createFacility(latlng, extra) {
 		var p = {
 				'facil_id' : newID('facil'),
 				'facil_type': 99,
@@ -908,26 +910,7 @@ $hulop.editor = function() {
 				'info' : 99,
 				'info_board' : 99
 		};
-		switch (subcategory) {
-		case 'toilet':
-			p['facil_type'] = 10;
-			p['toilet'] = 1;
-			p['sex'] = 99;
-			p['fee'] = 99;
-			break;
-		case 'hospital':
-			p['facil_type'] = 3;
-			p['subject'] = 99;
-			p['close_day'] = '99';
-			break;
-		case 'evacuation':
-			p['evacuation'] = 2;
-			p['med_dept'] = '99';
-			p['flood'] = 99;
-			break;
-		default:
-			break;
-		}
+		extra && merge(extra, p);
 		var feature = newFeature(newGeoJSON(p, latlng));
 		showProperty(feature);
 		return feature;
@@ -1009,7 +992,7 @@ $hulop.editor = function() {
 		return true;
 	}
 
-	function createLink(node1, node2) {
+	function createLink(node1, node2, extra) {
 		if (node1 == node2) {
 			return false;
 		}
@@ -1037,11 +1020,18 @@ $hulop.editor = function() {
 			'brail_tile': 99,
 			'elevator': 99
 		};
+		extra && merge(extra, p);
 		var obj = newGeoJSON(p, ol.proj.transform(node1.getGeometry().getCoordinates(), 'EPSG:3857', 'EPSG:4326'), ol.proj.transform(node2.getGeometry()
 				.getCoordinates(), 'EPSG:3857', 'EPSG:4326'));
 		var feature = newFeature(obj);
 		showProperty(feature);
 		return feature;
+	}
+
+	function merge(from, to) {
+		for (var name in from) {
+			READONLY_KEYS.exec(name) || (to[name] = from[name]);
+		}
 	}
 
 	function canRemoveLink(link) {
