@@ -114,6 +114,10 @@ $hulop.route = function() {
 				poi_end.push(pe);
 				poi_link.push(pe);
 			}
+			var pd = getText('DOOR_' + properties.door_type);
+			if (pd) {
+				poi_link.push(pd);
+			}
 			return {
 				'name' : name,
 				'type' : type,

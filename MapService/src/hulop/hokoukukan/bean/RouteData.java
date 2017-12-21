@@ -141,8 +141,8 @@ public class RouteData {
 							case 99:
 								break;
 							default:
-								mDoors.add(new JSONObject().append("node", properties.getString(ent_ + "node"))
-										.append("door", door));
+								mDoors.add(new JSONObject().put("node", properties.getString(ent_ + "node")).put("door",
+										door));
 								break;
 							}
 						}
