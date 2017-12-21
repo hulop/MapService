@@ -900,11 +900,21 @@ $hulop.editor = function() {
 				'facil_id' : newID('facil'),
 				'facil_type': 99,
 				'evacuation': 99,
-				'temporary': 99
+				'temporary': 99,
+				'toilet' : 99,
+				'elevator' : 99,
+				'escalator' : 99,
+				'parking' : 99,
+				'barrier' : 99,
+				'nursing' : 99,
+				'brail_tile' : 99,
+				'info' : 99,
+				'info_board' : 99
 		};
 		switch (subcategory) {
 		case 'toilet':
 			p['facil_type'] = 10;
+			p['toilet'] = 1;
 			p['sex'] = 99;
 			p['fee'] = 99;
 			break;
@@ -1020,10 +1030,15 @@ $hulop.editor = function() {
 			'start_id': node1.get('node_id'),
 			'end_id': node2.get('node_id'),
 			'rt_struct': 1,
+			'route_type': 0,
 			'direction': 0,
-			'vtcl_slope': 0,
 			'width': 99,
-			'lev_diff': 0
+			'vtcl_slope': 99,
+			'lev_diff': 99,
+			'tfc_signal': 99,
+			'tfc_s_type': 99,
+			'brail_tile': 99,
+			'elevator': 99
 		};
 		var obj = newGeoJSON(p, ol.proj.transform(node1.getGeometry().getCoordinates(), 'EPSG:3857', 'EPSG:4326'), ol.proj.transform(node2.getGeometry()
 				.getCoordinates(), 'EPSG:3857', 'EPSG:4326'));
