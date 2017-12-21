@@ -66,14 +66,11 @@ $hulop.editor = function() {
 	PROPERTY_NAMES['facility'] = [ 'group:LAYER1',
 		'facil_id', 'facil_type', 'evacuation', 'temporary', 'name_ja', 'name_en', 'address', 'tel', 'lat', 'lon', 'floors', 'toilet', 'elevator', 'escalator', 'parking', 'barrier', 
 		'nursing', 'brail_tile', 'info', 'info_board', 
+		'group:TOILET', 'sex', 'fee',
+		'group:HOSPITAL', 'subject', 'close_day',
+		'group:EVACUATION', 'med_dept', 'flood',
 		'group:LAYER2', 
 		'name_hira', 'fax', 'mail', 'start_time', 'end_time', 'no_serv_d', 
-		'group:TOILET', 
-		'sex', 'fee',
-		'group:HOSPITAL', 
-		'subject', 'close_day',
-		'group:EVACUATION', 
-		'med_dept', 'flood',
 		'group:LAYER3',
 		'hulop_building', 'hulop_major_category', 'hulop_sub_category', 'hulop_minor_category', 'hulop_heading', 'hulop_angle', 'hulop_height', 'hulop_long_description' ]
 		.concat(i18nMenu([ 'name', 'address', 'med_dept', 'hulop_long_description' ]));

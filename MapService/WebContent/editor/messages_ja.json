@@ -48,7 +48,7 @@
 		"DELETE": "%1を削除",
 		"GROUP_LAYER1": "第1層 (必須)",
 		"GROUP_LAYER2": "第2層 (任意)",
-		"GROUP_LAYER3": "第3層 (独自)",
+		"GROUP_LAYER3": "第3層 (独自拡張)",
 		"GROUP_I18N_EN": "国際化 (English)",
 		"GROUP_I18N_JA": "国際化 (Japanese)",
 		"GROUP_I18N_ES": "国際化 (Spanish)",
