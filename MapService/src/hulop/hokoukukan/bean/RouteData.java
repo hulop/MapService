@@ -228,9 +228,12 @@ public class RouteData {
 		for (int i = 0; i < result.length(); i++) {
 			JSONObject obj = result.getJSONObject(i);
 			try {
-				JSONObject node = mNodeMap.getJSONObject(obj.getString("node"));
-				obj.put("node_coordinates", node.getJSONObject("geometry").getJSONArray("coordinates"));
-				obj.put("node_height", node.getJSONObject("properties").getDouble("floor"));
+				String nodeID = obj.getString("node");
+				if (mNodeMap.has(nodeID)) {
+					JSONObject node = mNodeMap.getJSONObject(nodeID);
+					obj.put("node_coordinates", node.getJSONObject("geometry").getJSONArray("coordinates"));
+					obj.put("node_height", node.getJSONObject("properties").getDouble("floor"));
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
