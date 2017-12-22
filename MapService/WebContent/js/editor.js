@@ -51,7 +51,7 @@ $hulop.editor = function() {
 
 	var PROPERTY_NAMES = {};
 
-	PROPERTY_NAMES['node'] = [ 'node_id', 'lat', 'lon', 'floor', 'link1_id', 'link2_id', 'link3_id', 'link4_id', 'link5_id', 'link6_id', 'link7_id', 'link8_id', 'link9_id', 'link10_id' ];
+	PROPERTY_NAMES['node'] = [ 'node_id', 'lat', 'lon', 'link1_id', 'link2_id', 'link3_id', 'link4_id', 'link5_id', 'link6_id', 'link7_id', 'link8_id', 'link9_id', 'link10_id', 'floor' ];
 
 	PROPERTY_NAMES['link'] = [ 'group:LAYER1',
 		'link_id', 'start_id', 'end_id', 'distance', 'rt_struct', 'route_type', 'direction', 'width', 'vtcl_slope', 'lev_diff', 'tfc_signal', 'tfc_s_type', 'brail_tile', 'elevator',
@@ -64,7 +64,7 @@ $hulop.editor = function() {
 		.concat(i18nMenu([ 'st_name' ]));
 
 	PROPERTY_NAMES['facility'] = [ 'group:LAYER1',
-		'facil_id', 'facil_type', 'evacuation', 'temporary', 'name_ja', 'name_en', 'address', 'tel', 'lat', 'lon', 'floors', 'toilet', 'elevator', 'escalator', 'parking', 'barrier',
+		'facil_id', 'lat', 'lon', 'facil_type', 'evacuation', 'temporary', 'name_ja', 'name_en', 'address', 'tel', 'floors', 'toilet', 'elevator', 'escalator', 'parking', 'barrier',
 		'nursing', 'brail_tile', 'info', 'info_board',
 		'group:TOILET', 'sex', 'fee',
 		'group:HOSPITAL', 'subject', 'close_day',
@@ -1710,7 +1710,7 @@ $hulop.editor = function() {
 		var names;
 		if (ent_index) {
 			var ent = 'ent' + ent_index;
-			names = [ ent + '_lat', ent + '_lon', ent + '_n', ent + '_w', ent + '_d', ent + '_brr', ent + '_fl', ent + '_node' ].
+			names = [ ent + '_lat', ent + '_lon', ent + '_fl', ent + '_n', ent + '_w', ent + '_d', ent + '_brr' ].
 			concat(i18nMenu([ ent + '_n' ]));
 		} else {
 			var category = getCategory(feature);
