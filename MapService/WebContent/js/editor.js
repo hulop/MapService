@@ -95,6 +95,7 @@ $hulop.editor = function() {
 	var EDITOR_FILE = 'EDITOR';
 	var OPTIONAL_KEYS = /^(link\d+_id)$/;
 	var READONLY_KEYS = /^(node_id|lat|lon|link_id|start_id|end_id|distance|facil_id|link\d+_id|ent\d+_lat|ent\d+_lon|ent\d_fl|ent\d_node|geometry)$/;
+	var NOCOPY_KEYS = /^(ent\d+_.*)$/;
 	var STRING_KEYS = /^(link_id|start_id|end_id|start_time|end_time|start_date|end_date|no_serv_d|st_name(_.+)?|node_id|link\d+_id|facil_id|name(_.+)?|address(_.+)?|tel|fax|mail|close_day|med_dept|ent\d+_n(_.+)?|ent\d+_node|hulop_file|hulop_elevator_equipments|hulop_long_description(_.+)?)$/;
 	var MAX_INDEX = 99;
 	var downKey, keyState = {}, ADD_KEY = 65, DO_POI_KEY = 68, SPLIT_KEY = 83, COPY_KEY = 67, PASTE_KEY = 86;
@@ -1030,7 +1031,7 @@ $hulop.editor = function() {
 
 	function merge(from, to) {
 		for (var name in from) {
-			READONLY_KEYS.exec(name) || (to[name] = from[name]);
+			READONLY_KEYS.exec(name) || NOCOPY_KEYS.exec(name) || (to[name] = from[name]);
 		}
 	}
 
