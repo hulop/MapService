@@ -28,7 +28,7 @@
 </head>
 <body>
 	<%=user%> <a href="admin.jsp?logout=true">Log out</a> | <a href="edit_password.jsp?redirect_url=admin.jsp">Change password</a>
-	<fieldset>
+	<!--fieldset>
 		<legend>Import Hokoukukan gml.zip file</legend>
 		<form method="post" action="api/admin?action=import&type=gml.zip"
 			enctype="multipart/form-data">
@@ -47,7 +47,7 @@
 	<fieldset>
 		<legend>Imported files</legend>
 		<div id="fileList"></div>
-	</fieldset>
+	</fieldset-->
 	<fieldset>
 		<legend>Import Attachment zip file</legend>
 		<form method="post" action="api/admin?action=import&type=attachment.zip"
