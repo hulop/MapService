@@ -1208,7 +1208,11 @@ $hulop.editor = function() {
 			}
 		} else if (feature.get('hulop_major_category') == '_nav_poi_') {
 			var heading = feature.get('hulop_heading') || 0;
-			var angle = feature.get('hulop_angle') || 180;
+			var angle = feature.get('hulop_angle');
+			isNaN(angle) && (angle = 180);
+			if (heading < -180 || heading > 180 || angle < 0 || angle > 180) {
+				return null;
+			}
 			var path = 'M 20 21.6 L 20 20 ';
 			var size = Math.min(20, 12 * Math.sqrt(180 / angle));
 			for (var i = -angle; i < angle + 10; i += 10) {
