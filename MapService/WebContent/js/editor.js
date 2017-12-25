@@ -96,7 +96,7 @@ $hulop.editor = function() {
 	var OPTIONAL_KEYS = /^(link\d+_id)$/;
 	var READONLY_KEYS = /^(node_id|lat|lon|link_id|start_id|end_id|distance|facil_id|link\d+_id|ent\d+_lat|ent\d+_lon|ent\d_fl|ent\d_node|geometry)$/;
 	var NOCOPY_KEYS = /^(ent\d+_.*)$/;
-	var STRING_KEYS = /^(link_id|start_id|end_id|start_time|end_time|start_date|end_date|no_serv_d|st_name(_.+)?|node_id|link\d+_id|facil_id|name(_.+)?|address(_.+)?|tel|fax|mail|close_day|med_dept|ent\d+_n(_.+)?|ent\d+_node|hulop_file|hulop_elevator_equipments|hulop_long_description(_.+)?)$/;
+	var STRING_KEYS = /^(link_id|start_id|end_id|start_time|end_time|start_date|end_date|no_serv_d|st_name(_.+)?|node_id|link\d+_id|facil_id|name(_.+)?|address(_.+)?|tel|fax|mail|close_day|med_dept(_.+)?|ent\d+_n(_.+)?|ent\d+_node|hulop_file|hulop_building|hulop_major_category|hulop_sub_category|hulop_minor_category|hulop_elevator_equipments|hulop_long_description(_.+)?)$/;
 	var MAX_INDEX = 99;
 	var downKey, keyState = {}, ADD_KEY = 65, DO_POI_KEY = 68, SPLIT_KEY = 83, COPY_KEY = 67, PASTE_KEY = 86;
 	var lastData, map, source, select, modify, callback, start_feature, poi_lines, editingFeature, editingProperty, clipboardFeature;
@@ -1207,8 +1207,8 @@ $hulop.editor = function() {
 				}
 			}
 		} else if (feature.get('hulop_major_category') == '_nav_poi_') {
-			var heading = parseFloat(feature.get('hulop_heading') || 0);
-			var angle = parseFloat(feature.get('hulop_angle') || 180);
+			var heading = feature.get('hulop_heading') || 0;
+			var angle = feature.get('hulop_angle') || 180;
 			var path = 'M 20 21.6 L 20 20 ';
 			var size = Math.min(20, 12 * Math.sqrt(180 / angle));
 			for (var i = -angle; i < angle + 10; i += 10) {
@@ -1836,16 +1836,19 @@ $hulop.editor = function() {
 				'input' : function(event) {
 					editingProperty = true;
 					var text = $(event.target).text().trim();
+					var decoration = 'none';
 					if (isString) {
 						feature.set(name, text);
 					} else {
 						if (text == '' || isNaN(text)) {
 							feature.unset(name);
+							decoration = 'line-through';
 						} else {
 							feature.set(name, Number(text));
 						}
 					}
-					console.log(name + ' = ' +  JSON.stringify(feature.get(name)));
+					$(event.target).css('text-decoration', decoration);
+					// console.log(name + ' = ' + JSON.stringify(feature.get(name)));
 					editingProperty = false;
 				}
 			},
