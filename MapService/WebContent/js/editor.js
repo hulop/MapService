@@ -1224,15 +1224,12 @@ $hulop.editor = function() {
 			}
 			path += 'L 20 20 z';
 
-			var mysvg = new Image();
-			svg = '<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" width="40px" height="40px">'
-					+ '<path stroke="#006600" stroke-width="2" stroke-opacity="0.75" fill="#00CC00" fill-opacity="0.75" d="' + path + '"/></svg>';
-
-			mysvg.src = 'data:image/svg+xml,' + escape(svg);
+			var src = 'data:image/svg+xml,' + escape('<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" width="40px" height="40px">'
+					+ '<path stroke="#006600" stroke-width="2" stroke-opacity="0.75" fill="#00CC00" fill-opacity="0.75" d="' + path + '"/></svg>');
 
 			style = new ol.style.Style({
 				'image' : new ol.style.Icon({
-					'img' : mysvg,
+					'src' : src,
 					'rotation' : heading * Math.PI / 180.0,
 					'rotateWithView' : true,
 					'anchor' : [ 0.5, 0.5 ],
