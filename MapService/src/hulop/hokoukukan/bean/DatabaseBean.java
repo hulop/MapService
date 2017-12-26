@@ -44,7 +44,6 @@ import hulop.hokoukukan.servlet.FileFilter;
 import hulop.hokoukukan.utils.CloudUtils;
 import hulop.hokoukukan.utils.CloudantAdapter;
 import hulop.hokoukukan.utils.DBAdapter;
-import hulop.hokoukukan.utils.Hokoukukan;
 import hulop.hokoukukan.utils.MongoAdapter;
 
 public class DatabaseBean {
