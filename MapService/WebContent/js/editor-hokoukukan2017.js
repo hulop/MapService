@@ -445,6 +445,7 @@ $hulop.editor.importV1 = function(v1features) {
 				set(tp, 'address_hira', kana2hira(value));
 				break;
 			case '電話番号':
+			case 'phone':
 				set(tp, 'tel', value);
 				break;
 			case '階層':
@@ -498,6 +499,10 @@ $hulop.editor.importV1 = function(v1features) {
 			case 'sub_category':
 			case 'minor_category':
 			case 'file':
+			case 'description':
+			case 'location_description':
+			case 'tags':
+			case 'poi_external_category':
 				set(tp, 'hulop_' + name, value);
 				break;
 			case 'long_description':

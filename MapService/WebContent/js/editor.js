@@ -72,8 +72,8 @@ $hulop.editor = function() {
 		'group:LAYER2',
 		'name_hira', 'fax', 'mail', 'start_time', 'end_time', 'no_serv_d',
 		'group:LAYER3',
-		'hulop_building', 'hulop_major_category', 'hulop_sub_category', 'hulop_minor_category', 'hulop_heading', 'hulop_angle', 'hulop_height', 'hulop_long_description' ]
-		.concat(i18nMenu([ 'name', 'address', 'med_dept', 'hulop_long_description' ]));
+		'hulop_building', 'hulop_major_category', 'hulop_sub_category', 'hulop_minor_category', 'hulop_heading', 'hulop_angle', 'hulop_height', 'hulop_long_description', 'hulop_description', 'hulop_location_description', 'hulop_tags', 'hulop_poi_external_category' ]
+		.concat(i18nMenu([ 'name', 'address', 'med_dept', 'hulop_long_description', 'hulop_description', 'hulop_location_description' ]));
 
 	console.log(PROPERTY_NAMES);
 
@@ -96,7 +96,7 @@ $hulop.editor = function() {
 	var OPTIONAL_KEYS = /^(link\d+_id)$/;
 	var READONLY_KEYS = /^(node_id|lat|lon|link_id|start_id|end_id|distance|facil_id|link\d+_id|ent\d+_lat|ent\d+_lon|ent\d_fl|ent\d_node|geometry)$/;
 	var NOCOPY_KEYS = /^(ent\d+_.*)$/;
-	var STRING_KEYS = /^(link_id|start_id|end_id|start_time|end_time|start_date|end_date|no_serv_d|st_name(_.+)?|node_id|link\d+_id|facil_id|name(_.+)?|address(_.+)?|tel|fax|mail|close_day|med_dept(_.+)?|ent\d+_n(_.+)?|ent\d+_node|hulop_file|hulop_building|hulop_major_category|hulop_sub_category|hulop_minor_category|hulop_elevator_equipments|hulop_long_description(_.+)?)$/;
+	var STRING_KEYS = /^(link_id|start_id|end_id|start_time|end_time|start_date|end_date|no_serv_d|st_name(_.+)?|node_id|link\d+_id|facil_id|name(_.+)?|address(_.+)?|tel|fax|mail|close_day|med_dept(_.+)?|ent\d+_n(_.+)?|ent\d+_node|hulop_file|hulop_building|hulop_major_category|hulop_sub_category|hulop_minor_category|hulop_elevator_equipments|hulop_long_description(_.+)?|hulop_description(_.+)?|hulop_location_description(_.+)?|hulop_tags|hulop_poi_external_category)$/;
 	var MAX_INDEX = 99;
 	var downKey, keyState = {}, ADD_KEY = 65, DO_POI_KEY = 68, SPLIT_KEY = 83, COPY_KEY = 67, PASTE_KEY = 86;
 	var lastData, map, source, select, modify, callback, start_feature, poi_lines, editingFeature, editingProperty, clipboardFeature;
@@ -225,11 +225,7 @@ $hulop.editor = function() {
 						function addCoords(crd) {
 							if (typeof (crd[0]) == 'number') {
 								var x = crd[0], y = crd[1];
-								if (bounds) {
-									bounds = [ Math.min(bounds[0], x), Math.min(bounds[1], y), Math.max(bounds[2], x), Math.max(bounds[3], y) ];
-								} else {
-									bounds = [ x, y, x, y ];
-								}
+								bounds = bounds ? [ Math.min(bounds[0], x), Math.min(bounds[1], y), Math.max(bounds[2], x), Math.max(bounds[3], y) ] : [ x, y, x, y ];
 							} else {
 								crd.forEach(addCoords);
 							}
@@ -294,9 +290,7 @@ $hulop.editor = function() {
 			// console.log(event);
 			var feature = getEventFeature(event);
 			var latLng = ol.proj.transform(event.coordinate, 'EPSG:3857', 'EPSG:4326');
-			if (editingFeature && !feature) {
-				showProperty();
-			}
+			editingFeature && !feature && showProperty();
 			switch (downKey) {
 			case ADD_KEY:
 				createNode(latLng);
@@ -407,10 +401,7 @@ $hulop.editor = function() {
 					// console.log(event);
 					if (select.getFeatures().getLength() > 0) {
 						var feature = select.getFeatures().item(0);
-						if (feature.getGeometry().getType() == 'LineString') {
-							return isVertex(feature, ol.events.condition.altKeyOnly(event));
-						}
-						return true;
+						return feature.getGeometry().getType() != 'LineString' || isVertex(feature, ol.events.condition.altKeyOnly(event));
 					}
 				}
 				return false;
@@ -459,11 +450,7 @@ $hulop.editor = function() {
 							}
 						});
 					}
-					// console.log(feature.getId() + ' ' + event.key + ': ' +
-					// event.oldValue + ' => ' + feature.get(event.key));
-					if (feature == editingFeature && feature.get(event.key) != event.oldValue && !editingProperty) {
-						showProperty(feature);
-					}
+					feature == editingFeature && feature.get(event.key) != event.oldValue && !editingProperty && showProperty(feature);
 				}
 				setModified(feature)
 			});
@@ -671,15 +658,11 @@ $hulop.editor = function() {
 			console.log(result);
 			var errors = 0;
 			result.insert && result.insert.forEach(function(obj) {
-				if (!obj._rev) {
-					errors++;
-				}
+				!obj._rev && errors++;
 				checkDbResult(obj);
 			});
 			result.update && result.update.forEach(function(obj) {
-				if (!obj._rev) {
-					errors++;
-				}
+				!obj._rev && errors++;
 				checkDbResult(obj);
 			});
 			org_remove.forEach(function(obj) {
@@ -687,9 +670,7 @@ $hulop.editor = function() {
 					'_id' : obj._id
 				});
 			});
-			if (errors > 0) {
-				alert(errors + ' errors while saving changes. Please reload data.');
-			}
+			errors > 0 && alert(errors + ' errors while saving changes. Please reload data.');
 		});
 	}
 
@@ -779,13 +760,11 @@ $hulop.editor = function() {
 		}
 		source.getFeatures().forEach(function(feature) {
 			var id = feature.getId();
-			if (!lastData.original[id]) {
-				source.removeFeature(feature);
-			}
+			lastData.original[id] || source.removeFeature(feature);
 		});
 		$('#list tbody tr').each(function() {
 			var id = $(this).find('td:last-child').text();
-			!lastData.original[id] && $(this).remove();
+			lastData.original[id] || $(this).remove();
 		});
 		lastData.modified = [];
 		resetExit();
@@ -1821,7 +1800,7 @@ $hulop.editor = function() {
 			}
 		}
 
-		var isString = STRING_KEYS.exec(name);
+		var isString = STRING_KEYS.exec(name) || typeof feature.get(name) == 'string';
 		return $('<tr>', {
 			'class' : editable ? 'editable' : 'read_only'
 		}).append($('<td>', {
@@ -1912,22 +1891,16 @@ $hulop.editor = function() {
 				break;
 			case 'link':
 				var node1 = feature.get('start_id'), node2 = feature.get('end_id');
-				if (node1 == node2) {
-					errors.push('Start node = End node ' + node1);
-				}
+				node1 == node2 && errors.push('Start node = End node ' + node1);
 				if (node1) {
 					var node = source.getFeatureById(node1);
-					if (!node) {
-						errors.push('Missing node ' + node1);
-					}
+					node || errors.push('Missing node ' + node1);
 				} else {
 					errors.push('missing start node id');
 				}
 				if (node2) {
 					var node = source.getFeatureById(node2);
-					if (!node) {
-						errors.push('Missing node ' + node2);
-					}
+					node || errors.push('Missing node ' + node2);
 				} else {
 					errors.push('missing end node id');
 				}
@@ -1941,9 +1914,7 @@ $hulop.editor = function() {
 			}
 		});
 		source.getFeatures().forEach(function(feature) {
-			if (feature.error) {
-				getFeatureRow(feature.getId()).css('background-color', '#c0c0c0');
-			}
+			feature.error && getFeatureRow(feature.getId()).css('background-color', '#c0c0c0');
 		});
 	}
 
