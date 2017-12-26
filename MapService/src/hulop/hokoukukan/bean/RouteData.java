@@ -273,7 +273,7 @@ public class RouteData {
 
 		public boolean hasPronString(JSONObject properties, String key) {
 			try {
-				return properties.has(key + "_hira") && properties.getString(key + "_hira").length() > 0;
+				return "ja".equals(mLang) && properties.has(key + "_hira") && properties.getString(key + "_hira").length() > 0;
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}

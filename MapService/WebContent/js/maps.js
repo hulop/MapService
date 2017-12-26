@@ -884,9 +884,10 @@ $hulop.map = function() {
 
 	function getDestinationLong(pron) {
 		var obj = targetNodes[$('#to option:selected').val()];
-		var longDesc = obj && obj.properties && (obj.properties['hulop_long_description_' + $hulop.messages.defaultLang] || obj.properties['hulop_long_description']);
+		var lang = $hulop.messages.defaultLang;
+		var longDesc = obj && obj.properties && (obj.properties['hulop_long_description_' + lang] || obj.properties['hulop_long_description']);
 		if (longDesc) {
-			return pron ? obj.properties['hulop_long_description_hira'] || longDesc : longDesc;
+			return pron && lang == 'ja' && obj.properties['hulop_long_description_hira'] || longDesc;
 		}
 		return "";
 	}
