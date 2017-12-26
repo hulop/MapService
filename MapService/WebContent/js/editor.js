@@ -1795,6 +1795,8 @@ $hulop.editor = function() {
 						}
 						v += ' (' + m[2] + ')';
 					}
+				} else if (/^(en|ja|hira|es|fr)$/.exec(m[2])) {
+					v = m[1] + ' (' + m[2] + ')';
 				}
 				return v;
 			}
