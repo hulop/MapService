@@ -28,26 +28,6 @@
 </head>
 <body>
 	<%=user%> <a href="admin.jsp?logout=true">Log out</a> | <a href="edit_password.jsp?redirect_url=admin.jsp">Change password</a>
-	<!--fieldset>
-		<legend>Import Hokoukukan gml.zip file</legend>
-		<form method="post" action="api/admin?action=import&type=gml.zip"
-			enctype="multipart/form-data">
-			<input type="file" size="50" name="file" /> <input type="submit"
-				value="Import zip file">
-		</form>
-	</fieldset>
-	<fieldset>
-		<legend>Import NavCog json file</legend>
-		<form method="post" action="api/admin?action=import&type=navcog.json"
-			enctype="multipart/form-data">
-			<input type="file" size="50" name="file" /> <input type="submit"
-				value="Import json file">
-		</form>
-	</fieldset>
-	<fieldset>
-		<legend>Imported files</legend>
-		<div id="fileList"></div>
-	</fieldset-->
 	<fieldset>
 		<legend>Import Attachment zip file</legend>
 		<form method="post" action="api/admin?action=import&type=attachment.zip"

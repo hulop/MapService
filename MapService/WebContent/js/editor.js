@@ -1287,9 +1287,7 @@ $hulop.editor = function() {
 			addLink(feature);
 		} else if (feature.get('facil_id')) {
 			var h = feature.get('hulop_height');
-			if (h) {
-				heights.indexOf(h) == -1 && heights.push(h);
-			}
+			h && heights.indexOf(h) == -1 && heights.push(h);
 			getExitValues(feature.get('facil_id')).forEach(function(exit) {
 				var node = exit.node_id && source.getFeatureById(exit.node_id);
 				node && addNode(node);
@@ -1299,9 +1297,6 @@ $hulop.editor = function() {
 	}
 
 	function geometryChanged(feature) {
-		// console.log('geometryChanged: ' + feature.getId() + ' ' +
-		// feature.getGeometry().getType() + ' ' +
-		// feature.getGeometry().getCoordinates());
 		var nodeID = feature.get('node_id');
 		if (nodeID) {
 			var nodeCoordinate = feature.getGeometry().getCoordinates();
