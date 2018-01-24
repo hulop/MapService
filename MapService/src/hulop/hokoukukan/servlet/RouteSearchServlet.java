@@ -81,6 +81,15 @@ public class RouteSearchServlet extends HttpServlet {
 		long start = System.currentTimeMillis();
 		String user = request.getParameter("user");
 		String action = request.getParameter("action");
+		if ("info".equals(action)) {
+			try {
+				JSONObject result = new JSONObject().put("map_data", "hokoukukan2017");
+				sendJSON(result, request, response);
+				return;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 		if (user == null || action == null) {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid user or action");
 			return;
