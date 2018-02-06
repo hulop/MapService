@@ -49,6 +49,9 @@ $hulop.indoor = function() {
 	}
 
 	function createOverlay(region) {
+		if (region.tile_url) {
+			return overlayMap[region.id] = new TileOverlay(region);
+		}
 		var overlay = new FloorPlanOverlay({
 			'src' : region.image,
 			'lat' : region.lat,
@@ -184,7 +187,7 @@ $hulop.indoor = function() {
 		var center = $hulop.map.getCenter();
 		for ( var id in overlayMap) {
 			var ov = overlayMap[id];
-			var diag = Math.sqrt(Math.pow(ov.width / ov.ppm_x, 2) + Math.pow(ov.height / ov.ppm_y, 2));
+			var diag = ov.coverage || (Math.sqrt(Math.pow(ov.width / ov.ppm_x, 2) + Math.pow(ov.height / ov.ppm_y, 2)));
 			var dist = Math.max(diag + 100, ($hulop.config.MAX_RADIUS || 500) / 2);
 			var range = zoom >= 16 && $hulop.util.computeDistanceBetween(center, $hulop.util.newLatLng(ov.lat, ov.lng)) < dist;
 			var of = ov.floor;
@@ -227,6 +230,25 @@ $hulop.indoor = function() {
 
 	function getCurrentFloor() {
 		return (enabled && activeFloor) || 0;
+	}
+
+	function TileOverlay(options) {
+		for ( var key in options) {
+			this[key] = options[key];
+		}
+		var source = new ol.source.XYZ({
+			'wrapX' : false,
+			'url' : this.tile_url
+		});
+		this.attributions && source.setAttributions(this.attributions);
+
+		var layer = new ol.layer.Tile({
+			'source' : source
+		});
+		this.show = function(show) {
+			layer.setVisible(show);
+		}
+		$hulop.map.getMap().addLayer(layer);
 	}
 
 	return {
