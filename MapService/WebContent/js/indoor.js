@@ -243,7 +243,8 @@ $hulop.indoor = function() {
 		this.attributions && source.setAttributions(this.attributions);
 
 		var layer = new ol.layer.Tile({
-			'source' : source
+			'source' : source,
+			'visible' : false
 		});
 		this.show = function(show) {
 			layer.setVisible(show);
