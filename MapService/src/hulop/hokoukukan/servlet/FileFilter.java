@@ -86,7 +86,7 @@ public class FileFilter implements Filter {
 
 	public static void onAttachmentChanged() {
 		attachmentList = null;
-		attachmentDate = new Date().getTime();
+		attachmentDate = new Date().getTime() / 1000 * 1000;
 	}
 
 	synchronized private boolean hasAttachment(String url) {
@@ -119,6 +119,13 @@ public class FileFilter implements Filter {
 			}
 			gzip = false;
 			response.setHeader("Content-Encoding", "gzip");
+		}
+		long ifModified = request.getDateHeader("If-Modified-Since");
+		if(ifModified != -1) {
+			if (ifModified != -1 && attachmentDate <= ifModified) {
+				response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+				return true;
+			}
 		}
 		InputStream is = DatabaseBean.getAttachment(url + gzipExt);
 		if (is != null) {
