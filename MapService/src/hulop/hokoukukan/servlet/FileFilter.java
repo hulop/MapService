@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URLConnection;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPOutputStream;
@@ -50,6 +51,7 @@ public class FileFilter implements Filter {
 
 	private static int contextLength;
 	private static List<String> attachmentList = null;
+	private static long attachmentDate;
 
 	/**
 	 * Default constructor.
@@ -84,6 +86,7 @@ public class FileFilter implements Filter {
 
 	public static void onAttachmentChanged() {
 		attachmentList = null;
+		attachmentDate = new Date().getTime();
 	}
 
 	synchronized private boolean hasAttachment(String url) {
@@ -131,6 +134,7 @@ public class FileFilter implements Filter {
 			}
 			System.out.println(url + " / " + contentType);
 			response.setContentType(contentType);
+			response.setDateHeader("Last-Modified", attachmentDate);
 			OutputStream os = response.getOutputStream();
 			GZIPOutputStream gzos = null;
 			try {
