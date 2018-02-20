@@ -121,11 +121,9 @@ public class FileFilter implements Filter {
 			response.setHeader("Content-Encoding", "gzip");
 		}
 		long ifModified = request.getDateHeader("If-Modified-Since");
-		if(ifModified != -1) {
-			if (ifModified != -1 && attachmentDate <= ifModified) {
-				response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
-				return true;
-			}
+		if (ifModified != -1 && attachmentDate <= ifModified) {
+			response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+			return true;
 		}
 		InputStream is = DatabaseBean.getAttachment(url + gzipExt);
 		if (is != null) {
