@@ -134,10 +134,10 @@ public class GZIPFilter {
 
 		@Override
 		public ServletOutputStream getOutputStream() throws IOException {
+			if (writer != null) {
+				throw new IllegalStateException("PrintWriter obtained already - cannot get OutputStream");
+			}
 			if (os == null) {
-				if (writer != null) {
-					throw new IllegalStateException("PrintWriter obtained already - cannot get OutputStream");
-				}
 				os = new MemStream();
 			}
 			return os;
