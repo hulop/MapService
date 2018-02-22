@@ -23,6 +23,7 @@ package hulop.hokoukukan.servlet;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.HashMap;
@@ -118,7 +119,9 @@ public class GZIPFilter {
 			}
 		}
 		if (b != null) {
-			response.getOutputStream().write(b);
+			OutputStream os = response.getOutputStream();
+			os.write(b);
+			os.close();
 		}
 	}
 
