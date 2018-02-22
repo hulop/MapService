@@ -270,7 +270,7 @@ $hulop.route = function() {
 	}
 
 	function sendData(type, url, data, callback) {
-		$hulop.util.loading(true);
+		data.quiet || $hulop.util.loading(true);
 		data.user = data.user || ($hulop.logging && $hulop.logging.getClientId()) || user;
 		data.lang = data.lang || lang;
 		$.ajax({
