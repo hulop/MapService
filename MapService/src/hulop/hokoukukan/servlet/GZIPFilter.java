@@ -74,15 +74,17 @@ public class GZIPFilter {
 			throws IOException, ServletException {
 		String url = request.getRequestURI();
 		byte[] b = null;
-		Map<String, Object> map = cacheMap.get(url);
-		if (map != null) {
+		Map<String, Object> cache = cacheMap.get(url);
+		if (cache != null) {
 			// System.out.println("Use Cache: " + url);
-			for (String name : map.keySet()) {
-				Object value = map.get(name);
-				if (value instanceof byte[]) {
-					b = (byte[]) value;
-				} else {
-					response.setHeader(name, value.toString());
+			for (String name : cache.keySet()) {
+				switch (name) {
+				case "$data":
+					b = (byte[]) cache.get(name);
+					break;
+				default:
+					response.setHeader(name, (String) cache.get(name));
+					break;
 				}
 			}
 		} else {
@@ -96,11 +98,12 @@ public class GZIPFilter {
 			chain.doFilter(request, res);
 			b = res.toByteArray();
 			if (res.getStatus() == 200 && b != null && b.length > 860) {
-				Map<String, Object> cache = new HashMap<String, Object>();
+				cache = new HashMap<String, Object>();
 				for (String name : res.getHeaderNames()) {
 					cache.put(name, res.getHeader(name));
 				}
-				System.out.println(cache);
+				cache.remove("Date");
+				System.out.println(cache + " @ " + url);
 				if ("gzip".equals(res.getHeader("Content-Encoding"))) {
 					cache.put("$data", b);
 				} else {
