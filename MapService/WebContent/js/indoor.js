@@ -141,6 +141,7 @@ $hulop.indoor = function() {
 			var start = new Date().getTime();
 			$hulop.route.callService({
 				'action' : 'toilets',
+				'quiet' : true,
 				'lat' : toiletLatlng[1],
 				'lng' : toiletLatlng[0],
 				'dist' : toiletDist
