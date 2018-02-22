@@ -85,7 +85,7 @@ $hulop.map = function() {
 	function init() {
 		if (!$hulop.messages.ready()) {
 			console.log('waiting messages ready')
-			setTimeout(init, 1000);
+			setTimeout(init, 100);
 			return;
 		}
 		console.log('init OpenLayers');
