@@ -103,8 +103,11 @@ public class GZIPFilter {
 				for (String name : res.getHeaderNames()) {
 					cache.put(name, res.getHeader(name));
 				}
-				cache.remove("Date");
 				System.out.println(cache + " @ " + url);
+				if (cache.containsKey("Date")) {
+					cache.put("Last-Modified", cache.get("Date"));
+					cache.remove("Date");
+				}
 				if ("gzip".equals(res.getHeader("Content-Encoding"))) {
 					cache.put("$data", b);
 				} else {
