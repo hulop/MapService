@@ -44,7 +44,7 @@ import javax.servlet.http.HttpServletResponseWrapper;
 public class GZIPFilter {
 
 	private static GZIPFilter instance = null;
-	private static Pattern GZIP_PATTERN = Pattern.compile("\\.(js|css)$");
+	private static Pattern GZIP_PATTERN = Pattern.compile("\\.(js|css|json)$");
 	private Map<String, Map<String, Object>> cacheMap = new HashMap<String, Map<String, Object>>();
 
 	public static GZIPFilter getInstance() {
