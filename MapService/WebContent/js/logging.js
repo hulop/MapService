@@ -111,4 +111,6 @@ $hulop.logging = function() {
 	};
 }();
 
-$hulop.logging.start();
+$(window).load(function() {
+	$hulop.logging.start();
+});
