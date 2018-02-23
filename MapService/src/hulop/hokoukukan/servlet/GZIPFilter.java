@@ -78,6 +78,11 @@ public class GZIPFilter {
 		Map<String, Object> cache = cacheMap.get(url);
 		if (cache != null) {
 			// System.out.println("Use Cache: " + url);
+			String ifModified = request.getHeader("If-Modified-Since");
+			if (ifModified != null && ifModified.equals(cache.get("Last-Modified"))) {
+				response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+				return;
+			}
 			for (String name : cache.keySet()) {
 				switch (name) {
 				case "$data":
