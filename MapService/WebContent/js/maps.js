@@ -42,6 +42,7 @@ $hulop.map = function() {
 	var sync = true, rotationMode = 1, lastShowResult = false, landmarks;
 	var playback = location.search.substr(1).split('&').indexOf('playback') != -1;
 	var listeners = {};
+	var lastAnnounce;
 
 	var format = new ol.format.GeoJSON()
 
@@ -369,7 +370,7 @@ $hulop.map = function() {
 					var distance = $hulop.util.computeDistanceBetween(pos, info.lastDir.end);
 					if (distance < info.poi_announce_dist) {
 						console.log(distance + 'm to ' + info.poi_end);
-						$hulop.util.speak(getPOIMsg(info.poi_end), false);
+						$hulop.util.speak(lastAnnounce = getPOIMsg(info.poi_end), false);
 						delete info.poi_announce_dist;
 					}
 				}
@@ -423,7 +424,9 @@ $hulop.map = function() {
 				}
 			}
 			$hulop.location && $hulop.location.showNextCircle(nextLatlng, arriveDist);
+			route.next_dist_span && route.next_dist_span.text(Math.floor(distance) + 'm');
 			if (distance < arriveDist) {
+				route.next_dist_span && route.next_dist_span.empty();
 				showStep(index, false);
 				if (index == naviRoutes.length - 1) {
 					$hulop.util.speak($m('ARRIVED', route.title), true);
@@ -437,7 +440,13 @@ $hulop.map = function() {
 					$hulop.util.logText('navigationFinished,' + JSON.stringify(naviCondition));
 					var longDesc = getDestinationLong(true);
 					longDesc && $hulop.util.speak(longDesc, false);
-					setTimeout(clearRoute, 7500);
+					setTimeout(function () {
+						var nodes = routeLayer.getSource().getFeatures().filter(function(f) {
+							return f.getProperties().node_id;
+						});
+						clearRoute();
+						nodes.length && routeLayer.getSource().addFeature(nodes[0]);
+					}, 2500);
 					naviRoutes = []; // disable navigation
 				} else {
 					var nextRoute = naviRoutes[index + 1];
@@ -484,7 +493,7 @@ $hulop.map = function() {
 					if (old != msg) {
 						console.log(old + ' -> ' + msg);
 					}
-					$hulop.util.speak(msg, false);
+					$hulop.util.speak(lastAnnounce = msg, false);
 					minSpokenDistance = route.subtotal - 5;
 					checkPOIStep(index);
 					listeners.step && listeners.step(index, naviRoutes);
@@ -519,7 +528,7 @@ $hulop.map = function() {
 			if (prefix != null) {
 				lastAdjust == false && showStep(index - 1, false, 1);
 				if (prefix || spokenDistance != Number.MAX_VALUE) {
-					$hulop.util.speak(prefix + distAndTitle(announceDist, route, false, 10), false, !prefix);
+					$hulop.util.speak(lastAnnounce = prefix + distAndTitle(announceDist, route, false, 10), false, !prefix);
 					lastErrorPos = null;
 				}
 				spokenDistance = Math.min(distance, minSpokenDistance);
@@ -615,6 +624,7 @@ $hulop.map = function() {
 	}
 
 	function showRoute(data, startInfo, replay, noNavigation) {
+		lastAnnounce = null;
 		clearRoute();
 		if (data.error == 'zero-distance') {
 			showAlert($m('ARRIVED', ''));
@@ -653,7 +663,7 @@ $hulop.map = function() {
 		data.shift(); // Ignore start point
 		var naviItem = null, lastLinkInfo = {}, subtotal = 0, curved = false, path = [], links = [], pois = [];
 
-		function appendLabel(title, latlng, floor, dir, type) {
+		function appendLabel(title, latlng, floor, dir, type, wheelchair_accessible) {
 			var display_title = title;
 			if (typeof title.title == 'string') {
 				display_title = title.display_title;
@@ -678,6 +688,7 @@ $hulop.map = function() {
 				'floor' : floor,
 				'dir' : dir,
 				'type' : type,
+				'wheelchair_accessible' : wheelchair_accessible != false,
 				'links' : links,
 				'pois' : pois,
 				'lastLinkInfo' : lastLinkInfo
@@ -760,7 +771,7 @@ $hulop.map = function() {
 						}
 					}
 				}
-				label && appendLabel(label, getLatLng(coords[0]), obj.properties.sourceHeight, dir, type);
+				label && appendLabel(label, getLatLng(coords[0]), obj.properties.sourceHeight, dir, type, isWheelchairAccessible(obj.properties));
 				lastLinkInfo = linkInfo;
 				subtotal += linkInfo.length;
 				curved |= (coords.length > 2);
@@ -808,10 +819,13 @@ $hulop.map = function() {
 					'click' : function(e) {
 						e.preventDefault();
 						e.target.blur();
-						showStep(Math.min(index + 1, naviRoutes.length - 1));
+						lastAnnounce && $hulop.util.speak(lastAnnounce, true);
 					}
 				}
 			});
+			index && label.append(item.next_dist_span = $('<span>', {
+				'class' : 'next_dist'
+			}));
 			label.append($('<span class="direction">')).append($('<span class="linktype">'));
 			var tr = $('<tr>', {
 				'id' : 'route_' + index,
@@ -819,13 +833,13 @@ $hulop.map = function() {
 			});
 			index > 0 && tr.on('swiperight', function(event) {
 				showStep(index - 1);
+				lastAnnounce = null;
 			});
 			index < naviRoutes.length - 1 && tr.on('swipeleft', function(event) {
 				showStep(index + 1);
+				lastAnnounce = null;
 			});
-			tr.append([ $('<td>', {
-				'width' : '20%'
-			}).append(prev), $('<td>').append(label) ]).appendTo(tbody);
+			tr.append($('<td>').append(label)).appendTo(tbody);
 		});
 		$('#route_result').append($('<table>', {
 			'id' : 'route_table',
@@ -1006,12 +1020,15 @@ $hulop.map = function() {
 		for (var index = all ? 0 : Math.max(startIndex, 0); index < naviRoutes.length; index++) {
 			var item = naviRoutes[index];
 			if (prevFloor && prevFloor != item.floor) {
-				instructions.push($('<hr>'));
 				if (!all) {
 					nextIndex = index;
 					break;
 				}
 			}
+			prevFloor != item.floor && instructions.push($('<span>', {
+				'class' : 'floor',
+				'text' : item.floor ? ((item.floor > 0 ? '' : 'B') + Math.abs(item.floor) + 'F') : $m('OUTDOOR')
+			}));
 			prevFloor = item.floor;
 			var label = $('<span>', {
 				'text' : item.display_title,
@@ -1019,6 +1036,7 @@ $hulop.map = function() {
 			});
 			label.prepend($('<span class="direction">'));
 			label.append($('<span class="linktype">'));
+			item.wheelchair_accessible || label.append($('<span class="inaccessible">'));
 			if (all || !lastAdjust || index != currentStep) {
 				instructions.push(label);
 			}
@@ -1511,6 +1529,29 @@ $hulop.map = function() {
 		rotationMode == 1 && map.getView().setRotation(angle * Math.PI / 180.0);
 	}
 
+	function isWheelchairAccessible(p) {
+		switch(p.route_type) {
+		case 1: // Moving walkway
+		case 4: // Escalator
+		case 5: // Stairs
+			return false;
+		case 3: // Elevator
+			return p.elevator != 1; // accessible
+		default:
+			if (p.width == 0 || // < 1m
+				p.width == 1 || // < 2m
+				p.vtcl_slope == 1 || // > 5%
+				p.lev_diff == 1 || // > 2cm
+				p.condition == 1 || // soil 
+				p.condition == 2 || // gravel
+				p.condition == 3) { // other condition
+				return false;
+			}
+			break;
+		}
+		return true;
+	}
+	
 	return {
 		'getState' : getState,
 		'resetState' : resetState,
