@@ -44,6 +44,11 @@
 	bottom: 0.5em;
 }
 
+.LEFT_TOP {
+	left: 0.5em;
+	top: 0.5em;
+}
+
 .BOTTOM {
 	bottom: 0.5em;
 	left: 50%;

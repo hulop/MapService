@@ -206,7 +206,7 @@ html, body {
 	display: block;
 }
 
-.route_instructions span.direction, .route_instructions span.linktype, .route_instructions span.inaccessible {
+.route_instructions span.direction, .route_instructions span.linktype {
 	width: 28px;
 	height: 28px;
 	background-repeat: no-repeat;
@@ -218,16 +218,12 @@ html, body {
 	float: left;
 }
 
-.route_instructions span.linktype, .route_instructions span.inaccessible {
+.route_instructions span.linktype {
 	float: right;
 }
 
 .route_instructions .STRAIGHT span.direction {
 	background-image: none;
-}
-
-.route_instructions span.inaccessible {
-	background-image: url("../jquery/images/icons-png/delete-black.png")
 }
 
 .route_instructions .floor {

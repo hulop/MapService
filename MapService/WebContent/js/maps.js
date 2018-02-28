@@ -202,6 +202,7 @@ $hulop.map = function() {
 			map.addControl(new ol.control.Control({
 				'element' : instruction[0]
 			}));
+			addRemainDist();
 			var up = $('<div>', {
 				'class' : 'ol-unselectable ol-control RIGHT_TOP'
 			}).append($('<a>', {
@@ -422,9 +423,10 @@ $hulop.map = function() {
 						distance = $hulop.util.computeDistanceBetween(nextLatlng = latlng, pos);
 					}
 				}
+				route.next_dist_span && route.next_dist_span.text(Math.floor(distance) + 'm');
+				showRemainDist(route.resttotal + distance);
 			}
 			$hulop.location && $hulop.location.showNextCircle(nextLatlng, arriveDist);
-			route.next_dist_span && route.next_dist_span.text(Math.floor(distance) + 'm');
 			if (distance < arriveDist) {
 				route.next_dist_span && route.next_dist_span.empty();
 				showStep(index, false);
@@ -663,7 +665,7 @@ $hulop.map = function() {
 		data.shift(); // Ignore start point
 		var naviItem = null, lastLinkInfo = {}, subtotal = 0, curved = false, path = [], links = [], pois = [];
 
-		function appendLabel(title, latlng, floor, dir, type, wheelchair_accessible) {
+		function appendLabel(title, latlng, floor, dir, type) {
 			var display_title = title;
 			if (typeof title.title == 'string') {
 				display_title = title.display_title;
@@ -688,7 +690,6 @@ $hulop.map = function() {
 				'floor' : floor,
 				'dir' : dir,
 				'type' : type,
-				'wheelchair_accessible' : wheelchair_accessible != false,
 				'links' : links,
 				'pois' : pois,
 				'lastLinkInfo' : lastLinkInfo
@@ -771,7 +772,7 @@ $hulop.map = function() {
 						}
 					}
 				}
-				label && appendLabel(label, getLatLng(coords[0]), obj.properties.sourceHeight, dir, type, isWheelchairAccessible(obj.properties));
+				label && appendLabel(label, getLatLng(coords[0]), obj.properties.sourceHeight, dir, type);
 				lastLinkInfo = linkInfo;
 				subtotal += linkInfo.length;
 				curved |= (coords.length > 2);
@@ -795,6 +796,13 @@ $hulop.map = function() {
 			'title' : getDestinationName(true)
 		}, getLatLng(obj.geometry.coordinates), obj.properties['floor'] || 0, "STRAIGHT");
 
+		var total = naviRoutes.reduce(function(subtotal, route) {
+			return subtotal + (route.subtotal || 0);
+		}, 0);
+		naviRoutes.forEach(function(route) {
+			route.resttotal = total; 
+			total -= (route.subtotal || 0);
+		});
 		// Create step buttons
 		var tbody = $('<tbody>');
 		naviRoutes.forEach(function(item, index) {
@@ -866,10 +874,14 @@ $hulop.map = function() {
 			replay = false;
 		}
 		if ($hulop.util.isMobile() && !replay && !rerouting) {
-			$('#route_summary').text(getSummary(linkList));
+			var total = naviRoutes.reduce(function(subtotal, route) {
+				return subtotal + (route.subtotal || 0);
+			}, 0);
+			showRemainDist(total);
+			$('#route_summary').text(getSummary(linkList, total));
 			$('#route_instructions').html(getInstructions(true));
 			showPage('#confirm');
-			$hulop.util.speak(getSummary(linkList, true), true);
+			$hulop.util.speak(getSummary(linkList, total, true), true);
 			if (timeout) {
 				$('#confirm_yes').hide();
 				setTimeout(function() {
@@ -987,10 +999,7 @@ $hulop.map = function() {
 		});
 	}
 
-	function getSummary(linkList, pron) {
-		var total = naviRoutes.reduce(function(subtotal, route) {
-			return subtotal + (route.subtotal || 0);
-		}, 0);
+	function getSummary(linkList, total, pron) {
 		var poiList = {};
 		linkList.forEach(function(link, index) {
 			if (link.info) {
@@ -1036,7 +1045,6 @@ $hulop.map = function() {
 			});
 			label.prepend($('<span class="direction">'));
 			label.append($('<span class="linktype">'));
-			item.wheelchair_accessible || label.append($('<span class="inaccessible">'));
 			if (all || !lastAdjust || index != currentStep) {
 				instructions.push(label);
 			}
@@ -1127,6 +1135,7 @@ $hulop.map = function() {
 		var step = naviRoutes[index = fixIndex(index)];
 		$('#route_table tr').addClass('invisible');
 		$('#route_table tr#route_' + text_index).removeClass('invisible');
+		console.log('showStep: ' + naviRoutes[text_index].display_title);
 		if (pan != false) {
 			panTo(step.latlng);
 			suppressAnnounce = new Date().getTime();
@@ -1528,28 +1537,37 @@ $hulop.map = function() {
 	function setRotation(angle) {
 		rotationMode == 1 && map.getView().setRotation(angle * Math.PI / 180.0);
 	}
-
-	function isWheelchairAccessible(p) {
-		switch(p.route_type) {
-		case 1: // Moving walkway
-		case 4: // Escalator
-		case 5: // Stairs
-			return false;
-		case 3: // Elevator
-			return p.elevator != 1; // accessible
-		default:
-			if (p.width == 0 || // < 1m
-				p.width == 1 || // < 2m
-				p.vtcl_slope == 1 || // > 5%
-				p.lev_diff == 1 || // > 2cm
-				p.condition == 1 || // soil 
-				p.condition == 2 || // gravel
-				p.condition == 3) { // other condition
-				return false;
-			}
-			break;
+	
+	var noheader = location.search.substr(1).split('&').indexOf('noheader') != -1;
+	function addRemainDist() {
+		if (!noheader) {
+			var remain = $('<div>', {
+				'class' : 'instruction ol-unselectable ol-control LEFT_TOP',
+				'css' : {
+					'display' : 'none'
+				}
+			}).append($('<span>', {
+				'id' : 'remaining-distance',
+				'class' : 'ui-btn ui-mini ui-shadow ui-corner-all',
+				'css' : {
+					'font-size' : '16px',
+					'margin' : '0px',
+					'padding' : '0.5625em'
+				}
+			}));
+			map.addControl(new ol.control.Control({
+				'element' : remain[0]
+			}));
 		}
-		return true;
+	}
+
+	function showRemainDist(distance) {
+		var text = $m('REMAIN_DIST', Math.floor(distance));
+		if (noheader) {
+			$hulop.util.logText('setTitle,' + text);
+		} else {
+			$('#remaining-distance').text(text);
+		}
 	}
 	
 	return {
