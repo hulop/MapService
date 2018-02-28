@@ -185,6 +185,10 @@ html, body {
 	background-image: url("../images/slope.png")
 }
 
+.link_type_11 span.linktype {
+	background-image: url("../images/1472186708_aiga_escalator.png")
+}
+
 #confirm_floor table {
 	width: 100%;
 }
@@ -200,7 +204,6 @@ html, body {
 	color: #777;
 	margin-left: 32px;
 	display: block;
-	margin-left: 32px;
 }
 
 .route_instructions span.direction, .route_instructions span.linktype {
@@ -221,4 +224,29 @@ html, body {
 
 .route_instructions .STRAIGHT span.direction {
 	background-image: none;
+}
+
+.route_instructions .floor {
+	font-size: small;
+	font-weight: bold;
+	background-color: #eee;
+	line-height: 28px;
+	text-align: center;
+	display: block;
+}
+
+#route_table tr a span.next_dist {
+    position: absolute;
+    left: 0px;
+    width: 56px;
+    bottom: 0px;
+    font-size: 14px;
+    line-height: 14px;
+}
+
+#route_table tr a span.next_dist:not(:empty) + span.direction {
+	position: absolute;
+	left: 0px;
+	width: 56px;
+	top: 2px;
 }

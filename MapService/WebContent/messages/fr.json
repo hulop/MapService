@@ -75,6 +75,7 @@
 	"MOVE_FLOOR": "Allez à %2 par %1",
 	"UP": "Montez %1",
 	"DOWN": "Descendez %1",
+	"REMAIN_DIST": "Remaining about %1m",
 	"DIST": "Zone de recherche:",
 	"DIST_250": "250m",
 	"DIST_500": "500m",
