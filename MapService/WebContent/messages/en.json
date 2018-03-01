@@ -4,6 +4,8 @@
 	"REROUTING": "Rerouting. ",
 	"WRONG_ROUTE": "Are you away from the route? ",
 	"ARRIVED": "Arrived. %1",
+	"ARRIVED_RIGHT": "Destination is on the right side. %1",
+	"ARRIVED_LEFT": "Destination is on the left side. %1",
 	"NEXT_ROUTE": ", and %1",
 	"NEXT_DEST": "%1 meters to %2",
 	"NEXT_DEST_ABOUT": "About %1 meters to %2",

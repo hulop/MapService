@@ -443,7 +443,7 @@ $hulop.map = function() {
 				route.next_dist_span && route.next_dist_span.empty();
 				showStep(index, false);
 				if (index == naviRoutes.length - 1) {
-					$hulop.util.speak($m('ARRIVED', route.title), true);
+					$hulop.util.speak($m(getArrivalToken(), route.title), true);
 					$hulop.util.logText("endNavigation");
 					$hulop.logging && $hulop.logging.onData({
 						"event" : "navigation",
@@ -1588,6 +1588,27 @@ $hulop.map = function() {
 		}
 	}
 	
+	var HOOK_LENGTH = 3;
+	function getArrivalToken() {
+		var lastRoute = naviRoutes[naviRoutes.length - 2];
+		var total = 0, count = 0, len = lastRoute.links.length;
+		while (count < len && total <= HOOK_LENGTH) {
+			total += lastRoute.links[len - ++count].info.length;
+		}
+		if (count > 1 && total > HOOK_LENGTH) {
+			var angle = lastRoute.links[len - 1].info.lastDir.heading - lastRoute.links[len - count].info.lastDir.heading;
+			if (angle > 180) {
+				angle -= 360;
+			} else if (angle < -180) {
+				angle += 360;
+			}
+			if (Math.abs(angle) > 45 && Math.abs(angle) < 135) {
+				return angle > 0 ? 'ARRIVED_RIGHT' : 'ARRIVED_LEFT';
+			}
+		}
+		return 'ARRIVED';
+	}
+
 	return {
 		'getState' : getState,
 		'resetState' : resetState,
