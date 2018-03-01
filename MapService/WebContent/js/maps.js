@@ -42,7 +42,7 @@ $hulop.map = function() {
 	var sync = true, rotationMode = 1, lastShowResult = false, landmarks;
 	var playback = location.search.substr(1).split('&').indexOf('playback') != -1;
 	var listeners = {};
-	var lastAnnounce;
+	var lastAnnounce, lastStep;
 
 	var format = new ol.format.GeoJSON()
 
@@ -426,6 +426,10 @@ $hulop.map = function() {
 				route.next_dist_span && route.next_dist_span.text(Math.floor(distance) + 'm');
 				showRemainDist(route.resttotal + distance);
 			}
+			lastStep = {
+				'route' : route,
+				'distance' : distance
+			};
 			$hulop.location && $hulop.location.showNextCircle(nextLatlng, arriveDist);
 			if (distance < arriveDist) {
 				route.next_dist_span && route.next_dist_span.empty();
@@ -626,7 +630,7 @@ $hulop.map = function() {
 	}
 
 	function showRoute(data, startInfo, replay, noNavigation) {
-		lastAnnounce = null;
+		lastAnnounce = lastStep = null;
 		clearRoute();
 		if (data.error == 'zero-distance') {
 			showAlert($m('ARRIVED', ''));
@@ -827,7 +831,8 @@ $hulop.map = function() {
 					'click' : function(e) {
 						e.preventDefault();
 						e.target.blur();
-						lastAnnounce && $hulop.util.speak(lastAnnounce, true);
+//						lastAnnounce && $hulop.util.speak(lastAnnounce, true);
+						lastStep && $hulop.util.speak(distAndTitle(lastStep.distance, lastStep.route), true);
 					}
 				}
 			});
@@ -841,11 +846,11 @@ $hulop.map = function() {
 			});
 			index > 0 && tr.on('swiperight', function(event) {
 				showStep(index - 1);
-				lastAnnounce = null;
+				lastAnnounce = lastStep = null;
 			});
 			index < naviRoutes.length - 1 && tr.on('swipeleft', function(event) {
 				showStep(index + 1);
-				lastAnnounce = null;
+				lastAnnounce = lastStep = null;
 			});
 			tr.append($('<td>').append(label)).appendTo(tbody);
 		});

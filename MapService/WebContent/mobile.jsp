@@ -118,7 +118,7 @@ if (id == null || (agreeBean.isAgreementSupported() && !agreeBean.getAgreed(id))
 					</tr>
 					<tr>
 						<td>
-							<button data-mini="true" id="confirm_yes" data-icon="search" i18n>START</button>
+							<button data-mini="true" id="confirm_yes" data-icon="navigation" i18n>START</button>
 						</td>
 					</tr>
 					<tr>
