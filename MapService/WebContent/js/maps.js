@@ -42,7 +42,7 @@ $hulop.map = function() {
 	var sync = true, rotationMode = 1, lastShowResult = false, landmarks;
 	var playback = location.search.substr(1).split('&').indexOf('playback') != -1;
 	var listeners = {};
-	var lastAnnounce, lastStep;
+	var lastAnnounce, lastStep, lastSearchTo;
 
 	var format = new ol.format.GeoJSON()
 
@@ -264,6 +264,14 @@ $hulop.map = function() {
 			});
 			$('#confirm_no').on('click', function(event) {
 				clearRoute();
+			});
+			$('#wheelchair_mode').on('change', function(event) {
+				event.preventDefault();
+				try {
+					$('#preset').val(this.checked ? '2' : '1').change().selectmenu('refresh', true);
+				} catch (e) {
+				}
+				doSearch(false, lastSearchTo);
 			});
 			$(document).on('pagecontainershow', function(event, ui) {
 				var pageId = $('body').pagecontainer('getActivePage').prop('id');
@@ -664,6 +672,10 @@ $hulop.map = function() {
 			}
 		}
 
+		try {
+			$('#wheelchair_mode').prop('checked', $hulop.util.getPreferences().preset == '2').flipswitch('refresh');
+		} catch (e) {
+		}
 		console.log('showRoute');
 		console.log(data);
 		data.shift(); // Ignore start point
@@ -1379,6 +1391,7 @@ $hulop.map = function() {
 	}
 
 	function doSearch(all, to_val) {
+		lastSearchTo = to_val;
 		clearRoute();
 		var data = {
 			'action' : 'search',
