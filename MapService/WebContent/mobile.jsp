@@ -123,6 +123,10 @@ if (id == null || (agreeBean.isAgreementSupported() && !agreeBean.getAgreed(id))
 					</tr>
 					<tr>
 						<td>
+							<span id="wheelchair_switch">
+								<img src="images/wheelchair.png" />
+								<input data-role="flipswitch" id="wheelchair_mode" type="checkbox" />
+							</span>
 							<button data-mini="true" id="confirm_yes" data-icon="navigation" i18n>START</button>
 						</td>
 					</tr>

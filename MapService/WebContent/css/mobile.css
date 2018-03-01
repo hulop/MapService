@@ -250,3 +250,20 @@ html, body {
 	width: 56px;
 	top: 2px;
 }
+
+#confirm_yes {
+	width: 55%;
+}
+
+#wheelchair_switch {
+	float: right;
+}
+
+#wheelchair_switch img {
+	height: 28px;
+	vertical-align: middle;
+}
+
+#wheelchair_switch .ui-flipswitch {
+	border-radius: 20px;
+}
