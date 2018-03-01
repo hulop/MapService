@@ -456,7 +456,7 @@ $hulop.map = function() {
 					longDesc && $hulop.util.speak(longDesc, false);
 					setTimeout(function () {
 						var nodes = routeLayer.getSource().getFeatures().filter(function(f) {
-							return f.getProperties().node_id;
+							return f.getProperties()['ノードID'];
 						});
 						clearRoute();
 						nodes.length && routeLayer.getSource().addFeature(nodes[0]);
