@@ -23,6 +23,11 @@
 			"index": "function (doc) { doc.geometry && doc.geometry.coordinates && doc.properties && doc.properties.link_id && st_index(doc.geometry); }"
 		},
 
+		"facilityIndex": 
+		{
+			"index": "function (doc) { doc.geometry && doc.geometry.coordinates && doc.properties && doc.properties.facil_id && st_index(doc.geometry); }"
+		},
+
 		"toiletIndex": 
 		{
 			"index": "function (doc) { doc.geometry && doc.geometry.coordinates && doc.properties && doc.properties.facil_type==10 && st_index(doc.geometry); }"

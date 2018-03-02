@@ -41,6 +41,7 @@ import org.apache.wink.json4j.JSONObject;
 
 import hulop.hokoukukan.bean.DatabaseBean;
 import hulop.hokoukukan.bean.RouteSearchBean;
+import hulop.hokoukukan.utils.DBAdapter;
 
 /**
  * Servlet implementation class RouteSearchServlet
@@ -97,11 +98,12 @@ public class RouteSearchServlet extends HttpServlet {
 
 		try {
 			Object result = null;
-			if ("toilets".equals(action)) {
+			if ("toilets".equals(action) || "facilities".equals(action)) {
+				DBAdapter.GeometryType type = "toilets".equals(action) ? DBAdapter.GeometryType.TOILETS : DBAdapter.GeometryType.FACILITIES;
 				double lat = Double.parseDouble(request.getParameter("lat"));
 				double lng = Double.parseDouble(request.getParameter("lng"));
 				double dist = Double.parseDouble(request.getParameter("dist"));
-				result = DatabaseBean.getToilets(new double[] { lng, lat }, dist);
+				result = DatabaseBean.getFacilities(new double[] { lng, lat }, dist, type);
 				if (result != null) {
 					sendJSON(result, request, response);
 					return;

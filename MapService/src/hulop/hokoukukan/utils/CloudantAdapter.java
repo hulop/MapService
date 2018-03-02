@@ -207,7 +207,7 @@ public class CloudantAdapter implements DBAdapter {
 	}
 
 	@Override
-	public void getGeometry(double[] center, double radius, JSONObject nodeMap, JSONArray features, boolean toilet) {
+	public void getGeometry(double[] center, double radius, JSONObject nodeMap, JSONArray features, GeometryType toilet) {
 		int limit = 200;
 		if (getGeometryRows(center, radius, limit * 100, 1, toilet).size() > 0) {
 			System.err.println("more than 100 API calls expected");
@@ -323,10 +323,22 @@ public class CloudantAdapter implements DBAdapter {
 
 	}
 
-	private JsonArray getGeometryRows(double[] center, double radius, int skip, int limit, boolean toilet) {
+	private JsonArray getGeometryRows(double[] center, double radius, int skip, int limit, GeometryType toilet) {
+		String index;
+		switch (toilet) {
+		case TOILETS:
+			index = "toiletIndex";
+			break;
+		case FACILITIES:
+			index = "facilityIndex";
+			break;
+		default:
+			index = "geoIndex";
+			break;
+		}
 		return (JsonArray) navi_db.findAny(JsonObject.class, String.format(
 				"%s/_design/geo/_geo/%s?lon=%f&lat=%f8&radius=%f&relation=intersects&skip=%d&limit=%d&include_docs=true",
-				navi_db.getDBUri(), toilet ? "toiletIndex" : "geoIndex", center[0], center[1], radius, skip, limit))
+				navi_db.getDBUri(), index, center[0], center[1], radius, skip, limit))
 				.get("rows");
 	}
 

@@ -36,10 +36,33 @@ $hulop.indoor = function() {
 			'src' : 'images/toilet.png'
 		})
 	});
+
+	var facilityLabel = new ol.style.Style({
+		'text' : new ol.style.Text({
+			'textAlign' : 'center',
+			'textBaseline' : 'middle',
+			'fill' : new ol.style.Fill({
+				'color' : 'black'
+			}),
+			'stroke' : new ol.style.Stroke({
+				'color' : 'white',
+				'width' : 3
+			})
+		})
+	});
+
 	var toiletLayer = new ol.layer.Vector({
 		'source' : new ol.source.Vector(),
-		'style' : function() {
-			return toiletImage;
+		'style' : function(feature) {
+			var zoom = map.getView().getZoom();
+			var p = feature.getProperties();
+			if (zoom > 16 && p.toilet) {
+				return toiletImage;
+			}
+			if (zoom > 20 && p.label) {
+				facilityLabel.getText().setText(p.label);
+				return facilityLabel;
+			}
 		},
 		'zIndex' : 101
 	});
@@ -140,7 +163,7 @@ $hulop.indoor = function() {
 			toiletMarkers = [];
 			var start = new Date().getTime();
 			$hulop.route.callService({
-				'action' : 'toilets',
+				'action' : 'facilities',
 				'quiet' : true,
 				'lat' : toiletLatlng[1],
 				'lng' : toiletLatlng[0],
@@ -150,17 +173,25 @@ $hulop.indoor = function() {
 				for (var id in data) {
 					var site = data[id];
 					var properties = site.properties;
+					var floors = [];
 					for (var key in properties) {
-						var m = /^(ent\d+_)fl$/.exec(key);
-						if (m) {
-							var lat = properties[m[1] + 'lat'];
-							var lng = properties[m[1] + 'lon'];
-							lat && lng && toiletMarkers.push({
+						/^(ent\d+_)fl$/.exec(key) && floors.push(properties[key]);
+					}
+					if (floors.length > 0) {
+						var toilet = false, label = false;
+						if (properties.facil_type == 10) {
+							toilet = properties.toilet == 2 || properties.toilet == 4;
+						} else {
+							label = properties['name_' + $hulop.messages.defaultLang] || properties.name;
+						}
+						if (toilet || label) {
+							toiletMarkers.push({
 								'marker' : new ol.Feature({
-									'geometry' : new ol.geom.Point(ol.proj.transform([ lng, lat ], 'EPSG:4326', 'EPSG:3857'))
+									'toilet' : toilet,
+									'label' : label,
+									'geometry' : new ol.geom.Point(ol.proj.transform(site.geometry.coordinates, 'EPSG:4326', 'EPSG:3857'))
 								}),
-								'floor' : properties[key],
-								'site' : site
+								'floors' : floors
 							});
 						}
 					}
@@ -224,7 +255,7 @@ $hulop.indoor = function() {
 	function showToilets(floor) {
 		toiletLayer.getSource().clear();
 		toiletMarkers.forEach(function(t) {
-			t.floor == floor && toiletLayer.getSource().addFeature(t.marker);
+			t.floors.indexOf(floor) >= 0 && toiletLayer.getSource().addFeature(t.marker);
 		});
 
 	}

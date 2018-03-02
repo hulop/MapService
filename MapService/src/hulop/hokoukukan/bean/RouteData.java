@@ -34,6 +34,7 @@ import org.apache.wink.json4j.JSONException;
 import org.apache.wink.json4j.JSONObject;
 
 import hulop.hokoukukan.utils.DBAdapter;
+import hulop.hokoukukan.utils.DBAdapter.GeometryType;
 import hulop.hokoukukan.utils.Hokoukukan;
 
 public class RouteData {
@@ -120,7 +121,7 @@ public class RouteData {
 		mDoors = new JSONArray();
 		mLandMarks = new HashMap<String, JSONArray>();
 		mElevatorNodes = new HashSet<String>();
-		adapter.getGeometry(center, distance, mNodeMap, mFeatures, false);
+		adapter.getGeometry(center, distance, mNodeMap, mFeatures, GeometryType.ANY);
 		for (Object feature : mFeatures) {
 			try {
 				JSONObject properties = ((JSONObject) feature).getJSONObject("properties");
