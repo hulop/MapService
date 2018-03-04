@@ -269,8 +269,9 @@ public class DatabaseBean {
 	}
 
 	public static Object getFacilities(double[] point, double distance, DBAdapter.GeometryType type) throws JSONException {
-		JSONArray features = new JSONArray();
-		adapter.getGeometry(point, distance, null, features, type);
+//		JSONArray features = new JSONArray();
+//		adapter.getGeometry(point, distance, null, features, type);
+		JSONArray features = RouteData.getCache(point, distance).getFeatures();
 		JSONObject siteMap = new JSONObject();
 		for (Object feature : features) {
 			try {
