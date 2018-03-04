@@ -30,6 +30,12 @@ import org.apache.wink.json4j.JSONObject;
 
 public interface DBAdapter {
 
+	enum GeometryType {
+		ANY,
+		TOILETS,
+		FACILITIES
+	}
+
 	void prepare(File file);
 
 	void insert(String json);

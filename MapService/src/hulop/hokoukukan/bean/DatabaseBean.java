@@ -29,7 +29,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -293,20 +292,27 @@ public class DatabaseBean {
 	}
 
 	public static Object getToilets(double[] point, double distance) throws JSONException {
-		JSONArray features = new JSONArray();
-		List<String> categories = new ArrayList<String>();
-		categories.add("公共用トイレの情報");
-		categories.add("出入口情報");
-		adapter.getGeometry(point, distance, null, features, categories);
+		return getFacilities(point, distance, DBAdapter.GeometryType.TOILETS);
+	}
+
+	public static Object getFacilities(double[] point, double distance, DBAdapter.GeometryType type) throws JSONException {
+		RouteData rd = RouteData.getCache(point, distance);
+		JSONArray features = rd.getFeatures();
 		JSONObject siteMap = new JSONObject();
 		for (Object feature : features) {
-			JSONObject properties = ((JSONObject) feature).getJSONObject("properties");
-			if (properties.has("施設ID") && properties.has("多目的トイレ")) {
-				switch (properties.getString("多目的トイレ")) {
-				case "1":
-				case "2":
+			JSONObject properties = ((JSONObject)feature).getJSONObject("properties");
+			if (properties.has("施設ID")) {
+				if (type == DBAdapter.GeometryType.TOILETS) {
+					if ("公共用トイレの情報".equals(properties.getString("category")) && properties.has("多目的トイレ")) {
+						switch (properties.getString("多目的トイレ")) {
+						case "1":
+						case "2":
+							siteMap.put(properties.getString("施設ID"), feature);
+							break;
+						}
+					}
+				} else {
 					siteMap.put(properties.getString("施設ID"), feature);
-					break;
 				}
 			}
 		}
@@ -319,7 +325,7 @@ public class DatabaseBean {
 				String nodeId = properties.getString("対応ノードID");
 				if (siteMap.has(siteId)) {
 					if (!nodeMap.has(nodeId)) {
-						JSONObject node = adapter.find(nodeId);
+						JSONObject node = rd.getNodeMap().getJSONObject(nodeId);
 						if (node != null) {
 							nodeMap.put(nodeId, node);
 						}

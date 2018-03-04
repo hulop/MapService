@@ -36,10 +36,33 @@ $hulop.indoor = function() {
 			'src' : 'images/toilet.png'
 		})
 	});
+
+	var facilityLabel = new ol.style.Style({
+		'text' : new ol.style.Text({
+			'textAlign' : 'center',
+			'textBaseline' : 'middle',
+			'fill' : new ol.style.Fill({
+				'color' : 'black'
+			}),
+			'stroke' : new ol.style.Stroke({
+				'color' : 'white',
+				'width' : 3
+			})
+		})
+	});
+
 	var toiletLayer = new ol.layer.Vector({
 		'source' : new ol.source.Vector(),
-		'style' : function() {
-			return toiletImage;
+		'style' : function(feature) {
+			var zoom = map.getView().getZoom();
+			var p = feature.getProperties();
+			if (zoom > 16 && p.toilet) {
+				return toiletImage;
+			}
+			if (zoom > 20 && p.label) {
+				facilityLabel.getText().setText(p.label);
+				return facilityLabel;
+			}
 		},
 		'zIndex' : 101
 	});
@@ -140,33 +163,46 @@ $hulop.indoor = function() {
 			toiletMarkers = [];
 			var start = new Date().getTime();
 			$hulop.route.callService({
-				'action' : 'toilets',
+				'action' : 'facilities',
 				'quiet' : true,
 				'lat' : toiletLatlng[1],
 				'lng' : toiletLatlng[0],
 				'dist' : toiletDist
 			}, function(data) {
 				console.log('Get Toilets: ' + (new Date().getTime() - start) + 'ms');
+				var floorMap = {};
 				data.exitList.forEach(function(exit) {
 					var p = exit.properties;
 					var node = data.nodeMap[p['対応ノードID']];
-					var site = data.siteMap[p['対応施設ID']];
-					if (node && site) {
-						var lat = site.geometry.coordinates[1];
-						var lng = site.geometry.coordinates[0];
-						var floor = Number(node.properties['高さ'].replace('B', '-'));
-						var marker = new ol.Feature({
-							'geometry' : new ol.geom.Point(ol.proj.transform([ lng, lat ], 'EPSG:4326', 'EPSG:3857'))
-						});
-						toiletMarkers.push({
-							'marker' : marker,
-							'floor' : floor,
-							'exit' : exit,
-							'node' : node,
-							'site' : site
-						});
+					var siteID = p['対応施設ID'];
+					if (node && siteID) {
+						var floors = floorMap[siteID] || (floorMap[siteID] = []);
+						floors.push(Number(node.properties['高さ'].replace('B', '-')));
 					}
 				});
+				for (var id in data.siteMap) {
+					var site = data.siteMap[id];
+					var properties = site.properties;
+					var floors = floorMap[id];
+					if (floors) {
+						var toilet = false, label = false;
+						if (properties.category == '公共用トイレの情報') {
+							toilet = properties['多目的トイレ'] == '1' || properties['多目的トイレ'] == '2';
+						} else {
+							label = properties['名称:' + $hulop.messages.defaultLang] || properties['名称'];
+						}
+						if (toilet || label) {
+							toiletMarkers.push({
+								'marker' : new ol.Feature({
+									'toilet' : toilet,
+									'label' : label,
+									'geometry' : new ol.geom.Point(ol.proj.transform(site.geometry.coordinates, 'EPSG:4326', 'EPSG:3857'))
+								}),
+								'floors' : floors
+							});
+						}
+					}
+				}
 				if (toiletMarkers.length > 0) {
 					showToilets(getCurrentFloor());
 					console.log(toiletMarkers.length + ' accessible toilets');
@@ -226,7 +262,7 @@ $hulop.indoor = function() {
 	function showToilets(floor) {
 		toiletLayer.getSource().clear();
 		toiletMarkers.forEach(function(t) {
-			t.floor == floor && toiletLayer.getSource().addFeature(t.marker);
+			t.floors.indexOf(floor) >= 0 && toiletLayer.getSource().addFeature(t.marker);
 		});
 
 	}
