@@ -72,7 +72,7 @@ $hulop.editor = function() {
 		'group:LAYER2',
 		'name_hira', 'fax', 'mail', 'start_time', 'end_time', 'no_serv_d',
 		'group:LAYER3',
-		'hulop_building', 'hulop_major_category', 'hulop_sub_category', 'hulop_minor_category', 'hulop_heading', 'hulop_angle', 'hulop_height', 'hulop_long_description', 'hulop_description', 'hulop_location_description', 'hulop_tags', 'hulop_poi_external_category' ]
+		'hulop_building', 'hulop_major_category', 'hulop_sub_category', 'hulop_minor_category', 'hulop_heading', 'hulop_angle', 'hulop_height', 'hulop_long_description', 'hulop_description', 'hulop_location_description', 'hulop_tags', 'hulop_poi_external_category', 'hulop_show_labels_zoomlevel' ]
 		.concat(i18nMenu([ 'name', 'address', 'med_dept', 'hulop_long_description', 'hulop_description', 'hulop_location_description' ]));
 
 	console.log(PROPERTY_NAMES);

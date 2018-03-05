@@ -59,7 +59,7 @@ $hulop.indoor = function() {
 			if (zoom > 16 && p.toilet) {
 				return toiletImage;
 			}
-			if (zoom >= $hulop.config.SHOW_LABELS && p.label) {
+			if (zoom >= p.show_labels && p.label) {
 				facilityLabel.getText().setText(p.label);
 				return facilityLabel;
 			}
@@ -189,6 +189,7 @@ $hulop.indoor = function() {
 								'marker' : new ol.Feature({
 									'toilet' : toilet,
 									'label' : label,
+									'show_labels' : Number(properties.hulop_show_labels_zoomlevel || $hulop.config.DEFAULT_SHOW_LABELS_ZOOMLEVEL),
 									'geometry' : new ol.geom.Point(ol.proj.transform(site.geometry.coordinates, 'EPSG:4326', 'EPSG:3857'))
 								}),
 								'floors' : floors
