@@ -59,7 +59,7 @@ $hulop.indoor = function() {
 			if (zoom > 16 && p.toilet) {
 				return toiletImage;
 			}
-			if (zoom > 20 && p.label) {
+			if (zoom >= $hulop.config.SHOW_LABELS && p.label) {
 				facilityLabel.getText().setText(p.label);
 				return facilityLabel;
 			}
