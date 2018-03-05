@@ -64,7 +64,7 @@ $hulop.editor = function() {
 	PROPERTY_NAMES['出入口情報'] = [ '出入口ID', '対応ノードID', '対応施設ID', '出入口の名称', '出入口の有効幅員', '扉の種類', '段差' ].concat(i18nMenu([ '出入口の名称' ]));
 
 	PROPERTY_NAMES['公共施設の情報'] = [ '施設ID', '緯度経度桁数コード', '緯度', '経度', '名称', '所在地', '電話番号', '階層', '供用開始時間', '供用終了時間', '供用制限曜日', '多目的トイレ', 'group:EXT', 'building',
-			'major_category', 'sub_category', 'minor_category', 'heading', 'angle', 'height', 'long_description' ].concat(i18nMenu([ '名称', '所在地',
+			'major_category', 'sub_category', 'minor_category', 'heading', 'angle', 'height', 'long_description', 'show_labels_zoomlevel' ].concat(i18nMenu([ '名称', '所在地',
 			'long_description' ]));
 
 	PROPERTY_NAMES['公共用トイレの情報'] = [ '施設ID', '緯度経度桁数コード', '緯度', '経度', '階層', '男女別', '有料無料の別', '多目的トイレ', 'ベビーベッド', '供用開始時間', '供用終了時間', '供用制限曜日', 'group:EXT',
