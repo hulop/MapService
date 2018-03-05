@@ -49,7 +49,6 @@ import hulop.hokoukukan.bean.DatabaseBean;
 public class AdminServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static final AuthBean authBean = new AuthBean();
-	private static final Pattern FILENAME_PATTERN = Pattern.compile("form-data; name=\"file\"; filename=\"(.*)\"");
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -121,10 +120,8 @@ public class AdminServlet extends HttpServlet {
 			return;
 		}
 		for (Part part : request.getParts()) {
-			System.out.println(part.getHeader("content-disposition"));
-			Matcher m = FILENAME_PATTERN.matcher(part.getHeader("content-disposition"));
-			if (m.matches()) {
-				final String fileName = m.group(1);
+			final String fileName = part.getSubmittedFileName();
+			if (fileName != null) {
 				System.out.println(fileName);
 				InputStream is = null;
 				try {
