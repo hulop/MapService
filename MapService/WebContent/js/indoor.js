@@ -204,15 +204,8 @@ $hulop.indoor = function() {
 						}
 					}
 				}
-				if (toiletMarkers.length > 0) {
-					showToilets(getCurrentFloor());
-					console.log(toiletMarkers.length + ' accessible toilets');
-					toiletMarkers.forEach(function(t) {
-						console.log(t);
-					});
-				} else {
-					console.log('No accessible toilets');
-				}
+				console.log(toiletMarkers.length + ' accessible toilets');
+				showToilets(getCurrentFloor());
 			});
 		}
 		$hulop.util.isMobile() && initToilets();

@@ -870,21 +870,7 @@ $hulop.map = function() {
 			'id' : 'route_table',
 			'width' : '100%'
 		}).append(tbody));
-		if (!noNavigation) {
-			var routes = [];
-			naviRoutes.forEach(function(place) {
-				routes.push({
-					'lat' : place.latlng[1],
-					'lng' : place.latlng[0],
-					'floor' : place.floor,
-					'title' : place.display_title
-				});
-			});
-			getNeighbors(routes, function(places) {
-				console.log(places);
-				showNeighbors(places)
-			});
-		}
+		noNavigation || showNeighbors();
 		var timeout;
 		if (typeof replay == 'number') {
 			timeout = replay;
@@ -967,22 +953,22 @@ $hulop.map = function() {
 		$('.instruction').show();
 	}
 
-	function getNeighbors(routes, callback) {
+	function showNeighbors() {
+		var source = labelLayer.getSource();
+		source.clear();
 		var places = [];
-		routes.forEach(function(route) {
+		naviRoutes.forEach(function(route) {
 			var landmark = findNearestLandmark(route, 50);
-			if (landmark) {
-				var latlng = landmark.geometry.coordinates;
-				var place = {
-					'lat' : latlng[1],
-					'lng' : latlng[0],
+			if (landmark && places.indexOf(landmark) == -1) {
+				source.addFeature(new ol.Feature({
+					'geometry' : new ol.geom.Point(ol.proj.transform(landmark.geometry.coordinates, 'EPSG:4326', 'EPSG:3857')),
 					'floor' : route.floor,
 					'title' : landmark.name || $hulop.route.getPoiName(landmark)
-				};
-				places.push(place);
+				}));
+				places.push(landmark);
 			}
 		});
-		callback(places);
+		console.log(places);
 	}
 
 	function findNearestLandmark(route, min) {
@@ -993,7 +979,7 @@ $hulop.map = function() {
 				if (dist_poi > 50) {
 					return;
 				}
-				var dist = $hulop.util.computeDistanceBetween([ route.lng, route.lat ], lm.node_coordinates);
+				var dist = $hulop.util.computeDistanceBetween(route.latlng, lm.geometry.coordinates);
 				if (dist < min) {
 					min = dist;
 					result = lm;
@@ -1001,19 +987,6 @@ $hulop.map = function() {
 			}
 		});
 		return result;
-	}
-
-	function showNeighbors(places) {
-		var source = labelLayer.getSource();
-		source.clear();
-		places.forEach(function(place) {
-			var feature = new ol.Feature({
-				'geometry' : new ol.geom.Point(ol.proj.transform([ place.lng, place.lat ], 'EPSG:4326', 'EPSG:3857'))
-			});
-			feature.set('floor', place.floor);
-			feature.set('title', place.title);
-			source.addFeature(feature);
-		});
 	}
 
 	function getSummary(linkList, total, pron) {
