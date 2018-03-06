@@ -258,7 +258,6 @@ $hulop.indoor = function() {
 		toiletMarkers.forEach(function(t) {
 			t.floors.indexOf(floor) >= 0 && toiletLayer.getSource().addFeature(t.marker);
 		});
-
 	}
 
 	function getCurrentFloor() {
