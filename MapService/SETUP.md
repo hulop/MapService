@@ -125,3 +125,55 @@ HULOP\_TILE\_SERVER
 HULOP\_TILE\_ATTR
 - Attribution information.
 - Example: `Maps © <a href="http://www.example.com">Example</a>, Data © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>`
+
+## Setting Optional Environment Variables
+ENABLE\_MAP\_ACCESS=admin,auditor,editor (no default)
+- access right for map DB
+
+SUPPORT\_AGREEMENT=true (default: false)
+- agreement is supported at initial use
+
+SUPPORT\_QUESTION=true (default: false)
+- question is supported at initial use
+
+EDITOR\_API\_KEY=key (no default)
+- API key for map edit API
+
+AUDITOR\_API\_KEY=key (no default)
+- API key for logging API
+
+ESCALATOR\_WEIGHT=weight (default: 100)
+- weight for escalator route
+
+STAIR\_WEIGHT=weight (default: 300)
+- weight for stair route
+
+ELEVATOR\_WEIGHT=weight (default: 300)
+- weight for elavator route
+
+MAX\_START\_PARAMS=count (default: 10000)
+- max cache count for user location
+
+MAX\_ROUTE\_BEANS=count (default: 1000)
+- max cache count for route data
+
+HULOP\_VCAP\_SERVICES=json (default: VCAP\_SERVICE json)
+- use alternative db credential
+
+HULOP\_NAVI\_DB=name (default: navi_db)
+- db name for MongoDB
+
+HULOP\_INITIAL\_LOCATION={ "lat": latitude, "lng": longitude, "floor":floor } (default: COREDO Muromachi, no floor)
+- initial map location
+
+HULOP\_MAX\_RADIUS=radius (default: 500)
+- max radius for loading route data
+
+HULOP\_DEFAULT\_SHOW\_LABELS\_ZOOMLEVEL=level (no default)
+- show facility name when map zoom level >= level
+
+HULOP\_INITIAL\_ROTATION\_MODE=mode (default: 1)
+- initial map rotation mode (0: north up, 1: head up, 2: route up)
+
+HULOP\_DO\_NOT\_USE\_SAVED\_CENTER=true (default: false)
+- do not restore last map location
