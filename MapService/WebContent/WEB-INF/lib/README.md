@@ -26,17 +26,18 @@ SOFTWARE.
 The following files should be placed here.
 
 - JMapProjLib.jar
-- cloudant-client-2.4.2.jar
-- cloudant-http-2.4.2.jar
+- cloudant-client-2.7.0.jar
+- cloudant-http-2.7.0.jar
 - commons-codec-1.6.jar
 - commons-io-2.4.jar
 - commons-logging-1.1.3.jar
 - fluent-hc-4.3.6.jar
-- gson-2.2.4.jar
+- gson-2.7.jar
 - httpclient-4.3.6.jar
 - httpclient-cache-4.3.6.jar
 - httpcore-4.3.3.jar
 - httpmime-4.3.6.jar
+- ibm-cos-java-sdk-bundle-2.0.0.jar
 - jgrapht-core-0.9.1.jar
 - mongo-java-driver-3.4.3.jar
 - wink-1.4.jar

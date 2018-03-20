@@ -36,7 +36,7 @@ This server-side component provides Map related services that aimed to use with 
 - [Apache Commons IO version 2.4](http://commons.apache.org/proper/commons-io/) (Apache License v2.0)
 - [Apache HttpClient version 4.3.6](http://hc.apache.org/httpcomponents-client-ga/) (Apache License v2.0)
 - [Google Gson version 2.7](https://github.com/google/gson) (Apache License v2.0)
-- [OpenLayers version 4.0.1](https://openlayers.org/) (BSD License)
+- [OpenLayers version 4.6.4](https://openlayers.org/) (BSD License)
 - [D3 version 4.4.0](https://d3js.org/) (BSD License)
 
 ## Setup
