@@ -118,8 +118,7 @@ public class COSAdapter implements DBAdapter {
 			ObjectMetadata metadata = new ObjectMetadata();
 			metadata.setContentType("application/octet-stream");
 			metadata.setContentLength(b.length);
-			is = new ByteArrayInputStream(b);
-			cos.putObject(bucketName, path, is, metadata);
+			cos.putObject(bucketName, path, is = new ByteArrayInputStream(b), metadata);
 			is.close();
 		} catch (Exception e) {
 			e.printStackTrace();
