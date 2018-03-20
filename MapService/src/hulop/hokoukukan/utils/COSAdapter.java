@@ -35,36 +35,42 @@ public class COSAdapter implements DBAdapter {
 
 	public COSAdapter(DBAdapter adapter) {
 		db = adapter;
-		String vcap = System.getenv("COS_VCAP_SERVICES");
-		if (vcap == null) {
-			vcap = System.getenv("VCAP_SERVICES");
+		String services_env = System.getenv("COS_SERVICES");
+		String settings_env = System.getenv("COS_SETTINGS");
+		if (services_env == null) {
+			services_env = System.getenv("VCAP_SERVICES");
 		}
-		String bucket = System.getenv("COS_BUCKET_CONFIG");
-		if (vcap != null && bucket != null) {
+		if (services_env != null && settings_env != null) {
 			try {
-				JSONObject json = (JSONObject) JSON.parse(vcap);
-				JSONObject bucket_obj = (JSONObject) JSON.parse(bucket);
-				if (json.has("cloud-object-storage")) {
-					JSONObject service_obj = json.getJSONArray("cloud-object-storage").getJSONObject(0)
+				JSONObject settings = (JSONObject) JSON.parse(settings_env);
+				System.out.println(settings.toString(4));
+				JSONObject services = (JSONObject) JSON.parse(services_env);
+				if (services.has("cloud-object-storage")) {
+					JSONObject credentials = services.getJSONArray("cloud-object-storage").getJSONObject(0)
 							.getJSONObject("credentials");
-					String api_key = service_obj.getString("apikey");
-					String service_instance_id = service_obj.getString("resource_instance_id");
-					String endpoint_url = bucket_obj.getString("endpoint_url");
-					String location = bucket_obj.getString("location");
-					AWSCredentials credentials = new BasicIBMOAuthCredentials(api_key, service_instance_id);
-					ClientConfiguration clientConfig = new ClientConfiguration().withRequestTimeout(5000);
-					clientConfig.setUseTcpKeepAlive(true);
-					cos = AmazonS3ClientBuilder.standard()
-							.withCredentials(new AWSStaticCredentialsProvider(credentials))
-							.withEndpointConfiguration(new EndpointConfiguration(endpoint_url, location))
-							.withPathStyleAccessEnabled(true).withClientConfiguration(clientConfig).build();
-					bucketName = bucket_obj.getString("bucketName");
-					System.out.println(bucketName + " / " + cos.listBuckets());
+					System.out.println(credentials.toString(4));
+					bucketName = settings.getString("bucketName");
+					String api_key = credentials.getString("apikey");
+					String service_instance_id = credentials.getString("resource_instance_id");
+					String endpoint_url = settings.getString("endpoint_url");
+					String location = settings.getString("location");
+					cos = createClient(api_key, service_instance_id, endpoint_url, location);
+					System.out.println(cos.listBuckets());
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	private static AmazonS3 createClient(String api_key, String service_instance_id, String endpoint_url,
+			String location) {
+		AWSCredentials credentials = new BasicIBMOAuthCredentials(api_key, service_instance_id);
+		ClientConfiguration clientConfig = new ClientConfiguration().withRequestTimeout(5000);
+		clientConfig.setUseTcpKeepAlive(true);
+		return AmazonS3ClientBuilder.standard().withCredentials(new AWSStaticCredentialsProvider(credentials))
+				.withEndpointConfiguration(new EndpointConfiguration(endpoint_url, location))
+				.withPathStyleAccessEnabled(true).withClientConfiguration(clientConfig).build();
 	}
 
 	@Override
