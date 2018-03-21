@@ -34,6 +34,7 @@ import org.apache.wink.json4j.JSONArray;
 import org.apache.wink.json4j.JSONObject;
 
 import com.ibm.cloud.objectstorage.ClientConfiguration;
+import com.ibm.cloud.objectstorage.SDKGlobalConfiguration;
 import com.ibm.cloud.objectstorage.auth.AWSCredentials;
 import com.ibm.cloud.objectstorage.auth.AWSStaticCredentialsProvider;
 import com.ibm.cloud.objectstorage.client.builder.AwsClientBuilder.EndpointConfiguration;
@@ -85,8 +86,9 @@ public class COSAdapter implements DBAdapter {
 
 	private static AmazonS3 createClient(String api_key, String service_instance_id, String endpoint_url,
 			String location) {
+		SDKGlobalConfiguration.IAM_ENDPOINT = "https://iam.bluemix.net/oidc/token";
 		AWSCredentials credentials = new BasicIBMOAuthCredentials(api_key, service_instance_id);
-		ClientConfiguration clientConfig = new ClientConfiguration().withRequestTimeout(5000);
+		ClientConfiguration clientConfig = new ClientConfiguration().withRequestTimeout(3 * 60 * 1000);
 		clientConfig.setUseTcpKeepAlive(true);
 		return AmazonS3ClientBuilder.standard().withCredentials(new AWSStaticCredentialsProvider(credentials))
 				.withEndpointConfiguration(new EndpointConfiguration(endpoint_url, location))
@@ -142,12 +144,15 @@ public class COSAdapter implements DBAdapter {
 		try {
 			byte[] b = IOUtils.toByteArray(is);
 			is.close();
-			cache.put(path, b);
 			ObjectMetadata metadata = new ObjectMetadata();
 			metadata.setContentType("application/octet-stream");
 			metadata.setContentLength(b.length);
+			long start = System.currentTimeMillis();
 			cos.putObject(bucket_name, path, is = new ByteArrayInputStream(b), metadata);
+			long elapsed = System.currentTimeMillis() - start;
+			System.out.println(path + ": " + b.length + "/" + elapsed + " bytes/ms");
 			is.close();
+			cache.put(path, b);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
