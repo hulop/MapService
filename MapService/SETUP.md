@@ -160,6 +160,12 @@ MAX\_ROUTE\_BEANS=count (default: 1000)
 HULOP\_VCAP\_SERVICES=json (default: VCAP\_SERVICE json)
 - use alternative db credential
 
+COS\_SERVICES=json (default: VCAP\_SERVICE json)
+- use alternative Cloud Object Storage credential
+
+COS\_SETTINGS={"bucket_name": backet name, "endpoint_url": endpoint url, "location": location} (no default)
+- specify Cloud Object Storage bucket
+
 HULOP\_NAVI\_DB=name (default: navi_db)
 - db name for MongoDB
 
