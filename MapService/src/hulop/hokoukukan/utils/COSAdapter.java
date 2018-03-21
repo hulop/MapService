@@ -50,7 +50,7 @@ public class COSAdapter implements DBAdapter {
 
 	private final DBAdapter db;
 	private final Map<String, byte[]> cache = new HashMap<String, byte[]>();
-	private String bucketName;
+	private String bucket_name;
 	private AmazonS3 cos;
 
 	public COSAdapter(DBAdapter adapter) {
@@ -69,7 +69,7 @@ public class COSAdapter implements DBAdapter {
 					JSONObject credentials = services.getJSONArray("cloud-object-storage").getJSONObject(0)
 							.getJSONObject("credentials");
 					System.out.println(credentials.toString(4));
-					bucketName = settings.getString("bucketName");
+					bucket_name = settings.getString("bucket_name");
 					String api_key = credentials.getString("apikey");
 					String service_instance_id = credentials.getString("resource_instance_id");
 					String endpoint_url = settings.getString("endpoint_url");
@@ -104,7 +104,7 @@ public class COSAdapter implements DBAdapter {
 		}
 		List<String> files = new ArrayList<String>();
 		try {
-			ObjectListing objectListing = cos.listObjects(new ListObjectsRequest().withBucketName(bucketName));
+			ObjectListing objectListing = cos.listObjects(new ListObjectsRequest().withBucketName(bucket_name));
 			for (S3ObjectSummary objectSummary : objectListing.getObjectSummaries()) {
 				files.add(objectSummary.getKey());
 			}
@@ -122,7 +122,7 @@ public class COSAdapter implements DBAdapter {
 		byte[] b = cache.get(path);
 		if (b == null) {
 			try {
-				InputStream is = cos.getObject(bucketName, path).getObjectContent();
+				InputStream is = cos.getObject(bucket_name, path).getObjectContent();
 				b = IOUtils.toByteArray(is);
 				is.close();
 				cache.put(path, b);
@@ -146,7 +146,7 @@ public class COSAdapter implements DBAdapter {
 			ObjectMetadata metadata = new ObjectMetadata();
 			metadata.setContentType("application/octet-stream");
 			metadata.setContentLength(b.length);
-			cos.putObject(bucketName, path, is = new ByteArrayInputStream(b), metadata);
+			cos.putObject(bucket_name, path, is = new ByteArrayInputStream(b), metadata);
 			is.close();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -161,7 +161,7 @@ public class COSAdapter implements DBAdapter {
 		}
 		cache.remove(path);
 		try {
-			cos.deleteObject(bucketName, path);
+			cos.deleteObject(bucket_name, path);
 			System.out.println("deleteAttachment:" + path);
 		} catch (Exception e) {
 			e.printStackTrace();
