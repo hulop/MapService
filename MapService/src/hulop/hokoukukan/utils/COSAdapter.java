@@ -23,7 +23,6 @@ package hulop.hokoukukan.utils;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -104,9 +103,13 @@ public class COSAdapter implements DBAdapter {
 			return db.listAttachment();
 		}
 		List<String> files = new ArrayList<String>();
-		ObjectListing objectListing = cos.listObjects(new ListObjectsRequest().withBucketName(bucketName));
-		for (S3ObjectSummary objectSummary : objectListing.getObjectSummaries()) {
-			files.add(objectSummary.getKey());
+		try {
+			ObjectListing objectListing = cos.listObjects(new ListObjectsRequest().withBucketName(bucketName));
+			for (S3ObjectSummary objectSummary : objectListing.getObjectSummaries()) {
+				files.add(objectSummary.getKey());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		return files;
 	}
@@ -123,7 +126,7 @@ public class COSAdapter implements DBAdapter {
 				b = IOUtils.toByteArray(is);
 				is.close();
 				cache.put(path, b);
-			} catch (IOException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
@@ -157,8 +160,12 @@ public class COSAdapter implements DBAdapter {
 			return;
 		}
 		cache.remove(path);
-		cos.deleteObject(bucketName, path);
-		System.out.println("deleteAttachment:" + path);
+		try {
+			cos.deleteObject(bucketName, path);
+			System.out.println("deleteAttachment:" + path);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
