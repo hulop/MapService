@@ -94,6 +94,10 @@ public class COSAdapter implements DBAdapter {
 				.withPathStyleAccessEnabled(true).withClientConfiguration(clientConfig).build();
 	}
 
+	/**
+	 * Attachment handlers - Use cloud object storage
+	 */
+
 	@Override
 	public List<String> listAttachment() {
 		if (cos == null) {
@@ -156,6 +160,10 @@ public class COSAdapter implements DBAdapter {
 		cos.deleteObject(bucketName, path);
 		System.out.println("deleteAttachment:" + path);
 	}
+
+	/**
+	 * Other handlers - Invoke original database handlers
+	 */
 
 	@Override
 	public void prepare(File file) {
