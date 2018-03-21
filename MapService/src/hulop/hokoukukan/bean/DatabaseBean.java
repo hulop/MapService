@@ -50,7 +50,7 @@ import hulop.hokoukukan.utils.MongoAdapter;
 import hulop.hokoukukan.utils.NavCogUtils;
 
 public class DatabaseBean {
-	public static final DBAdapter adapter = getDBAdapter();
+	public static final DBAdapter adapter = new hulop.hokoukukan.utils.COSAdapter(getDBAdapter());
 
 	private static DBAdapter getDBAdapter() {
 		String url = CloudUtils.getCredentialURL(new String[] { "cloudantNoSQLDB" }, null);

@@ -29,11 +29,11 @@
 <meta charset="UTF-8">
 <link rel="stylesheet" href="css/locationlog.css">
 <link rel="stylesheet" href="css/ol3.css">
-<link rel="stylesheet" href="openlayers/v4.0.1/ol.css">
+<link rel="stylesheet" href="openlayers/v4.6.4/ol.css">
 <link rel="stylesheet" href="jquery/jquery.mobile-1.4.5.min.css"/>
 <script type="text/javascript" src="jquery/jquery-1.11.3.min.js"></script>
 <script type="text/javascript" src="js/messages.js"></script>
-<script src="openlayers/v4.0.1/ol.js"></script>
+<script src="openlayers/v4.6.4/ol.js"></script>
 <script type="text/javascript" src="js/hokoukukan.js"></script>
 <script type="text/javascript" src="js/util.js"></script>
 <script type="text/javascript" src="js/maps.js"></script>
