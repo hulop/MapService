@@ -37,6 +37,7 @@ This server-side component provides Map related services that aimed to use with 
 - [Apache HttpClient version 4.3.6](http://hc.apache.org/httpcomponents-client-ga/) (Apache License v2.0)
 - [Google Gson version 2.7](https://github.com/google/gson) (Apache License v2.0)
 - [OpenLayers version 4.6.4](https://openlayers.org/) (BSD License)
+- [IBM Cloud Object Storage Java SDK version 2.0.0](https://github.com/ibm/ibm-cos-sdk-java) (Apache License v2.0)
 - [D3 version 4.4.0](https://d3js.org/) (BSD License)
 
 ## Setup
