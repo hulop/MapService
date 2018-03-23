@@ -160,6 +160,7 @@ $hulop.editor = function() {
 				keyState = event;
 				downKey = null;
 				drawMarkers();
+				doAlign();
 			}
 		});
 
@@ -299,12 +300,15 @@ $hulop.editor = function() {
 				category && copyProperties(clipboardFeature, createPOI(latLng, category))
 				break;
 			default:
-				var feature = getEventFeature(event);
 				if (feature) {
 					if (feature.get('リンクID')) {
 						var editable = source.getFeatureById(feature.get('起点ノードID')) && source.getFeatureById(feature.get('終点ノードID'));
 						if (!editable) {
 							showProperty(feature);
+							return false;
+						}
+						if (keyState.ctrlKey) {
+							addAlignFeature(feature);
 							return false;
 						}
 					}
@@ -1101,6 +1105,38 @@ $hulop.editor = function() {
 		})
 	};
 
+	var align_features = [], align_edge = [], align_nodes = [];
+	function addAlignFeature(feature) {
+		if (align_features.indexOf(feature) == -1) {
+			align_features.push(feature);
+			feature.changed();
+			['起点ノードID', '終点ノードID'].forEach(function(key) {
+				var node = source.getFeatureById(feature.get(key));
+				var pos = align_edge.indexOf(node);
+				if (pos == -1) {
+					align_edge.push(node);
+				} else {
+					align_edge.splice(pos, 1);
+					align_nodes.push(node)
+				}
+			});
+		}
+	}
+	function doAlign() {
+		if (align_nodes.length > 0 && align_edge.length == 2) {
+			var edge = [align_edge[0].getGeometry().getCoordinates(), align_edge[1].getGeometry().getCoordinates()];
+			var line =  new ol.geom.LineString(edge);
+			align_nodes.forEach(function(node) {
+				setGeometry(node, new ol.geom.Point(line.getClosestPoint(node.getGeometry().getCoordinates())));
+			});
+		}
+		align_edge = [];
+		align_nodes = [];
+		while (align_features.length > 0) {
+			align_features.pop().changed();
+		}
+	}
+
 	function getStyle(feature) {
 		var style;
 		var heights = getHeights(feature);
@@ -1148,6 +1184,9 @@ $hulop.editor = function() {
 				if (feature.get('road_low_priority') == '1') {
 					b = '#0000A0';
 					r = '#A00000';
+				}
+				if (align_features.indexOf(feature) != -1) {
+					b = r = '#00B4B4';
 				}
 				style = [new ol.style.Style({
 					'stroke' : new ol.style.Stroke({

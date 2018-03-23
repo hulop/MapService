@@ -31,6 +31,8 @@
 		"EDIT_ELEVATOR": "エレベーターリンクの編集方法",
 		"EDIT_ELEVATOR1": "接続ノードが接近すると自動的にスナップする",
 		"EDIT_ELEVATOR2": "スナップ状態を解除するには\"Shift\"キーを押したまま接続ノードをドラッグする",
+		"ALIGN_LINKS": "リンクの整列方法",
+		"ALIGN_LINKS1": "\"Ctrl\"キーを押したままリンクをクリックする",
 		"SAVE_MAP": "編集結果の保存",
 		"SAVE_YES": "保存",
 		"SAVE_NO": "保存しない",

@@ -77,6 +77,8 @@
 				<strong>(i18n_EDIT_ELEVATOR)</strong>
 				<li>(i18n_EDIT_ELEVATOR1)</li>
 				<li>(i18n_EDIT_ELEVATOR2)</li>
+				<strong>(i18n_ALIGN_LINKS)</strong>
+				<li>(i18n_ALIGN_LINKS1)</li>
 			</fieldset>
 			<fieldset class="modified" style="display:none">
 				<legend>(i18n_SAVE_MAP)</legend>
