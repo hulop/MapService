@@ -32,7 +32,7 @@
 		"EDIT_ELEVATOR1": "Link automatically snapped when connected nodes approaches to other",
 		"EDIT_ELEVATOR2": "Drag connected node with holding \"Shift\" key to resume snap",
 		"ALIGN_LINKS": "Align links in a straight line",
-		"ALIGN_LINKS1": "Click links with holding \"Ctrl\" key",
+		"ALIGN_LINKS1": "Click links with holding \"Shift\" key",
 		"SAVE_MAP": "Save data",
 		"SAVE_YES": "Save",
 		"SAVE_NO": "Not save",

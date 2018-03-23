@@ -303,14 +303,17 @@ $hulop.editor = function() {
 				if (feature) {
 					if (feature.get('リンクID')) {
 						var editable = source.getFeatureById(feature.get('起点ノードID')) && source.getFeatureById(feature.get('終点ノードID'));
+						if (keyState.shiftKey && !start_feature) {
+							editable && addAlignFeature(feature);
+							return false;
+						}
 						if (!editable) {
 							showProperty(feature);
 							return false;
 						}
-						if (keyState.ctrlKey) {
-							addAlignFeature(feature);
-							return false;
-						}
+					}
+					if (align_features.length > 0) {
+						return false;
 					}
 					// console.log(feature.getId());
 					if (keyState.altKey && switchMonitor(feature)) {
