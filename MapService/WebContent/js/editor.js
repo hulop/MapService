@@ -315,14 +315,17 @@ $hulop.editor = function() {
 				if (feature) {
 					if (feature.get('link_id')) {
 						var editable = source.getFeatureById(feature.get('start_id')) && source.getFeatureById(feature.get('end_id'));
+						if (keyState.shiftKey && !start_feature) {
+							editable && addAlignFeature(feature);
+							return false;
+						}
 						if (!editable) {
 							showProperty(feature);
 							return false;
 						}
-						if (keyState.ctrlKey) {
-							addAlignFeature(feature);
-							return false;
-						}
+					}
+					if (align_features.length > 0) {
+						return false;
 					}
 					// console.log(feature.getId());
 					if (keyState.altKey && switchMonitor(feature)) {
