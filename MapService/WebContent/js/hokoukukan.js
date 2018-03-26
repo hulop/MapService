@@ -231,16 +231,31 @@ $hulop.route = function() {
 		var properties = feature.getProperties();
 		if (properties.link_id) {
 			if (floor) {
-				if (levelDiff(floor, properties['sourceHeight']) >= 1 && levelDiff(floor, properties['targetHeight']) >= 1) {
-					return null;
+				if (floor % 1 != 0) {
+					if (floor != properties['sourceHeight'] && floor != properties['targetHeight']) {
+						return null;
+					}
+				} else {
+					if (levelDiff(floor, properties['sourceHeight']) >= 1 && levelDiff(floor, properties['targetHeight']) >= 1) {
+						return null;
+					}
 				}
 			}
 			return properties['route'] == 3 ? styles.elevator : styles.link;
 		} else if (properties.node_id) {
 			if (floor) {
 				var height = properties['floor'];
-				if (!height || levelDiff(floor, height) >= 1) {
+				if (!height) {
 					return null;
+				}
+				if (floor % 1 != 0) {
+					if (floor != height) {
+						return null;
+					}
+				} else {
+					if (levelDiff(floor, height) >= 1) {
+						return null;
+					}
 				}
 			}
 			return styles.node;

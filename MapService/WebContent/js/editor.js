@@ -1267,7 +1267,11 @@ $hulop.editor = function() {
 		}
 		if (floor != 0 && heights.length > 0 && style) {
 			var visible = heights.filter(function(height) {
-				return $hulop.route.levelDiff(floor, height) < 1;
+				if (floor % 1 != 0) {
+					return floor == height;
+				} else {
+					return $hulop.route.levelDiff(floor, height) < 1;
+				}
 			}).length > 0;
 			if (!visible) {
 				style = null;

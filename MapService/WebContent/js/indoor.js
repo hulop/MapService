@@ -205,9 +205,9 @@ $hulop.indoor = function() {
 	}
 
 	function showFloor(floor) {
-		if (floor && floor % 1 != 0) {
-			return;
-		}
+//		if (floor && floor % 1 != 0) {
+//			return;
+//		}
 		floors = [];
 		var zoom = map.getView().getZoom();
 		var center = $hulop.map.getCenter();
