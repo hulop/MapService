@@ -234,8 +234,14 @@ $hulop.route = function() {
 		switch (properties.category) {
 		case 'リンクの情報':
 			if (floor) {
-				if (levelDiff(floor, properties['sourceHeight']) >= 1 && levelDiff(floor, properties['targetHeight']) >= 1) {
-					return null;
+				if (floor % 1 != 0) {
+					if (floor != properties['sourceHeight'] && floor != properties['targetHeight']) {
+						return null;
+					}
+				} else {
+					if (levelDiff(floor, properties['sourceHeight']) >= 1 && levelDiff(floor, properties['targetHeight']) >= 1) {
+						return null;
+					}
 				}
 			}
 			if (properties['エレベーター種別']) {
@@ -247,8 +253,18 @@ $hulop.route = function() {
 		case 'ノード情報':
 			if (floor) {
 				var height = properties['高さ'];
-				if (!height || levelDiff(floor, Number(height.replace('B', '-'))) >= 1) {
+				if (!height) {
 					return null;
+				}
+				height = Number(height.replace('B', '-'));
+				if (floor % 1 != 0) {
+					if (floor != height) {
+						return null;
+					}
+				} else {
+					if (levelDiff(floor, height) >= 1) {
+						return null;
+					}
 				}
 			}
 			return styles.node;
