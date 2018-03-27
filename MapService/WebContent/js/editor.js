@@ -173,9 +173,6 @@ $hulop.editor = function() {
 		$('#export_button').on('click', function(event) {
 			downloadFile(toFeatureCollection(), 'MapData.geojson');
 		});
-		$('#export_button_2017').on('click', function(event) {
-			$hulop.editor.exportV2 && downloadFile($hulop.editor.exportV2(), 'SpatialNetwork2017.geojson');
-		});
 		$('#delete_button').on('click', function(event) {
 			source.getFeatures().forEach(function(feature) {
 				source.removeFeature(feature);
