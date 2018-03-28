@@ -232,13 +232,7 @@ $hulop.indoor = function() {
 		});
 		var lastFloor = getCurrentFloor();
 		activeFloor = floor;
-		var text;
-		if (floor) {
-			text = floor > 0 ? floor + 'F' : 'B' + (-floor) + 'F';
-		} else {
-			text = $m('OUTDOOR');
-		}
-		floorButton.text(text);
+		floorButton.text(getFloorName());
 		if (floors.length > 0) {
 			$('.floorToggle').show();
 			enabled = true;
@@ -284,6 +278,16 @@ $hulop.indoor = function() {
 		$hulop.map.getMap().addLayer(layer);
 	}
 
+	function getFloorName() {
+		var floor = getCurrentFloor();
+		return floor ? (floor > 0 ? floor + 'F' : 'B' + (-floor) + 'F') : $m('OUTDOOR');
+	}
+
+	function isVisible(height) {
+		var index = floors.indexOf(getCurrentFloor());
+		return (index != -1) && (index == 0 || floors[index - 1] < height) && (index == floors.length - 1 || height < floors[index + 1]) 
+	}
+
 	return {
 		'setStyle' : function(style) {
 			styleOptions = style;
@@ -292,7 +296,9 @@ $hulop.indoor = function() {
 		'refresh' : refresh,
 		'loadOverlays' : loadOverlays,
 		'showFloor' : showFloor,
-		'getCurrentFloor' : getCurrentFloor
+		'getCurrentFloor' : getCurrentFloor,
+		'getFloorName' : getFloorName,
+		'isVisible' : isVisible
 	};
 
 }();
