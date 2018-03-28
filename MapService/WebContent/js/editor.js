@@ -51,7 +51,7 @@ $hulop.editor = function() {
 
 	var PROPERTY_NAMES = {};
 
-	PROPERTY_NAMES['node'] = [ 'node_id', 'lat', 'lon', 'link1_id', 'link2_id', 'link3_id', 'link4_id', 'link5_id', 'link6_id', 'link7_id', 'link8_id', 'link9_id', 'link10_id', 'floor' ];
+	PROPERTY_NAMES['node'] = [ 'node_id', 'lat', 'lon', 'link1_id', 'link2_id', 'link3_id', 'link4_id', 'link5_id', 'link6_id', 'link7_id', 'link8_id', 'link9_id', 'link10_id', 'floor', 'in_out' ];
 
 	PROPERTY_NAMES['link'] = [ 'group:LAYER1',
 		'link_id', 'start_id', 'end_id', 'distance', 'rt_struct', 'route_type', 'direction', 'width', 'vtcl_slope', 'lev_diff', 'tfc_signal', 'tfc_s_type', 'brail_tile', 'elevator',
@@ -64,13 +64,13 @@ $hulop.editor = function() {
 		.concat(i18nMenu([ 'st_name' ]));
 
 	PROPERTY_NAMES['facility'] = [ 'group:LAYER1',
-		'facil_id', 'lat', 'lon', 'facil_type', 'evacuation', 'temporary', 'name_ja', 'name_en', 'address', 'tel', 'floors', 'toilet', 'elevator', 'escalator', 'parking', 'barrier',
-		'nursing', 'brail_tile', 'info', 'info_board',
+		'facil_id', 'lat', 'lon', 'facil_type', 'name_ja', 'name_en', 'address', 'tel', 'toilet', 'elevator', 'escalator', 'parking', 'barrier',
+		'nursing', 'brail_tile',
 		'group:TOILET', 'sex', 'fee',
 		'group:HOSPITAL', 'subject', 'close_day',
-		'group:EVACUATION', 'med_dept', 'flood',
+		'group:EVACUATION', 'evacuation', 'temporary', 'med_dept', 'flood',
 		'group:LAYER2',
-		'name_hira', 'fax', 'mail', 'start_time', 'end_time', 'no_serv_d',
+		'name_hira', 'fax', 'mail', 'start_time', 'end_time', 'no_serv_d', 'info', 'info_board', 'move_floor',
 		'group:LAYER3',
 		'hulop_building', 'hulop_major_category', 'hulop_sub_category', 'hulop_minor_category', 'hulop_heading', 'hulop_angle', 'hulop_height', 'hulop_long_description', 'hulop_description', 'hulop_location_description', 'hulop_tags', 'hulop_poi_external_category', 'hulop_show_labels_zoomlevel' ]
 		.concat(i18nMenu([ 'name', 'address', 'med_dept', 'hulop_long_description', 'hulop_description', 'hulop_location_description' ]));
@@ -79,7 +79,7 @@ $hulop.editor = function() {
 
 	var EXTRA_TOILET = {
 		'facil_type': 10,
-		'toilet': 1,
+		'toilet': 2,
 		'sex': 99,
 		'fee': 99
 	}, EXTRA_HOSPITAL = {
@@ -87,7 +87,8 @@ $hulop.editor = function() {
 		'subject': 99,
 		'close_day': '99'
 	}, EXTRA_EVACUATION = {
-		'evacuation': 2,
+		'evacuation': 3,
+		'temporary': 99,
 		'med_dept': '99',
 		'flood': 99
 	};
@@ -849,9 +850,11 @@ $hulop.editor = function() {
 	}
 
 	function createNode(latlng) {
+		var floor = getFloor();
 		var p = {
 			'node_id': newID('node'),
-			'floor': getFloor()
+			'floor': floor,
+			'in_out': floor == 0 ? 1 : 3
 		};
 		var feature = newFeature(newGeoJSON(p, latlng));
 		showProperty(feature);
@@ -885,17 +888,13 @@ $hulop.editor = function() {
 		var p = {
 				'facil_id' : newID('facil'),
 				'facil_type': 99,
-				'evacuation': 99,
-				'temporary': 99,
 				'toilet' : 99,
 				'elevator' : 99,
 				'escalator' : 99,
 				'parking' : 99,
 				'barrier' : 99,
 				'nursing' : 99,
-				'brail_tile' : 99,
-				'info' : 99,
-				'info_board' : 99
+				'brail_tile' : 99
 		};
 		extra && merge(extra, p);
 		var feature = newFeature(newGeoJSON(p, latlng));
@@ -996,9 +995,9 @@ $hulop.editor = function() {
 			'link_id': linkID,
 			'start_id': node1.get('node_id'),
 			'end_id': node2.get('node_id'),
-			'rt_struct': 1,
-			'route_type': 0,
-			'direction': 0,
+			'rt_struct': node1.get('floor') == 0 && node2.get('floor') == 0 ? 1 : 7,
+			'route_type': 1,
+			'direction': 1,
 			'width': 99,
 			'vtcl_slope': 99,
 			'lev_diff': 99,
@@ -1208,7 +1207,7 @@ $hulop.editor = function() {
 				})];
 				var dir = feature.get('direction');
 
-				if (dir == 1 || dir == 2) {
+				if (dir == 2 || dir == 3) {
 				var geometry = feature.getGeometry();
 				  geometry.forEachSegment(function(start, end) {
 				    var dx = end[0] - start[0];
@@ -1221,7 +1220,7 @@ $hulop.editor = function() {
 				        src: 'images/arrow.png',
 				        anchor: [1.5, 0.5],
 				        rotateWithView: false,
-				        rotation: (dir==1)?-rotation:-rotation+Math.PI
+				        rotation: (dir==2)?-rotation:-rotation+Math.PI
 				      })
 				    }));
 				  });

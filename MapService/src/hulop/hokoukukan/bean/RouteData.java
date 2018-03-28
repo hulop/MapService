@@ -127,7 +127,7 @@ public class RouteData {
 				JSONObject properties = ((JSONObject) feature).getJSONObject("properties");
 				switch (Hokoukukan.getCategory(properties)) {
 				case Hokoukukan.CATEGORY_LINK:
-					if (properties.getInt("route_type") == 3) {
+					if (properties.getInt("route_type") == 4) {
 						mElevatorNodes.add(properties.getString("start_id"));
 						mElevatorNodes.add(properties.getString("end_id"));
 					}
@@ -138,7 +138,7 @@ public class RouteData {
 						if (properties.has(ent_d)) {
 							int door = properties.getInt(ent_d);
 							switch (door) {
-							case 0:
+							case 1:
 							case 99:
 								break;
 							default:

@@ -49,9 +49,10 @@ $hulop.route = function() {
 			var announce = true, elevator = false;
 			switch (type) {
 			case 101: // Sidewalk, Pedestrian road, Garden path or Free passage
+			case 107: // Indoor route
 				announce = false;
 				break;
-			case 3: // Elevator 
+			case 4: // Elevator 
 				elevator = true;
 				break;
 			}
@@ -152,7 +153,7 @@ $hulop.route = function() {
 		var type = getRouteType(obj);
 		var linkName = getText('LINK_TYPE_' + type);
 		var floorDiff = (obj.properties.targetHeight || 0) - (obj.properties.sourceHeight || 0);
-		if (floorDiff != 0 && type == 3) {
+		if (floorDiff != 0 && type == 4) { // Elevator
 			var floor = (obj.properties.targetHeight || 0);
 			if (floor >= 0) {
 				floor = $m('FLOOR', floor == 0 ? 1 : floor);
@@ -180,13 +181,13 @@ $hulop.route = function() {
 		var type = getRouteType(obj);
 		switch (type) {
 		case 103: // Crosswalk
-		case 1: // Moving walkway
-		case 2: // Railroad crossing
-		case 3: // Elevator
-		case 6: // Slope
+		case 2: // Moving walkway
+		case 3: // Railroad crossing
+		case 4: // Elevator
+		case 7: // Slope
 			return 'AFTER_' + type;
-		case 4: // Escalator
-		case 5: // Stairs
+		case 5: // Escalator
+		case 6: // Stairs
 			if (floorDiff > 0) {
 				return 'AFTER_' + type + '_UP';
 			} else if (floorDiff < 0) {
@@ -342,7 +343,7 @@ $hulop.route = function() {
 	function getRouteType(obj) {
 		var type = obj.properties['route_type'];
 		var struct = obj.properties['rt_struct'];
-		if (struct != 99 && (type == 0 || type == 99)) {
+		if (struct != 99 && (type == 1 || type == 99)) {
 			return 100 + struct;
 		}
 		return type;

@@ -100,13 +100,15 @@ $hulop.editor.importV1 = function(v1features) {
 				set(tp, 'distance', Number(value));
 				break;
 			case '経路の種類':
-				var rt_struct = 99, route_type = 0;
+				var rt_struct = 99, route_type = 1;
 				switch (Number(value)) {
 				case 1: // 歩道
 				case 2: // 歩行者専用道路
 				case 3: // 園路
-				case 8: // 自由通路
 					rt_struct = 1; // 車道と歩道の物理的な分離あり
+					break;
+				case 8: // 自由通路
+					rt_struct = 7; // 施設内通路
 					break;
 				case 4: // 歩車共存道路
 					rt_struct = 2; // 車道と歩道の物理的な分離なし
@@ -118,22 +120,22 @@ $hulop.editor.importV1 = function(v1features) {
 					rt_struct = 4;
 					break;
 				case 7: // 動く歩道
-					route_type = 1;
-					break;
-				case 9: // 踏切
 					route_type = 2;
 					break;
-				case 10: // エレベーター
+				case 9: // 踏切
 					route_type = 3;
 					break;
-				case 11: // エスカレーター
+				case 10: // エレベーター
 					route_type = 4;
 					break;
-				case 12: // 階段
+				case 11: // エスカレーター
 					route_type = 5;
 					break;
-				case 13: // スロープ
+				case 12: // 階段
 					route_type = 6;
+					break;
+				case 13: // スロープ
+					route_type = 7;
 					break;
 				case 99: // 不明
 					route_type = 99;
@@ -146,28 +148,34 @@ $hulop.editor.importV1 = function(v1features) {
 				set(tp, 'direction', Code(value));
 				break;
 			case '有効幅員':
-				switch (value = Code(value)) {
+				switch (value = Code0(value)) {
+				case 0: // 1.0m 未満
+					value = 1; // 1.0m 未満
+					break;
 				case 1: // 1m 以上 1.5m 未満
 				case 2: // 1.5m 以上 2.0m 未満
-					value = 1; // 1.0m 以上～2.0m 未満（車いすの通行可能（すれ違い困難））
+					value = 2; // 1.0m 以上～2.0m 未満
 					break;
 				case 3: // 2.0m 以上
-					value = 2; // 2.0m 以上～3.0m 未満（車いすの通行可能（すれ違い可能））
+					value = 3; // 2.0m 以上～3.0m 未満
 					break;
 				}
 				set(tp, 'width', value);
 				break;
 			case '縦断勾配1':
 				set(tp, 'vSlope_max', value = Number(value));
-				var vtcl_slope = isNaN(value) ? 99 : value < 5 ? 0 : 1;
+				var vtcl_slope = isNaN(value) ? 99 : value <= 5 ? 1 : 2;
 				set(tp, 'vtcl_slope', vtcl_slope);
 				break;
 			case '段差':
-				switch (value = Code(value)){
+				switch (value = Code0(value)){
+				case 0: // 2cm 未満
+					value = 1; // 2 ㎝以下
+					break;
 				case 1: // 2～5cm
 				case 2: // 5～10cm
 				case 3: // 10cm 以上
-					value = 1; // 2 ㎝より大きい（車いすの通行に支障あり）
+					value = 2; // 2 ㎝より大きい
 					break;
 				}
 				set(tp, 'lev_diff', value);
@@ -181,18 +189,22 @@ $hulop.editor.importV1 = function(v1features) {
 			case 'エスコートゾーン':
 			case '視覚障害者誘導用ブロック':
 				if (value == '1') {
-					set(tp, 'brail_tile', 1);
+					set(tp, 'brail_tile', 2);
 				}
 				break;
 			case 'エレベーター種別':
-				switch (value = Code(value)) {
+				switch (value = Code0(value)) {
 				case 0: // 障害対応なし
-					value = 1; // エレベーターあり（バリアフリー対応なし）
+					value = 2; // エレベーターあり（バリアフリー対応なし）
 					break;
 				case 1: // 点字・音声あり
+					value = 4; // エレベーターあり（視覚障害者対応）
+					break;
 				case 2: // 車イス対応
+					value = 3; // エレベーターあり（車いす使用者対応）
+					break;
 				case 3: // 1・2 両方
-					value = 2; // エレベーターあり（バリアフリー対応あり）
+					value = 5; // エレベーターあり（車いす使用者、視覚障害者対応）
 					break;
 				}
 				set(tp, 'elevator', value);
@@ -237,10 +249,17 @@ $hulop.editor.importV1 = function(v1features) {
 				set(tp, 'hSlope_lon', DMS(value));
 				break;
 			case '路面状況':
-				set(tp, 'condition', Code(value));
-				break;
-			case '段差':
-				set(tp, 'levDif_max', Number(value));
+				switch (value = Code0(value)) {
+				case 0: // 通行に問題なし
+					value = 1; // 車いすの通行に支障なし
+					break;
+				case 1: // 土
+				case 2: // 砂利
+				case 3: // その他
+					value = 2; // 車いすの通行に支障あり
+					break;
+				}
+				set(tp, 'condition', value);
 				break;
 			case '段差緯度':
 				set(tp, 'levDif_lat', DMS(value));
@@ -350,6 +369,7 @@ $hulop.editor.importV1 = function(v1features) {
 				break;
 			case '高さ':
 				set(tp, 'floor', Number(value));
+				set(tp, 'in_out', value == '0' ? 1 : 3);
 				break;
 			case 'file':
 				set(tp, 'hulop_' + name, value);
@@ -381,16 +401,21 @@ $hulop.editor.importV1 = function(v1features) {
 	function convertFacility(feature) {
 		var fp = feature.properties;
 		var name = fp['名称'] || '';
-		var toilet = Code(fp['多目的トイレ']) || 99;
-		if (fp['ベビーベッド'] == '1') {
-			toilet = (toilet == 2 ? 4 : 3);
+		var toilet = 99;
+		switch (fp['多目的トイレ']) {
+		case '1': // あり（オストメイト対応なし）
+			toilet = 3; // 多機能トイレ	（オストメイト対応、おむつ交換シートなし）
+			break;
+		case '2': // あり	（オストメイト対応あり）
+			toilet = 4; // 多機能トイレ（オストメイト対応あり）
+			break;
 		}
-
+		if (fp['ベビーベッド'] == '1') {
+			toilet = (toilet == 4 ? 6 : 5); // おむつ交換シートあり
+		}
 		// preset mandatory values unknown
 		var tp = {
 			'facil_type' : 99,
-			'evacuation' : 99,
-			'temporary' : 99,
 			'name_ja' : name,
 			'name_en' : /[\u3000-\u9fff]/.exec(name) ? '' : name,
 			'address' : '',
@@ -401,9 +426,7 @@ $hulop.editor.importV1 = function(v1features) {
 			'parking' : 99,
 			'barrier' : 99,
 			'nursing' : 99,
-			'brail_tile' : 99,
-			'info' : 99,
-			'info_board' : 99
+			'brail_tile' : 99
 		}
 
 		for ( var name in fp) {
@@ -449,7 +472,13 @@ $hulop.editor.importV1 = function(v1features) {
 				set(tp, 'tel', value);
 				break;
 			case '階層':
-				set(tp, 'floors', Number(value));
+				value = Number(value);
+				if (value > 1) {
+					value = 2; // 階層間の移動あり
+				} else if (value == 1) {
+					value = 1; // 階層間の移動なし
+				}
+				set(tp, 'move_floor', Number(value));
 				break;
 			case '名称:ja':
 			case '名称:en':
@@ -558,7 +587,19 @@ $hulop.editor.importV1 = function(v1features) {
 				set(fp, name, 'ent' + index + '_n_hira', kana2hira(value));
 				break;
 			case '出入口の有効幅員':
-				set(fp, 'ent' + index + '_w', Number(value));
+				switch (value = Code0(value)) {
+				case 0: // 1.0m 未満
+					value = 1; // 1.0m 未満
+					break;
+				case 1: // 1m 以上 1.5m 未満
+				case 2: // 1.5m 以上 2.0m 未満
+					value = 2; // 1.0m 以上～2.0m 未満
+					break;
+				case 3: // 2.0m 以上
+					value = 3; // 2.0m 以上～3.0m 未満
+					break;
+				}
+				set(fp, 'ent' + index + '_w', value);
 				break;
 			case '扉の種類':
 				set(fp, 'ent' + index + '_d', Code(value));
@@ -566,13 +607,13 @@ $hulop.editor.importV1 = function(v1features) {
 			case '段差':
 				var brr = 99;
 				switch (value) {
-				case '0': // ：1.0m 未満
-					brr = 1; // 車いす使用者が利用可能な出入口あり
+				case 0: // 2cm 未満
+					brr = 2; // 車いす使用者が利用可能な出入口あり
 					break;
-				case '1': // 1m 以上 1.5m 未満
-				case '2': // 1.5m 以上 2.0m 未満
-				case '3': // 2.0m以上
-					brr = 0; // なし
+				case 1: // 2～5cm
+				case 2: // 5～10cm
+				case 3: // 10cm 以上
+					brr = 1; // なし
 					break;
 				}
 				set(fp, 'ent' + index + '_brr', brr);
@@ -605,6 +646,10 @@ $hulop.editor.importV1 = function(v1features) {
 	}
 	
 	function Code(value) {
+		return value == '9' ? 99 : Number(value) + 1;
+	}
+
+	function Code0(value) {
 		return value == '9' ? 99 : Number(value);
 	}
 

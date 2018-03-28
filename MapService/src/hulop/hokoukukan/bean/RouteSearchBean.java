@@ -178,11 +178,11 @@ public class RouteSearchBean {
 				g.addVertex(end);
 
 				DefaultWeightedEdge startEnd = null, endStart = null;
-				switch (getCode(properties, "direction", 0)) {
-				case 1:
+				switch (getCode(properties, "direction", 99)) {
+				case 2:
 					startEnd = g.addEdge(start, end);
 					break;
-				case 2:
+				case 3:
 					endStart = g.addEdge(end, start);
 					break;
 				default:
@@ -279,16 +279,16 @@ public class RouteSearchBean {
 
 			int route_type = getCode(properties, "route_type", 100);
 			switch (route_type) {
-			case 3: // Elevator
+			case 4: // Elevator
 				weight = 0.0f;
 				break;
-			case 1: // Moving walkway
+			case 2: // Moving walkway
 				weight *= 0.75f;
 				break;
-			case 4: // Escalator
+			case 5: // Escalator
 				weight = ESCALATOR_WEIGHT;
 				break;
-			case 5: // Stairs
+			case 6: // Stairs
 				weight = STAIR_WEIGHT;
 				break;
 			}
@@ -305,22 +305,22 @@ public class RouteSearchBean {
 			try {
 				switch (conditions.get("min_width")) {
 				case "1": // >3.0m
-					if (width < 3) {
+					if (width < 4) {
 						return WEIGHT_IGNORE;
 					}
 					break;
 				case "2": // >2.0m
-					if (width < 2) {
+					if (width < 3) {
 						return WEIGHT_IGNORE;
 					}
 					break;
 				case "3": // >1.0m
-					if (width < 1) {
+					if (width < 2) {
 						return WEIGHT_IGNORE;
 					}
 					break;
 				case "8": // Avoid
-					if (width < 3) {
+					if (width < 4) {
 						weight += penarty;
 					}
 					break;
@@ -335,12 +335,12 @@ public class RouteSearchBean {
 			try {
 				switch (conditions.get("slope")) {
 				case "1": // <5%
-					if (vtcl_slope == 1) {
+					if (vtcl_slope == 2 || vtcl_slope == 3) {
 						return WEIGHT_IGNORE;
 					}
 					break;
 				case "8": // Avoid
-					if (vtcl_slope == 1) {
+					if (vtcl_slope == 2 || vtcl_slope == 3) {
 						weight += penarty;
 					}
 					break;
@@ -349,16 +349,16 @@ public class RouteSearchBean {
 			}
 
 			int condition = getCode(properties, "condition", 100);
-			// 0: no problem in accessibility, 1: soil, 2: gravel, 3: other, 99: unknown
+			// 1: no problem in accessibility, 2: problem in accessibility, 99: unknown
 			try {
 				switch (conditions.get("road_condition")) {
 				case "1": // No problem
-					if (condition == 1 || condition == 2 || condition == 3) {
+					if (condition == 2) {
 						return WEIGHT_IGNORE;
 					}
 					break;
 				case "8": // Avoid
-					if (condition == 1 || condition == 2 || condition == 3) {
+					if (condition == 2) {
 						weight += penarty;
 					}
 					break;
@@ -367,19 +367,19 @@ public class RouteSearchBean {
 			}
 
 			int lev_diff = getCode(properties, "lev_diff", 100);
-			// 0: 2 cm or less (no problem in wheelchair accessibility),
-			// 1: more than 2 cm (problem in wheelchair accessibility),
+			// 1: 2 cm or less (no problem in wheelchair accessibility),
+			// 2: more than 2 cm (problem in wheelchair accessibility),
 			// 99: unknown
 
 			try {
 				switch (conditions.get("deff_LV")) {
 				case "1": // <2cm
-					if (lev_diff == 1) {
+					if (lev_diff == 2) {
 						return WEIGHT_IGNORE;
 					}
 					break;
 				case "8": // Avoid
-					if (lev_diff == 1) {
+					if (lev_diff == 2) {
 						weight += penarty;
 					}
 					break;
@@ -388,22 +388,22 @@ public class RouteSearchBean {
 			}
 
 			int handrail = getCode(properties, "handrail", 100);
-			// 0: none, 1: on the right, 2: on the left, 3: on both sides, 99: unknown
+			// 1: none, 2: on the right, 3: on the left, 4: on both sides, 99: unknown
 			// (The direction is as seen from the source.)
 			try {
 				switch (conditions.get("stairs")) {
 				case "1": // Do not use
-					if (route_type == 5) {
+					if (route_type == 6) {
 						return WEIGHT_IGNORE;
 					}
 					break;
 				case "2": // Use with hand rail
-					if (route_type == 5 && !(handrail == 1 || handrail == 2 || handrail == 3)) {
+					if (route_type == 6 && !(handrail == 2 || handrail == 3 || handrail == 4)) {
 						return WEIGHT_IGNORE;
 					}
 					break;
 				case "8": // Avoid
-					if (route_type == 5) {
+					if (route_type == 6) {
 						weight += penarty;
 					}
 					break;
@@ -412,23 +412,23 @@ public class RouteSearchBean {
 			}
 
 			int elevator = getCode(properties, "elevator", 100);
-			// 0: without elevator, 1: with elevator (not accessible), 2: with elevator
-			// (accessible), 99: unknown
-			if (elevator != 2 && route_type == 3) {
-				elevator = 1;
+			// 1: no elevator, 2: inaccessible, 3: wheel chair accessible
+			// 4: blind accessible, 5: accessible, 99: unknown
+			if (elevator != 3 && elevator != 5 && route_type == 4) {
+				elevator = 2;
 			}
 			try {
 				switch (conditions.get("elv")) {
 				case "1": // Do not use
-					if (elevator == 1 || elevator == 2) {
+					if (elevator == 2 || elevator == 3 || elevator == 4 || elevator == 5 || elevator == 99) {
 						return WEIGHT_IGNORE;
 					}
 				case "2": // Wheel chair supported
-					if (elevator == 1) {
+					if (elevator == 2 || elevator == 4 || elevator == 99) {
 						return WEIGHT_IGNORE;
 					}
 				case "8": // Avoid
-					if (elevator == 1) {
+					if (elevator == 2 || elevator == 4 || elevator == 99) {
 						weight += penarty;
 					}
 					break;
@@ -439,11 +439,11 @@ public class RouteSearchBean {
 			try {
 				switch (conditions.get("esc")) {
 				case "1": // Do not use
-					if (route_type == 4) {
+					if (route_type == 5) {
 						return WEIGHT_IGNORE;
 					}
 				case "8": // Avoid
-					if (route_type == 4) {
+					if (route_type == 5) {
 						weight += penarty;
 					}
 					break;
@@ -454,11 +454,11 @@ public class RouteSearchBean {
 			try {
 				switch (conditions.get("mvw")) {
 				case "1": // Do not use
-					if (route_type == 1) {
+					if (route_type == 2) {
 						return WEIGHT_IGNORE;
 					}
 				case "8": // Avoid
-					if (route_type == 1) {
+					if (route_type == 2) {
 						weight += penarty;
 					}
 					break;
@@ -467,9 +467,9 @@ public class RouteSearchBean {
 			}
 
 			int brail_tile = getCode(properties, "brail_tile", 100);
-			// 0: without tactile walking surface indicators, etc., 1: with tactile walking
+			// 1: without tactile walking surface indicators, etc., 2: with tactile walking
 			// surface indicators, etc., 99: unknown
-			if (brail_tile == 1 && "1".equals(conditions.get("tactile_paving"))) {
+			if (brail_tile == 2 && "1".equals(conditions.get("tactile_paving"))) {
 				weight = weight / 3;
 			}
 			return weight;
@@ -571,7 +571,7 @@ public class RouteSearchBean {
 					continue;
 				}
 				int route_type = getCode(properties, "route_type", 100);
-				if (route_type != 1 && route_type != 3 && route_type != 4) {
+				if (route_type != 2 && route_type != 4 && route_type != 5) {
 					if (isNode(startID) && isNode(endID)) {
 						if (floors == null) {
 							links.add(json);

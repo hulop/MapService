@@ -74,7 +74,7 @@ public class MongoAdapter implements DBAdapter {
 		db = client.getDB(dbName != null ? dbName : mongoURI.getDatabase());
 		mFS = new GridFS(db);
 		System.out.println(db.getCollectionNames());
-		mapCol = db.getCollection("h29maps");
+		mapCol = db.getCollection("maps2018");
 		userCol = db.getCollection("users");
 		logCol = db.getCollection("logs");
 		fileCol = db.getCollection("files");

@@ -60,7 +60,7 @@ public class CloudantAdapter implements DBAdapter {
 	private final List<JsonElement> insertList = new ArrayList<JsonElement>();
 	private final List<JsonElement> insertLogList = new ArrayList<JsonElement>();
 	private JSONArray resultList = new JSONArray();
-	private static final String NAVI_DB = "h29navi_db", USER_DB = "user_db", LOG_DB = "log_db", FILE_DB = "file_db",
+	private static final String NAVI_DB = "navi2018_db", USER_DB = "user_db", LOG_DB = "log_db", FILE_DB = "file_db",
 			ENTRY_DB = "entry_db";
 	private int insertCount = 0;
 	private static final Replay429Interceptor REPLAY429_INTERCEPTOR = new Replay429Interceptor(3, 250l);

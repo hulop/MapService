@@ -73,8 +73,8 @@ public class FileFilter implements Filter {
 		if (processFile((HttpServletRequest) request, (HttpServletResponse) response)) {
 			return;
 		}
-		// chain.doFilter(request, response);
-		GZIPFilter.getInstance().doFilter(request, response, chain);
+		chain.doFilter(request, response);
+//		GZIPFilter.getInstance().doFilter(request, response, chain);
 	}
 
 	/**

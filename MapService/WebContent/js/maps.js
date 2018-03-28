@@ -421,7 +421,7 @@ $hulop.map = function() {
 				} else if (index == currentStep + 1) {
 					var special = currentRoute.floor != route.floor || !route.nextLatlng;
 					var ext = Math.max(special ? ARRIVE_DIST / 2 : 0, ARRIVE_DIST - subtotal / 2);
-					if (currentRoute.type == 4 || route.type == 4) { // escalator
+					if (currentRoute.type == 5 || route.type == 5) { // escalator
 						ext = 0;
 					}
 					if (ext > 0) {
@@ -475,8 +475,8 @@ $hulop.map = function() {
 					var dist = route.subtotal;
 					switch (route.type) {
 					case 103: // pedestrian crossing
-					case 1: // moving walkway
-					case 4: // escalator,
+					case 2: // moving walkway
+					case 5: // escalator,
 						route.links.forEach(function(link) {
 							if (link.info.type == route.type) {
 								dist -= link.info.length;

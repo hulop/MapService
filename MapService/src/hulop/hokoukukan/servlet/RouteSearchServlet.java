@@ -84,7 +84,7 @@ public class RouteSearchServlet extends HttpServlet {
 		String action = request.getParameter("action");
 		if ("info".equals(action)) {
 			try {
-				JSONObject result = new JSONObject().put("map_data", "hokoukukan2017");
+				JSONObject result = new JSONObject().put("map_data", "hokoukukan2018");
 				sendJSON(result, request, response);
 				return;
 			} catch (Exception e) {
