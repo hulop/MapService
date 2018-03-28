@@ -318,8 +318,8 @@ $hulop.route = function() {
 				break;
 			}
 			switch (obj.properties['toilet']) {
-			case 2:
 			case 4:
+			case 6:
 				name += $m('FOR_DISABLED');
 				break;
 			}
