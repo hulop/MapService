@@ -24,7 +24,7 @@ window.$hulop || eval('var $hulop={};');
 
 $hulop.indoor = function() {
 
-	var overlayMap = {}, floors = [], activeFloor = null, enabled = false, styleOptions;
+	var overlayMap = {}, floors = [], activeFloor = null, activeFloorName = null, enabled = false, styleOptions;
 	var map, floorButton, toiletMarkers = [];
 
 	var toiletImage = new ol.style.Style({
@@ -86,6 +86,7 @@ $hulop.indoor = function() {
 			'origin_y' : region.origin_y,
 			'rotate' : region.rotate,
 			'floor' : region.floor,
+			'name' : region.name,
 			'width' : region.width || 1000,
 			'height' : region.height || 1000,
 			'zIndex' : region.zIndex || 0
@@ -209,6 +210,7 @@ $hulop.indoor = function() {
 //			return;
 //		}
 		floors = [];
+		activeFloorName = null;
 		var zoom = map.getView().getZoom();
 		var center = $hulop.map.getCenter();
 		for ( var id in overlayMap) {
@@ -217,7 +219,11 @@ $hulop.indoor = function() {
 			var dist = Math.max(diag + 100, ($hulop.config.MAX_RADIUS || 500) / 2);
 			var range = zoom >= 16 && $hulop.util.computeDistanceBetween(center, $hulop.util.newLatLng(ov.lat, ov.lng)) < dist;
 			var of = ov.floor;
-			ov.show(range && of == floor);
+			var show = range && of == floor;
+			ov.show(show);
+			if (show) {
+				activeFloorName = ov.name;
+			}
 			range && floors.indexOf(of) < 0 && floors.push(of);
 		}
 		floors.sort(function(a, b) {
@@ -272,6 +278,9 @@ $hulop.indoor = function() {
 	}
 
 	function getFloorName() {
+		if (activeFloorName) {
+			return activeFloorName;
+		}
 		var floor = getCurrentFloor();
 		return floor ? (floor > 0 ? floor + 'F' : 'B' + (-floor) + 'F') : $m('OUTDOOR');
 	}

@@ -329,8 +329,9 @@ public class RouteSearchBean {
 			}
 
 			int vtcl_slope = getCode(properties, "vtcl_slope", 100);
-			// 0: 5% or less (no problem in wheelchair accessibility),
-			// 1: more than 5% (problem in wheelchair accessibility),
+			// 1: 5% or less (no problem in wheelchair accessibility),
+			// 2: more than 5% (up),
+			// 3: more than 5% (down),
 			// 99: unknown
 			try {
 				switch (conditions.get("slope")) {
