@@ -237,7 +237,7 @@ $hulop.route = function() {
 					return null;
 				}
 			}
-			return properties['route'] == 3 ? styles.elevator : styles.link;
+			return properties['route_type'] == 4 ? styles.elevator : styles.link;
 		} else if (properties.node_id) {
 			if (floor) {
 				var height = properties['floor'];
