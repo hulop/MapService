@@ -295,12 +295,12 @@ public class RouteSearchBean {
 			double penarty = Math.max(weight, 10.0f) * 9;
 
 			int width = getCode(properties, "width", 100);
-			// 0: less than 1.0 m (wheelchair inaccessible),
-			// 1: 1.0 m to less than 2.0 m (wheelchair accessible (difficult to pass each
+			// 1: less than 1.0 m (wheelchair inaccessible),
+			// 2: 1.0 m to less than 2.0 m (wheelchair accessible (difficult to pass each
 			// other)),
-			// 2: 2.0 m to less than 3.0 m (wheelchair accessible (possible to pass each
+			// 3: 2.0 m to less than 3.0 m (wheelchair accessible (possible to pass each
 			// other)),
-			// 3: 3.0 m or more (no problem in wheelchair accessibility),
+			// 4: 3.0 m or more (no problem in wheelchair accessibility),
 			// 99: unknown
 			try {
 				switch (conditions.get("min_width")) {
@@ -420,15 +420,15 @@ public class RouteSearchBean {
 			try {
 				switch (conditions.get("elv")) {
 				case "1": // Do not use
-					if (elevator == 2 || elevator == 3 || elevator == 4 || elevator == 5 || elevator == 99) {
+					if (elevator == 2 || elevator == 3 || elevator == 4 || elevator == 5) {
 						return WEIGHT_IGNORE;
 					}
 				case "2": // Wheel chair supported
-					if (elevator == 2 || elevator == 4 || elevator == 99) {
+					if (elevator == 2 || elevator == 4) {
 						return WEIGHT_IGNORE;
 					}
 				case "8": // Avoid
-					if (elevator == 2 || elevator == 4 || elevator == 99) {
+					if (elevator == 2 || elevator == 3 || elevator == 4 || elevator == 5) {
 						weight += penarty;
 					}
 					break;

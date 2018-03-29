@@ -1172,7 +1172,7 @@ $hulop.editor = function() {
 				'zIndex' : 1
 			});
 		} else if (feature.get('link_id')) {
-			if (feature.get('route_type') == 3) {
+			if (feature.get('route_type') == 4) {
 				var anchor = [ 0.5, 1 ];
 				if (floor != 0 && heights.length == 2 && (heights[0] < floor || heights[1] < floor)) {
 					anchor = [ 0, 0 ];
@@ -1331,7 +1331,7 @@ $hulop.editor = function() {
 					if (isNaN(linkCoordinates[0])) {
 						var other = linkCoordinates[isStart ? linkCoordinates.length - 1 : 0];
 						var otherLatlng = ol.proj.transform(other, 'EPSG:3857', 'EPSG:4326');
-						if (keyState.shiftKey || link.get('route_type') != 3 || $hulop.util.computeDistanceBetween(latlng, otherLatlng) > 1) {
+						if (keyState.shiftKey || link.get('route_type') != 4 || $hulop.util.computeDistanceBetween(latlng, otherLatlng) > 1) {
 							var array = linkCoordinates;
 							array[isStart ? 0 : array.length - 1] = nodeCoordinate;
 							geometry = new ol.geom.LineString(array);
@@ -1626,7 +1626,7 @@ $hulop.editor = function() {
 		});
 		source.addFeature(feature);
 		var properties
-		if (feature.get('route_type') == 3 && feature.get('distance') > 0) {
+		if (feature.get('route_type') == 4 && feature.get('distance') > 0) {
 			console.error('Invalid distance for elevator: ' + feature.get('distance'));
 			console.error(obj.properties);
 		}

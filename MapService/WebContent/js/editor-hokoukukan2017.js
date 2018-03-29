@@ -445,7 +445,7 @@ $hulop.editor.importV1 = function(v1features) {
 				switch (value) {
 				case '公共用トイレの情報':
 					set(tp, 'facil_type', 10); // 公共トイレ（単体）
-					tp.toilet == 99 && set(tp, 'toilet', 1); // 一般トイレ
+					tp.toilet == 99 && set(tp, 'toilet', 2); // 一般トイレ
 					break;
 				case '病院の情報':
 					set(tp, 'facil_type', 3); // 医療施設

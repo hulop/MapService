@@ -82,7 +82,7 @@ $hulop.route = function() {
 			}
 			var accInfo = "";
 			if ($hulop.util.getPreferences(true).slope != '9') {
-				if (properties['vtcl_slope'] == 1) {
+				if (properties['vtcl_slope'] == 2 || properties['vtcl_slope'] == 3) {
 					if (accInfo) {
 						accInfo += ', ';
 					}
@@ -90,7 +90,7 @@ $hulop.route = function() {
 				}
 			}
 			if ($hulop.util.getPreferences(true).deff_LV != '9') {
-				if (properties['lev_diff'] == 1) {
+				if (properties['lev_diff'] == 2) {
 					if (accInfo) {
 						accInfo += ', ';
 					}
@@ -117,6 +117,7 @@ $hulop.route = function() {
 			}
 			var pd = getText('DOOR_' + properties.door_type);
 			if (pd) {
+				poi_end.push(pd);
 				poi_link.push(pd);
 			}
 			return {
@@ -318,7 +319,9 @@ $hulop.route = function() {
 				break;
 			}
 			switch (obj.properties['toilet']) {
+			case 3:
 			case 4:
+			case 5:
 			case 6:
 				name += $m('FOR_DISABLED');
 				break;

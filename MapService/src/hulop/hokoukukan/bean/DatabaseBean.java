@@ -279,8 +279,10 @@ public class DatabaseBean {
 				if (type == DBAdapter.GeometryType.TOILETS) {
 					if (properties.getInt("facil_type") == 10) {
 						switch (properties.getInt("toilet")) {
-						case 2:
+						case 3:
 						case 4:
+						case 5:
+						case 6:
 							siteMap.put(properties.getString("facil_id"), feature);
 							break;
 						}

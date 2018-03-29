@@ -180,7 +180,7 @@ $hulop.indoor = function() {
 					if (floors.length > 0) {
 						var toilet = false, label = false;
 						if (properties.facil_type == 10) {
-							toilet = properties.toilet == 4 || properties.toilet == 6;
+							toilet = properties.toilet == 3 || properties.toilet == 4 || properties.toilet == 5 || properties.toilet == 6;
 						} else {
 							label = properties['name_' + $hulop.messages.defaultLang] || properties.name;
 						}
