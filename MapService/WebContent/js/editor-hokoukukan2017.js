@@ -81,7 +81,8 @@ $hulop.editor.importV1 = function(v1features) {
 			'tfc_signal': 99,
 			'tfc_s_type': 99,
 			'brail_tile': 99,
-			'elevator': 99
+			'elevator': 99,
+			'roof': 99
 		};
 
 		for ( var name in fp) {

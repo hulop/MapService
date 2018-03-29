@@ -54,10 +54,10 @@ $hulop.editor = function() {
 	PROPERTY_NAMES['node'] = [ 'node_id', 'lat', 'lon', 'link1_id', 'link2_id', 'link3_id', 'link4_id', 'link5_id', 'link6_id', 'link7_id', 'link8_id', 'link9_id', 'link10_id', 'floor', 'in_out' ];
 
 	PROPERTY_NAMES['link'] = [ 'group:LAYER1',
-		'link_id', 'start_id', 'end_id', 'distance', 'rt_struct', 'route_type', 'direction', 'width', 'vtcl_slope', 'lev_diff', 'tfc_signal', 'tfc_s_type', 'brail_tile', 'elevator',
+		'link_id', 'start_id', 'end_id', 'distance', 'rt_struct', 'route_type', 'direction', 'width', 'vtcl_slope', 'lev_diff', 'tfc_signal', 'tfc_s_type', 'brail_tile', 'elevator', 'roof',
 		'group:LAYER2',
 		'start_time', 'end_time', 'start_date', 'end_date', 'no_serv_d', 'tfc_restr', 'w_min', 'w_min_lat', 'w_min_lon', 'vSlope_max', 'vSlope_lat', 'vSlope_lon',
-		'hSlope_max', 'hSlope_lat', 'hSlope_lon', 'condition', 'levDif_max', 'levDif_lat', 'levDif_lon', 'stair', 'handrail', 'roof', 'waterway', 'bus_stop', 'bus_s_lat', 'bus_s_lon',
+		'hSlope_max', 'hSlope_lat', 'hSlope_lon', 'condition', 'levDif_max', 'levDif_lat', 'levDif_lon', 'stair', 'handrail', 'waterway', 'bus_stop', 'bus_s_lat', 'bus_s_lon',
 		'facility', 'facil_lat', 'facil_lon', 'elev_lat', 'elev_lon', 'door_type', 'tfc_s_lat', 'tfc_s_lon', 'day_trfc', 'main_user', 'st_name',
 		'group:LAYER3',
 		'hulop_road_low_priority', 'hulop_elevator_equipments' ]
@@ -220,7 +220,7 @@ $hulop.editor = function() {
 							features.features = $hulop.editor.importV1(features.features);
 							fmt = checkFeature(features);
 						}
-						if (fmt != 'H29') {
+						if (fmt != 'H30') {
 							return;
 						}
 						var bounds;
@@ -470,7 +470,7 @@ $hulop.editor = function() {
 		if (features.type == 'FeatureCollection' && features.features && features.features.length > 0) {
 			var p = features.features[0].properties;
 			if (p['node_id'] || p['link_id'] || p['facil_id']) {
-				return 'H29';
+				return 'H30';
 			} else if (p['ノードID'] || p['リンクID'] || p['施設ID'] || p['出入口ID']) {
 				return 'H22';
 			}
@@ -1004,7 +1004,8 @@ $hulop.editor = function() {
 			'tfc_signal': 99,
 			'tfc_s_type': 99,
 			'brail_tile': 99,
-			'elevator': 99
+			'elevator': 99,
+			'roof': 99
 		};
 		extra && merge(extra, p);
 		var obj = newGeoJSON(p, ol.proj.transform(node1.getGeometry().getCoordinates(), 'EPSG:3857', 'EPSG:4326'), ol.proj.transform(node2.getGeometry()
