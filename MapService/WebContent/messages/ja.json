@@ -7,7 +7,6 @@
 	"ARRIVED_RIGHT": "目的地は右側です。%1",
 	"ARRIVED_LEFT": "目的地は左側です。%1",
 	"NEXT_ROUTE": "。そのあと、%1",
-	"NEXT_ROUTE_PAUSE": "。 。 。 。 。%1",
 	"NEXT_DEST": "%1メートル先、%2",
 	"NEXT_DEST_ABOUT": "およそ%1メートル先、%2",
 	"NEXT_MOVE": "%1メートル直進する",

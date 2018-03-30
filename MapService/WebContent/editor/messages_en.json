@@ -78,6 +78,10 @@
 				"name": "Floor number",
 				"desc": "Floor number (A location between floors shall be expressed with a decimal point such as \"1.5.\" Outdoors shall be \"0.\")"
 			},
+			"in_out": {
+				"name": "TODO: in_out",
+				"desc": "TODO"
+			},
 			"link#_id": {
 				"name": "Connected link ID",
 				"desc": "Enter the ID of a link to be connected (Enter multiple link IDs to connect multiple links.)"
@@ -334,9 +338,9 @@
 				"name": "Longitude",
 				"desc": "Longitude of the center position. Enter a value in decimal notation (e.g., 139.7512700)."
 			},
-			"floors": {
-				"name": "Total number of floors",
-				"desc": "Total number of floors"
+			"move_floor": {
+				"name": "TODO: move_floor",
+				"desc": "TODO"
 			},
 			"toilet": {
 				"name": "Toilets",
