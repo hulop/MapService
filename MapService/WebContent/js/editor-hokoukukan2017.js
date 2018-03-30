@@ -452,7 +452,7 @@ $hulop.editor.importV1 = function(v1features) {
 					set(tp, 'facil_type', 3); // 医療施設
 					break;
 				case '指定避難場所の情報':
-					set(tp, 'evacuation', 2); // 指定避難所
+					set(tp, 'evacuation', 3); // 指定避難所
 					break;
 				default:
 					break;
