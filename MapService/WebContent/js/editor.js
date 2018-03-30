@@ -1199,6 +1199,9 @@ $hulop.editor = function() {
 		} else if (feature.get('major_category') == '_nav_poi_') {
 			var heading = parseFloat(feature.get('heading') || 0);
 			var angle = parseFloat(feature.get('angle') || 180);
+			if (heading < -180 || heading > 180 || angle < 0 || angle > 180) {
+				return null;
+			}
 			var path = 'M 20 21.6 L 20 20 ';
 			var size = Math.min(20, 12 * Math.sqrt(180 / angle));
 			for (var i = -angle; i < angle + 10; i += 10) {
