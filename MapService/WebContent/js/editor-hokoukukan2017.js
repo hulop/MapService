@@ -211,16 +211,16 @@ $hulop.editor.importV1 = function(v1features) {
 				set(tp, 'elevator', value);
 				break;
 			case '供用開始時間':
-				value && set(tp, 'start_time', value.replace('-', ''));
+				set(tp, 'start_time', value && value.replace('-', ''));
 				break;
 			case '供用終了時間':
-				value && set(tp, 'end_time', value.replace('-', ''));
+				set(tp, 'end_time', value && value.replace('-', ''));
 				break;
 			case '供用開始日':
-				value && set(tp, 'start_date', value.replace(' ', '-'));
+				set(tp, 'start_date', value && value.replace(' ', '-'));
 				break;
 			case '供用終了日':
-				value && set(tp, 'end_date', value.replace(' ', '-'));
+				set(tp, 'end_date', value && value.replace(' ', '-'));
 				break;
 			case '供用制限曜日':
 				set(tp, 'no_serv_d', value);
