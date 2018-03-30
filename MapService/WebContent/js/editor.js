@@ -1216,7 +1216,7 @@ $hulop.editor = function() {
 				    var rotation = Math.atan2(dy, dx);
 				    // arrows
 				    style.push(new ol.style.Style({
-				      geometry: new ol.geom.Point((dir==1)?end:start),
+				      geometry: new ol.geom.Point((dir==2)?end:start),
 				      image: new ol.style.Icon({
 				        src: 'images/arrow.png',
 				        anchor: [1.5, 0.5],
