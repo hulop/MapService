@@ -473,13 +473,9 @@ $hulop.editor.importV1 = function(v1features) {
 				set(tp, 'tel', value);
 				break;
 			case '階層':
-				value = Number(value);
-				if (value > 1) {
-					value = 2; // 階層間の移動あり
-				} else if (value == 1) {
-					value = 1; // 階層間の移動なし
+				if (value = Number(value)) {
+					set(tp, 'move_floor', value > 1 ? 2 : 1); // 階層間の移動あり/なし
 				}
-				set(tp, 'move_floor', Number(value));
 				break;
 			case '名称:ja':
 			case '名称:en':
@@ -500,13 +496,13 @@ $hulop.editor.importV1 = function(v1features) {
 				set(tp, 'no_serv_d', value);
 				break;
 			case '男女別':
-				set(tp, 'sex', Number(value));
+				set(tp, 'sex', Code0(value));
 				break;
 			case '有料無料の別':
-				set(tp, 'fee', Number(value));
+				set(tp, 'fee', Code0(value));
 				break;
 			case '診療科目':
-				set(tp, 'subject', Number(value));
+				set(tp, 'subject', Code0(value));
 				break;
 			case '休診日':
 				set(tp, 'close_day', value);
