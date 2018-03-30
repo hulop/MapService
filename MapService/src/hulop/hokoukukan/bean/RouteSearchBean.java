@@ -531,8 +531,8 @@ public class RouteSearchBean {
 		return tempNodeID.equals(id) ? mTempNode : mNodeMap.getJSONObject(id);
 	}
 
-	private float getHeight(String node) throws NumberFormatException, JSONException {
-		return Float.parseFloat(getNode(node).getJSONObject("properties").getString("高さ").replace("B", "-"));
+	private double getHeight(String node) throws NumberFormatException, JSONException {
+		return Double.parseDouble(getNode(node).getJSONObject("properties").getString("高さ").replace("B", "-"));
 	}
 
 	private String getDoor(String node) throws JSONException {

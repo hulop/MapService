@@ -52,7 +52,7 @@ $hulop.route = function() {
 			case '8': // Free passage
 				announce = false;
 				break;
-			case '10':
+			case '10': // Elevator
 				elevator = true;
 				break;
 			}
@@ -154,7 +154,7 @@ $hulop.route = function() {
 		var type = obj.properties['経路の種類'];
 		var linkName = getText('LINK_TYPE_' + type);
 		var floorDiff = (obj.properties.targetHeight || 0) - (obj.properties.sourceHeight || 0);
-		if (floorDiff != 0 && type == '10') {
+		if (floorDiff != 0 && type == '10') { // Elevator
 			var floor = (obj.properties.targetHeight || 0);
 			if (floor >= 0) {
 				floor = $m('FLOOR', floor == 0 ? 1 : floor);
@@ -238,11 +238,7 @@ $hulop.route = function() {
 					return null;
 				}
 			}
-			if (properties['エレベーター種別']) {
-				return styles.elevator;
-			} else {
-				return styles.link;
-			}
+			return properties['エレベーター種別'] ? styles.elevator : styles.link;
 			break;
 		case 'ノード情報':
 			if (floor) {

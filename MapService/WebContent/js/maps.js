@@ -421,7 +421,7 @@ $hulop.map = function() {
 				} else if (index == currentStep + 1) {
 					var special = currentRoute.floor != route.floor || !route.nextLatlng;
 					var ext = Math.max(special ? ARRIVE_DIST / 2 : 0, ARRIVE_DIST - subtotal / 2);
-					if (currentRoute.type == '11' || route.type == '11') {
+					if (currentRoute.type == '11' || route.type == '11') { // escalator
 						ext = 0;
 					}
 					if (ext > 0) {
@@ -474,9 +474,9 @@ $hulop.map = function() {
 					});
 					var dist = route.subtotal;
 					switch (route.type) {
-					case '5':
-					case '7':
-					case '11':
+					case '5': // pedestrian crossing
+					case '7': // moving walkway
+					case '11': // escalator,
 						route.links.forEach(function(link) {
 							if (link.info.type == route.type) {
 								dist -= link.info.length;

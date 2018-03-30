@@ -91,11 +91,6 @@ if (id == null || (agreeBean.isAgreementSupported() && !agreeBean.getAgreed(id))
 							<button data-mini="true" id="search" data-icon="search" i18n>CONFIRM_ROUTE</button>
 						</td>
 					</tr>
-					<!--<tr>
-						<td colspan="2">
-							<button data-mini="true" id="showAll" i18n>SHOW_ALL</button>
-						</td>
-					</tr>-->
 				</tbody>
 			</table>
 		</div>
@@ -178,7 +173,6 @@ if (id == null || (agreeBean.isAgreementSupported() && !agreeBean.getAgreed(id))
 					<option value="1" i18n>MIN_WIDTH_1</option>
 					<option value="2" i18n>MIN_WIDTH_2</option>
 					<option value="3" i18n>MIN_WIDTH_3</option>
-					<!--option value="8" i18n>MIN_WIDTH_8</option-->
 					<option value="9" i18n selected>MIN_WIDTH_9</option>
 			</select>
 
@@ -210,21 +204,18 @@ if (id == null || (agreeBean.isAgreementSupported() && !agreeBean.getAgreed(id))
 			<select data-mini="true" id="stairs" name="stairs">
 					<option value="1" i18n>STAIRS_1</option>
 					<option value="2" i18n>STAIRS_2</option>
-					<!--option value="8" i18n>STAIRS_8</option-->
 					<option value="9" i18n selected>STAIRS_9</option>
 			</select>
 
 			<label for="esc" i18n>ESC</label>
 			<select data-mini="true" id="esc" name="esc">
 					<option value="1" i18n>ESC_1</option>
-					<!--option value="8" i18n>ESC_8</option-->
 					<option value="9" i18n selected>ESC_9</option>
 			</select>
 
 			<label for="mvw" i18n>MVW</label>
 			<select data-mini="true" id="mvw" name="mvw">
 					<option value="1" i18n>MVW_1</option>
-					<!--option value="8" i18n>MVW_8</option-->
 					<option value="9" i18n selected>MVW_9</option>
 			</select>
 
@@ -232,16 +223,9 @@ if (id == null || (agreeBean.isAgreementSupported() && !agreeBean.getAgreed(id))
 			<select data-mini="true" id="elv" name="elv">
 					<option value="1" i18n>ELV_1</option>
 					<option value="2" i18n>ELV_2</option>
-					<!--option value="8" i18n>ELV_8</option-->
 					<option value="9" i18n selected>ELV_9</option>
 			</select>
 			</div>
-
-			<!--label for="test">Test:</label>
-			<select data-mini="true" id="test" name="test">
-					<option value="">Online mode</option>
-					<option value="offline">Offline mode</option>
-			</select-->
 		</div>
 	</div>
 	<div data-role="page" id="playback" data-theme="a">

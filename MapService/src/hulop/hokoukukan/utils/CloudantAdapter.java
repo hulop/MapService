@@ -207,8 +207,7 @@ public class CloudantAdapter implements DBAdapter {
 	}
 
 	@Override
-	public void getGeometry(double[] center, double radius, JSONObject nodeMap, JSONArray features,
-			List<String> categories) {
+	public void getGeometry(double[] center, double radius, JSONObject nodeMap, JSONArray features, List<String> categories) {
 		int limit = 200;
 		if (getGeometryRows(center, radius, limit * 100, 1, categories).size() > 0) {
 			System.err.println("more than 100 API calls expected");
@@ -335,7 +334,8 @@ public class CloudantAdapter implements DBAdapter {
 		}
 		return (JsonArray) navi_db.findAny(JsonObject.class, String.format(
 				"%s/_design/geo/_geo/%s?lon=%f&lat=%f8&radius=%f&relation=intersects&skip=%d&limit=%d&include_docs=true",
-				navi_db.getDBUri(), index, center[0], center[1], radius, skip, limit)).get("rows");
+				navi_db.getDBUri(), index, center[0], center[1], radius, skip, limit))
+				.get("rows");
 	}
 
 	private JsonArray getNearestRows(double[] point, int skip, int limit) {

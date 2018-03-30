@@ -171,8 +171,7 @@ public class MongoAdapter implements DBAdapter {
 	}
 
 	@Override
-	public void getGeometry(double[] center, double radius, JSONObject nodeMap, JSONArray features,
-			List<String> categories) {
+	public void getGeometry(double[] center, double radius, JSONObject nodeMap, JSONArray features, List<String> categories) {
 		DBObject query = new BasicDBObject().append("geometry",
 				new BasicDBObject("$near",
 						new BasicDBObject("$geometry", new BasicDBObject("type", "Point").append("coordinates", center))

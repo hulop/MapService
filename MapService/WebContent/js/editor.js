@@ -204,11 +204,7 @@ $hulop.editor = function() {
 						function addCoords(crd) {
 							if (typeof (crd[0]) == 'number') {
 								var x = crd[0], y = crd[1];
-								if (bounds) {
-									bounds = [ Math.min(bounds[0], x), Math.min(bounds[1], y), Math.max(bounds[2], x), Math.max(bounds[3], y) ];
-								} else {
-									bounds = [ x, y, x, y ];
-								}
+								bounds = bounds ? [ Math.min(bounds[0], x), Math.min(bounds[1], y), Math.max(bounds[2], x), Math.max(bounds[3], y) ] : [ x, y, x, y ];
 							} else {
 								crd.forEach(addCoords);
 							}
@@ -273,9 +269,7 @@ $hulop.editor = function() {
 			// console.log(event);
 			var feature = getEventFeature(event);
 			var latLng = ol.proj.transform(event.coordinate, 'EPSG:3857', 'EPSG:4326');
-			if (editingFeature && !feature) {
-				showProperty();
-			}
+			editingFeature && !feature && showProperty();
 			switch (downKey) {
 			case ADD_KEY:
 				createNode(latLng);
@@ -393,10 +387,7 @@ $hulop.editor = function() {
 					// console.log(event);
 					if (select.getFeatures().getLength() > 0) {
 						var feature = select.getFeatures().item(0);
-						if (feature.getGeometry().getType() == 'LineString') {
-							return isVertex(feature, ol.events.condition.altKeyOnly(event));
-						}
-						return true;
+						return feature.getGeometry().getType() != 'LineString' || isVertex(feature, ol.events.condition.altKeyOnly(event));
 					}
 				}
 				return false;
@@ -431,11 +422,7 @@ $hulop.editor = function() {
 						geometryChanged(feature);
 					});
 				} else {
-					// console.log(feature.getId() + ' ' + event.key + ': ' +
-					// event.oldValue + ' => ' + feature.get(event.key));
-					if (feature == editingFeature && feature.get(event.key) != event.oldValue && !editingProperty) {
-						showProperty(feature);
-					}
+					feature == editingFeature && feature.get(event.key) != event.oldValue && !editingProperty && showProperty(feature);
 				}
 				setModified(feature)
 			});
@@ -637,15 +624,11 @@ $hulop.editor = function() {
 			console.log(result);
 			var errors = 0;
 			result.insert && result.insert.forEach(function(obj) {
-				if (!obj._rev) {
-					errors++;
-				}
+				!obj._rev && errors++;
 				checkDbResult(obj);
 			});
 			result.update && result.update.forEach(function(obj) {
-				if (!obj._rev) {
-					errors++;
-				}
+				!obj._rev && errors++;
 				checkDbResult(obj);
 			});
 			org_remove.forEach(function(obj) {
@@ -653,9 +636,7 @@ $hulop.editor = function() {
 					'_id' : obj._id
 				});
 			});
-			if (errors > 0) {
-				alert(errors + ' errors while saving changes. Please reload data.');
-			}
+			errors > 0 && alert(errors + ' errors while saving changes. Please reload data.');
 		});
 	}
 
@@ -745,13 +726,11 @@ $hulop.editor = function() {
 		}
 		source.getFeatures().forEach(function(feature) {
 			var id = feature.getId();
-			if (!lastData.original[id]) {
-				source.removeFeature(feature);
-			}
+			lastData.original[id] || source.removeFeature(feature);
 		});
 		$('#list tbody tr').each(function() {
 			var id = $(this).find('td:last-child').text();
-			!lastData.original[id] && $(this).remove();
+			lastData.original[id] || $(this).remove();
 		});
 		lastData.modified = [];
 		resetExit();
@@ -1231,15 +1210,12 @@ $hulop.editor = function() {
 			}
 			path += 'L 20 20 z';
 
-			var mysvg = new Image();
-			svg = '<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" width="40px" height="40px">'
-					+ '<path stroke="#006600" stroke-width="2" stroke-opacity="0.75" fill="#00CC00" fill-opacity="0.75" d="' + path + '"/></svg>';
-
-			mysvg.src = 'data:image/svg+xml,' + escape(svg);
+			var src = 'data:image/svg+xml,' + escape('<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" width="40px" height="40px">'
+					+ '<path stroke="#006600" stroke-width="2" stroke-opacity="0.75" fill="#00CC00" fill-opacity="0.75" d="' + path + '"/></svg>');
 
 			style = new ol.style.Style({
 				'image' : new ol.style.Icon({
-					'img' : mysvg,
+					'src' : src,
 					'rotation' : heading * Math.PI / 180.0,
 					'rotateWithView' : true,
 					'anchor' : [ 0.5, 0.5 ],
@@ -1312,10 +1288,7 @@ $hulop.editor = function() {
 	}
 
 	function geometryChanged(feature) {
-		// console.log('geometryChanged: ' + feature.getId() + ' ' +
-		// feature.getGeometry().getType() + ' ' +
-		// feature.getGeometry().getCoordinates());
-		var nodeID = feature.get('ノードID');
+		var nodeID = feature.get('node_id');
 		if (nodeID) {
 			var nodeCoordinate = feature.getGeometry().getCoordinates();
 			var latlng = ol.proj.transform(nodeCoordinate, 'EPSG:3857', 'EPSG:4326');
@@ -1911,17 +1884,13 @@ $hulop.editor = function() {
 				}
 				if (node1) {
 					var node = source.getFeatureById(node1);
-					if (!node) {
-						errors.push('Missing node ' + node1);
-					}
+					node || errors.push('Missing node ' + node1);
 				} else {
 					errors.push('missing start node id');
 				}
 				if (node2) {
 					var node = source.getFeatureById(node2);
-					if (!node) {
-						errors.push('Missing node ' + node2);
-					}
+					node || errors.push('Missing node ' + node2);
 				} else {
 					errors.push('missing end node id');
 				}
@@ -1935,9 +1904,7 @@ $hulop.editor = function() {
 			}
 		});
 		source.getFeatures().forEach(function(feature) {
-			if (feature.error) {
-				getFeatureRow(feature.getId()).css('background-color', '#c0c0c0');
-			}
+			feature.error && getFeatureRow(feature.getId()).css('background-color', '#c0c0c0');
 		});
 	}
 
