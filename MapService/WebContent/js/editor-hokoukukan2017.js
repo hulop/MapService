@@ -211,16 +211,16 @@ $hulop.editor.importV1 = function(v1features) {
 				set(tp, 'elevator', value);
 				break;
 			case '供用開始時間':
-				set(tp, 'start_time', value);
+				value && set(tp, 'start_time', value.replace('-', ''));
 				break;
 			case '供用終了時間':
-				set(tp, 'end_time', value);
+				value && set(tp, 'end_time', value.replace('-', ''));
 				break;
 			case '供用開始日':
-				set(tp, 'start_date', value);
+				value && set(tp, 'start_date', value.replace(' ', '-'));
 				break;
 			case '供用終了日':
-				set(tp, 'end_date', value);
+				value && set(tp, 'end_date', value.replace(' ', '-'));
 				break;
 			case '供用制限曜日':
 				set(tp, 'no_serv_d', value);
@@ -500,13 +500,13 @@ $hulop.editor.importV1 = function(v1features) {
 				set(tp, 'no_serv_d', value);
 				break;
 			case '男女別':
-				set(tp, 'sex', Code(value));
+				set(tp, 'sex', Number(value));
 				break;
 			case '有料無料の別':
-				set(tp, 'fee', Code(value));
+				set(tp, 'fee', Number(value));
 				break;
 			case '診療科目':
-				set(tp, 'subject', Code(value));
+				set(tp, 'subject', Number(value));
 				break;
 			case '休診日':
 				set(tp, 'close_day', value);
