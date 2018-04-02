@@ -1226,6 +1226,22 @@ $hulop.editor = function() {
 				    }));
 				  });
 				}
+				var slope = feature.get('vtcl_slope');
+				if (slope == 2 || slope == 3) {
+					feature.getGeometry().forEachSegment(function(start, end) {
+						var rotation = Math.atan2(end[1] - start[1], end[0] - start[0]) - Math.PI / 2;
+						style.push(new ol.style.Style({
+							'geometry' : new ol.geom.Point([ (start[0] + end[0]) / 2, (start[1] + end[1]) / 2 ]),
+							'image' : new ol.style.Icon({
+								'src' : 'images/arrow-straight.png',
+								'anchor' : [ 0.5, 0.5 ],
+								'scale' : 16 / 56,
+								'rotateWithView' : false,
+								'rotation' : (slope == 2) ? -rotation : -rotation + Math.PI
+							})
+						}));
+					});
+				}
 			}
 		} else if (feature.get('hulop_major_category') == '_nav_poi_') {
 			var heading = feature.get('hulop_heading') || 0;
