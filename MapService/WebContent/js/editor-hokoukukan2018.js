@@ -146,7 +146,7 @@ $hulop.editor.importV1 = function(v1features) {
 				set(tp, 'route_type', route_type);
 				break;
 			case '方向性':
-				set(tp, 'direction', Code(value));
+				set(tp, 'direction', Code1(value));
 				break;
 			case '有効幅員':
 				switch (value = Code0(value)) {
@@ -165,7 +165,7 @@ $hulop.editor.importV1 = function(v1features) {
 				break;
 			case '縦断勾配1':
 				set(tp, 'vSlope_max', value = Number(value));
-				var vtcl_slope = isNaN(value) ? 99 : value <= 5 ? 1 : 2;
+				var vtcl_slope = isNaN(value) ? 99 : value <= 5 ? 1 : 2; // 5%以下/5%より大きい
 				set(tp, 'vtcl_slope', vtcl_slope);
 				break;
 			case '段差':
@@ -182,10 +182,10 @@ $hulop.editor.importV1 = function(v1features) {
 				set(tp, 'lev_diff', value);
 				break;
 			case '信号の有無':
-				set(tp, 'tfc_signal', Code(value));
+				set(tp, 'tfc_signal', Code1(value));
 				break;
 			case '信号種別':
-				set(tp, 'tfc_s_type', Code(value));
+				set(tp, 'tfc_s_type', Code1(value));
 				break;
 			case 'エスコートゾーン':
 			case '視覚障害者誘導用ブロック':
@@ -211,22 +211,22 @@ $hulop.editor.importV1 = function(v1features) {
 				set(tp, 'elevator', value);
 				break;
 			case '供用開始時間':
-				set(tp, 'start_time', value && value.replace('-', ''));
+				set(tp, 'start_time', value && value.replace('-', '')); // HH-MM to HHMM
 				break;
 			case '供用終了時間':
-				set(tp, 'end_time', value && value.replace('-', ''));
+				set(tp, 'end_time', value && value.replace('-', '')); // HH-MM to HHMM
 				break;
 			case '供用開始日':
-				set(tp, 'start_date', value && value.replace(' ', '-'));
+				set(tp, 'start_date', value && value.replace(' ', '-')); // YYYY MM DD to YYYY-MM-DD
 				break;
 			case '供用終了日':
-				set(tp, 'end_date', value && value.replace(' ', '-'));
+				set(tp, 'end_date', value && value.replace(' ', '-')); // YYYY MM DD to YYYY-MM-DD
 				break;
 			case '供用制限曜日':
 				set(tp, 'no_serv_d', value);
 				break;
 			case '通行制限':
-				set(tp, 'tfc_restr', Code(value));
+				set(tp, 'tfc_restr', Code1(value));
 				break;
 			case '有効幅員緯度':
 				set(tp, 'w_min_lat', DMS(value));
@@ -272,16 +272,16 @@ $hulop.editor.importV1 = function(v1features) {
 				set(tp, 'stair', Number(value));
 				break;
 			case '手すり':
-				set(tp, 'handrail', Code(value));
+				set(tp, 'handrail', Code1(value));
 				break;
 			case '屋根の有無':
-				set(tp, 'roof', Code(value));
+				set(tp, 'roof', Code1(value));
 				break;
 			case '蓋のない溝や水路の有無':
-				set(tp, 'waterway', Code(value));
+				set(tp, 'waterway', Code1(value));
 				break;
 			case 'バス停の有無':
-				set(tp, 'bus_stop', Code(value));
+				set(tp, 'bus_stop', Code1(value));
 				break;
 			case 'バス停の緯度':
 				set(tp, 'bus_s_lat', DMS(value));
@@ -290,7 +290,7 @@ $hulop.editor.importV1 = function(v1features) {
 				set(tp, 'bus_s_lon', DMS(value));
 				break;
 			case '補助施設の設置状況':
-				set(tp, 'facility', Code(value));
+				set(tp, 'facility', Code1(value));
 				break;
 			case '補助施設の緯度':
 				set(tp, 'facil_lat', DMS(value));
@@ -314,7 +314,7 @@ $hulop.editor.importV1 = function(v1features) {
 				set(tp, 'day_trfc', Number(value));
 				break;
 			case '主な利用者':
-				set(tp, 'main_user', Code(value));
+				set(tp, 'main_user', Code1(value));
 				break;
 			case '通り名称または交差点名称':
 			case '通り名称または交差点名称:ja':
@@ -370,7 +370,7 @@ $hulop.editor.importV1 = function(v1features) {
 				break;
 			case '高さ':
 				set(tp, 'floor', Number(value));
-				set(tp, 'in_out', value == '0' ? 1 : 3);
+				set(tp, 'in_out', value == '0' ? 1 : 3); // 施設外/施設内
 				break;
 			case 'file':
 				set(tp, 'hulop_' + name, value);
@@ -487,10 +487,10 @@ $hulop.editor.importV1 = function(v1features) {
 				set(tp, 'name_hira', kana2hira(value));
 				break;
 			case '供用開始時間':
-				set(tp, 'start_time', value);
+				set(tp, 'start_time', value && value.replace('-', '')); // HH-MM to HHMM
 				break;
 			case '供用終了時間':
-				set(tp, 'end_time', value);
+				set(tp, 'end_time', value && value.replace('-', '')); // HH-MM to HHMM
 				break;
 			case '供用制限曜日':
 				set(tp, 'no_serv_d', value);
@@ -518,7 +518,7 @@ $hulop.editor.importV1 = function(v1features) {
 				set(tp, 'med_dept_hira', kana2hira(value));
 				break;
 			case '風水害対応':
-				set(tp, 'flood', Code(value));
+				set(tp, 'flood', Code1(value));
 				break;
 			case 'building':
 			case 'major_category':
@@ -599,7 +599,7 @@ $hulop.editor.importV1 = function(v1features) {
 				set(fp, 'ent' + index + '_w', value);
 				break;
 			case '扉の種類':
-				set(fp, 'ent' + index + '_d', Code(value));
+				set(fp, 'ent' + index + '_d', Code1(value));
 				break;
 			case '段差':
 				var brr = 99;
@@ -642,7 +642,8 @@ $hulop.editor.importV1 = function(v1features) {
 		}
 	}
 	
-	function Code(value) {
+	// convert 0 based code to 1 based code
+	function Code1(value) {
 		return value == '9' ? 99 : Number(value) + 1;
 	}
 

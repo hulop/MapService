@@ -33,7 +33,7 @@
 <script type="text/javascript" src="js/FloorPlanOverlay.js"></script>
 <script type="text/javascript" src="js/indoor.js"></script>
 <script type="text/javascript" src="js/editor.js"></script>
-<script type="text/javascript" src="js/editor-hokoukukan2017.js"></script>
+<script type="text/javascript" src="js/editor-hokoukukan2018.js"></script>
 <script type="text/javascript" src="js/login-monitor.js"></script>
 <script type="text/javascript">
 	$(document).ready(function(){
