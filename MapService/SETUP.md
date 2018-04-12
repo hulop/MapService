@@ -29,7 +29,7 @@ Before you get started, make sure you have the following dependencies installed 
 
 - [Eclipse IDE for Java EE Developers Mars2 or later](http://www.eclipse.org/downloads/packages/eclipse-ide-java-ee-developers/mars2)
 - (Optional) Component from Eclipse Marketplace
-  - IBM Eclipse Toolkit for Bluemix
+  - [IBM Eclipse Tools for IBM Cloud](https://developer.ibm.com/wasdev/downloads/#asset/tools-IBM_Eclipse_Tools_for_IBM_Cloud)
   - IBM WebSphere Application Server Liberty Developer Tools
 - (Optional) [Cloud Foundry cf command](https://console.ng.bluemix.net/docs/cli/reference/cfcommands/index.html)
 
