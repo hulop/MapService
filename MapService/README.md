@@ -25,6 +25,16 @@ SOFTWARE.
 This server-side component provides Map related services that aimed to use with [NavCogIOSv3](https://github.com/hulop/NavCogIOSv3).
 
 ## Prerequisites
+- check "README.md" files to find where you need to copy the following libraries
+```
+$ find . -name README.md
+./SampleMap/README.md
+./README.md
+./MapService/WebContent/jquery/README.md
+./MapService/WebContent/WEB-INF/lib/README.md
+./MapService/WebContent/openlayers/README.md
+./MapService/README.md
+```
 - [jQuery version 1.11.3](https://jquery.com/) (MIT License)
 - [jQuery Mobile version 1.4.5](https://jquerymobile.com/) (MIT License)
 - [jQuery-mobile-nestedlists](https://github.com/arschmitz/jquery-mobile-nestedlists) (MIT License)
