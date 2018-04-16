@@ -33,6 +33,13 @@ Before you get started, make sure you have the following dependencies installed 
   - IBM WebSphere Application Server Liberty Developer Tools
 - (Optional) [Cloud Foundry cf command](https://console.ng.bluemix.net/docs/cli/reference/cfcommands/index.html)
 
+## Database
+
+The server can use one of the follwing database system
+
+1. [Cloudant](https://console.ng.bluemix.net/catalog/services/cloudant-nosql-db/)
+2. MongoDB at localhost or at [Compose](https://console.bluemix.net/docs/services/ComposeForMongoDB/index.html#about-compose-for-mongodb)
+
 ## Deploy MapService Server
 
 After you setup Eclipse, you have the following options to deploy server.
@@ -44,9 +51,9 @@ After you setup Eclipse, you have the following options to deploy server.
 3. Setup your own J2EE Container (WAS Liberty recommneended). Then deploy server manually.
  - https://developer.ibm.com/wasdev/
 
-After you deploy MapService Server, you need to add Cloudant NoSQL DB service
-- For Bluemix, see https://console.ng.bluemix.net/catalog/services/cloudant-nosql-db/
+After you deploy MapService Server, you need to add a DB service
 - If you are not using Bluemix, you need to provide `VCAP_SERVICES` Environment variable
+- If `VCAP_SERVICES` is not provided, it tries to connect to Mongo DB at localhost:27017 
 
 You need to add the following environment variable for administoration instances
 - ENABLE_MAP_ACCESS=admin,auditor,editor
