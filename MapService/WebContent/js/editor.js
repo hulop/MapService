@@ -1291,7 +1291,7 @@ $hulop.editor = function() {
 	}
 
 	function geometryChanged(feature) {
-		var nodeID = feature.get('node_id');
+		var nodeID = feature.get('ノードID');
 		if (nodeID) {
 			var nodeCoordinate = feature.getGeometry().getCoordinates();
 			var latlng = ol.proj.transform(nodeCoordinate, 'EPSG:3857', 'EPSG:4326');
