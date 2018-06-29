@@ -1,22 +1,1 @@
-{
-	"MIN_WIDTH_1": "More than 2m",
-	"MIN_WIDTH_2": "More than 1.5m",
-	"MIN_WIDTH_8": "Avoid as much as possible",
-	"SLOPE_1": "Up to 8%",
-	"SLOPE_2": "Up to 10%",
-	"ROAD_CONDITION_1": "All pavement",
-	"ROAD_CONDITION_8": "Avoid soil and gravel",
-	"ROAD_CONDITION_9": "Do not worry",
-	"DEFF_LV_2": "Up to 5cm",
-	"DEFF_LV_3": "Up to 10cm",
-	"DEFF_LV_9": "Allowed, even if there is more of a step 10cm",
-	"LINK_TYPE_1": "Sidewalk",
-	"LINK_TYPE_3": "Park road",
-	"LINK_TYPE_8": "Free passage",
-	"LINK_TYPE_15": "Shopping street",
-	"LINK_TYPE_16": "Shopping street entrance",
-	"LINK_TYPE_17": "Square shortest route",
-	"LINK_TYPE_18": "Square congestion avoidance route",
-	"LINK_TYPE_19": "Scenic route",
-	"LINK_TYPE_20": "Avoid snow and rain"
-}
+{	"MIN_WIDTH_1": "2m 이상"	"MIN_WIDTH_2": "1.5m 이상"	"MIN_WIDTH_8": "가능한 피한다."	"SLOPE_1": "최대 8% 이내"	"SLOPE_2": "최대 10% 이내"	"ROAD_CONDITION_1": "전체 포장면"	"ROAD_CONDITION_8": "비포장도로는 가능한 피한다."	"ROAD_CONDITION_9": "비포장도로 통행 가능"	"DEFF_LV_2": "5cm 이내"	"DEFF_LV_3": "10cm 이내"	"DEFF_LV_9": "10cm 이상 단차가 있더라도 통행 가능"	"LINK_TYPE_1": "보도"	"LINK_TYPE_3": "공원로"	"LINK_TYPE_8": "자유통로"	"LINK_TYPE_15": "상점가"	"LINK_TYPE_16": "상점가 입구"	"LINK_TYPE_17": "광장 등 최단 경로 연결"	"LINK_TYPE_18": "광장 등 혼잡구간을 피해서 연결"	"LINK_TYPE_19": "관광 경로"	"LINK_TYPE_20": "눈이나 비를 피한다."}
