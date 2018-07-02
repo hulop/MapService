@@ -210,21 +210,29 @@ $hulop.indoor = function() {
 //			return;
 //		}
 		floors = [];
-		activeFloorName = null;
+		var activeMaps = [];
 		var zoom = map.getView().getZoom();
 		var center = $hulop.map.getCenter();
 		for ( var id in overlayMap) {
 			var ov = overlayMap[id];
 			var diag = ov.coverage || (Math.sqrt(Math.pow(ov.width / ov.ppm_x, 2) + Math.pow(ov.height / ov.ppm_y, 2)));
 			var dist = Math.max(diag + 100, ($hulop.config.MAX_RADIUS || 500) / 2);
-			var range = zoom >= 16 && $hulop.util.computeDistanceBetween(center, $hulop.util.newLatLng(ov.lat, ov.lng)) < dist;
-			var of = ov.floor;
-			var show = range && of == floor;
+			if (zoom >= 16 && $hulop.util.computeDistanceBetween(center, $hulop.util.newLatLng(ov.lat, ov.lng)) < dist) {
+				ov.floor == floor && activeMaps.push(id);
+				floors.indexOf(ov.floor) < 0 && floors.push(ov.floor);
+			}
+		}
+		if (floor && activeMaps.length == 0) {
+			return;
+		}
+		activeFloorName = null;
+		for (var id in overlayMap) {
+			var ov = overlayMap[id];
+			var show = activeMaps.indexOf(id) != -1;
 			ov.show(show);
-			if (show) {
+			if (show && ov.name) {
 				activeFloorName = ov.name;
 			}
-			range && floors.indexOf(of) < 0 && floors.push(of);
 		}
 		floors.sort(function(a, b) {
 			return a - b;
