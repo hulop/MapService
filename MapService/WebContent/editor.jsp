@@ -32,6 +32,7 @@
 <script type="text/javascript" src="js/maps.js"></script>
 <script type="text/javascript" src="js/FloorPlanOverlay.js"></script>
 <script type="text/javascript" src="js/indoor.js"></script>
+<script type="text/javascript" src="js/area-edit.js"></script>
 <script type="text/javascript" src="js/editor.js"></script>
 <script type="text/javascript" src="js/login-monitor.js"></script>
 <script type="text/javascript">
@@ -78,6 +79,8 @@
 				<li>(i18n_EDIT_ELEVATOR2)</li>
 				<strong>(i18n_ALIGN_LINKS)</strong>
 				<li>(i18n_ALIGN_LINKS1)</li>
+				<strong>Add an area polygon</strong>
+				<li>Click <button onclick="$hulop.area.addInteraction()">here</button>, then draw on the map</li>
 			</fieldset>
 			<fieldset class="modified" style="display:none">
 				<legend>(i18n_SAVE_MAP)</legend>

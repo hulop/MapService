@@ -75,6 +75,7 @@ $hulop.editor = function() {
 
 	PROPERTY_NAMES['病院の情報'] = [ '施設ID', '緯度経度桁数コード', '緯度', '経度', '名称', '所在地', '電話番号', '階層', '診療科目', '休診日', '多目的トイレ' ].concat(i18nMenu([ '名称', '所在地' ]));
 
+	$hulop.area.setPropertyNames(PROPERTY_NAMES);
 	console.log(PROPERTY_NAMES);
 
 	var OPTIONAL_NAMES = {};
@@ -268,6 +269,9 @@ $hulop.editor = function() {
 		map.on('click', function(event) {
 			// console.log(event);
 			var feature = getEventFeature(event);
+			if (feature === null) {
+				return;
+			}
 			var latLng = ol.proj.transform(event.coordinate, 'EPSG:3857', 'EPSG:4326');
 			editingFeature && !feature && showProperty();
 			switch (downKey) {
@@ -337,7 +341,13 @@ $hulop.editor = function() {
 		select = new ol.interaction.Select({
 			'condition' : ol.events.condition.never,
 			'style' : function(feature) {
+				if ($hulop.area.getId(feature)) {
+					return $hulop.area.getSelectStyle(feature);
+				}
 				var style = getStyle(feature);
+				if (!style) {
+					return;
+				}
 				if (!Array.isArray(style)) {
 					style = [style];
 				}
@@ -387,6 +397,9 @@ $hulop.editor = function() {
 					// console.log(event);
 					if (select.getFeatures().getLength() > 0) {
 						var feature = select.getFeatures().item(0);
+						if ($hulop.area.getId(feature)) {
+							return $hulop.area.modifyCondition(event, isVertex(feature));
+						}
 						return feature.getGeometry().getType() != 'LineString' || isVertex(feature, ol.events.condition.altKeyOnly(event));
 					}
 				}
@@ -396,6 +409,9 @@ $hulop.editor = function() {
 				if (ol.events.condition.singleClick(event)) {
 					if (select.getFeatures().getLength() > 0) {
 						var feature = select.getFeatures().item(0);
+						if ($hulop.area.getId(feature)) {
+							return $hulop.area.deleteCondition(event, isVertex(feature));
+						}
 						if (feature.getGeometry().getType() == 'LineString') {
 							return isVertex(feature) && ol.events.condition.altKeyOnly(event);
 						}
@@ -433,9 +449,16 @@ $hulop.editor = function() {
 	var vertex;
 	function isVertex(feature, others) {
 		if (vertex) {
+			var type = feature.getGeometry().getType();
 			var coords = feature.getGeometry().getCoordinates();
 			for (var i = 0; i < coords.length; i++) {
-				if (isEqual(coords[i], vertex)) {
+				if (type == 'Polygon') {
+					for (var j = 0; j < coords[i].length; j++) {
+						if (isEqual(coords[i][j], vertex)) {
+							return true;
+						}
+					}
+				} else if (isEqual(coords[i], vertex)) {
 					return i > 0 && i < coords.length - 1;
 				}
 			}
@@ -444,12 +467,14 @@ $hulop.editor = function() {
 	}
 
 	function getEventFeature(event) {
+		var ignore;
 		return map.forEachFeatureAtPixel(event.pixel, function(feature) {
 			if (feature.getId()) {
 				// console.log(event.type + ' @ ' + feature.getId());
 				return feature;
 			}
-		});
+			ignore = null;
+		}) || ignore;
 	}
 
 	function splitLink(event) {
@@ -480,7 +505,7 @@ $hulop.editor = function() {
 		var properties = from.getProperties();
 		for ( var name in properties) {
 			var value = properties[name];
-			if (READONLY_NAMES.indexOf(name) == -1) {
+			if (READONLY_NAMES.indexOf(name) == -1 && !$hulop.area.isReadOnly(name)) {
 				to.set(name, value);
 			}
 		}
@@ -1230,6 +1255,9 @@ $hulop.editor = function() {
 			});
 		} else if (feature.get('施設ID')) {
 			style = styles.marker;
+		} else if ($hulop.area.getId(feature)) {
+			style = $hulop.area.getStyle(feature);
+			heights = $hulop.area.getHeights(feature);
 		} else {
 			console.log(feature);
 		}
@@ -1581,7 +1609,7 @@ $hulop.editor = function() {
 
 	function addFeatureList(obj) {
 		var p = obj.properties;
-		var id = p['ノードID'] || p['リンクID'] || p['施設ID'] || p['出入口ID'];
+		var id = p['ノードID'] || p['リンクID'] || p['施設ID'] || p['出入口ID'] || $hulop.area.getId(p);
 		if (source.getFeatureById(id)) {
 			console.error('Duplicated id' + id);
 			return;
@@ -1615,6 +1643,20 @@ $hulop.editor = function() {
 		})).appendTo('#list tbody');
 		return feature;
 	}
+	
+	function newFeaturteCreated(feature) {
+		$('<tr>', {
+			'click' : function() {
+				showProperty(feature);
+			}
+		}).append($('<td>', {
+			'text' : getDisplayName(feature, true)
+		}), $('<td>', {
+			'text' : feature.getId()
+		})).appendTo('#list tbody');
+		setModified(feature);
+		showProperty(feature);
+	}
 
 	function getFeatureRow(id) {
 		var found = false;
@@ -1638,7 +1680,7 @@ $hulop.editor = function() {
 				var end = feature.get('終点ノードID');
 				editable = start && end && source.getFeatureById(start) && source.getFeatureById(end);
 			} else {
-				editable = feature.get('ノードID') || feature.get('施設ID');
+				editable = feature.get('ノードID') || feature.get('施設ID') || $hulop.area.getId(feature);
 			}
 			showPropertyTable(feature);
 			var exitList = findExit(feature); // Exit informations
@@ -1785,7 +1827,7 @@ $hulop.editor = function() {
 
 	function propertyRow(feature, name, value) {
 		var tips = tooltips[feature.get('category')];
-		var editable = READONLY_NAMES.indexOf(name) == -1;
+		var editable = READONLY_NAMES.indexOf(name) == -1 && !$hulop.area.isReadOnly(name);
 		if (name.startsWith('_NAVCOG_')) {
 			if (value.startsWith('{"')) {
 				value = JSON.stringify(JSON.parse(value), null, '\t');
@@ -1912,6 +1954,8 @@ $hulop.editor = function() {
 	}
 
 	return {
+		'version' : 'h22',
+		'newFeaturteCreated' : newFeaturteCreated,
 		'toFeatureCollection': toFeatureCollection,
 		'downloadFile' : downloadFile,
 		'init' : init
