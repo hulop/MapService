@@ -65,6 +65,7 @@ public class FileFilter implements Filter {
 	public void destroy() {
 	}
 
+	private static final boolean NO_GZIPFilter = "false".equals(System.getenv("GZIPFilter"));
 	/**
 	 * @see Filter#doFilter(ServletRequest, ServletResponse, FilterChain)
 	 */
@@ -73,8 +74,11 @@ public class FileFilter implements Filter {
 		if (processFile((HttpServletRequest) request, (HttpServletResponse) response)) {
 			return;
 		}
-//		chain.doFilter(request, response);
-		GZIPFilter.getInstance().doFilter(request, response, chain);
+		if (NO_GZIPFilter) {
+			chain.doFilter(request, response);
+		} else {
+			GZIPFilter.getInstance().doFilter(request, response, chain);
+		}
 	}
 
 	/**
