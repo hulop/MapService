@@ -53,9 +53,11 @@ $hulop.editor.importV1 = function(v1features) {
 					newFeature && (entranceMap[fp['施設ID']] || []).forEach(function(entrance, i) {
 						addEntrance(newFeature, entrance, i + 1);
 					});
+				} else if (fp['hulop_area_id']) {
+					newFeature = convertArea(feature);
 				}
 				if (newFeature) {
-					newFeature['_id'] = newFeature.properties['link_id'] || newFeature.properties['node_id'] || newFeature.properties['facil_id'];
+					newFeature['_id'] = newFeature.properties['link_id'] || newFeature.properties['node_id'] || newFeature.properties['facil_id'] || newFeature.properties['hulop_area_id'];
 					v2.push(newFeature);
 					console.log(newFeature.properties);
 				}
@@ -554,6 +556,35 @@ $hulop.editor.importV1 = function(v1features) {
 				break;
 			default:
 				console.error(name + '=' + value);
+				break;
+			}
+		}
+
+		return {
+			'type' : 'Feature',
+			'geometry' : feature.geometry,
+			'properties' : tp,
+		}
+	}
+
+	/*
+	 * convert area feature
+	 */
+	function convertArea(feature) {
+		var fp = feature.properties;
+		var tp = {};
+
+		for (var name in fp) {
+			var value = fp[name];
+			switch (name) {
+			case 'hulop_area_id':
+			case 'hulop_area_name':
+				set(tp, name, value);
+				break;
+			case 'hulop_area_height':
+			case 'hulop_area_localization':
+			case 'hulop_area_navigation':
+				set(tp, name, Number(value));
 				break;
 			}
 		}

@@ -75,6 +75,7 @@ $hulop.editor = function() {
 		'hulop_building', 'hulop_major_category', 'hulop_sub_category', 'hulop_minor_category', 'hulop_heading', 'hulop_angle', 'hulop_height', 'hulop_long_description', 'hulop_description', 'hulop_location_description', 'hulop_tags', 'hulop_poi_external_category', 'hulop_show_labels_zoomlevel' ]
 		.concat(i18nMenu([ 'name', 'address', 'med_dept', 'hulop_long_description', 'hulop_description', 'hulop_location_description' ]));
 
+	$hulop.area.setPropertyNames(PROPERTY_NAMES);
 	console.log(PROPERTY_NAMES);
 
 	var EXTRA_TOILET = {
@@ -291,6 +292,9 @@ $hulop.editor = function() {
 		map.on('click', function(event) {
 			// console.log(event);
 			var feature = getEventFeature(event);
+			if (feature === null) {
+				return;
+			}
 			var latLng = ol.proj.transform(event.coordinate, 'EPSG:3857', 'EPSG:4326');
 			editingFeature && !feature && showProperty();
 			switch (downKey) {
@@ -359,7 +363,13 @@ $hulop.editor = function() {
 		select = new ol.interaction.Select({
 			'condition' : ol.events.condition.never,
 			'style' : function(feature) {
+				if ($hulop.area.getId(feature)) {
+					return $hulop.area.getSelectStyle(feature);
+				}
 				var style = getStyle(feature);
+				if (!style) {
+					return;
+				}
 				if (!Array.isArray(style)) {
 					style = [style];
 				}
@@ -409,6 +419,9 @@ $hulop.editor = function() {
 					// console.log(event);
 					if (select.getFeatures().getLength() > 0) {
 						var feature = select.getFeatures().item(0);
+						if ($hulop.area.getId(feature)) {
+							return $hulop.area.modifyCondition(event, isVertex(feature));
+						}
 						return feature.getGeometry().getType() != 'LineString' || isVertex(feature, ol.events.condition.altKeyOnly(event));
 					}
 				}
@@ -418,6 +431,9 @@ $hulop.editor = function() {
 				if (ol.events.condition.singleClick(event)) {
 					if (select.getFeatures().getLength() > 0) {
 						var feature = select.getFeatures().item(0);
+						if ($hulop.area.getId(feature)) {
+							return $hulop.area.deleteCondition(event, isVertex(feature));
+						}
 						if (feature.getGeometry().getType() == 'LineString') {
 							return isVertex(feature) && ol.events.condition.altKeyOnly(event);
 						}
@@ -480,9 +496,16 @@ $hulop.editor = function() {
 	var vertex;
 	function isVertex(feature, others) {
 		if (vertex) {
+			var type = feature.getGeometry().getType();
 			var coords = feature.getGeometry().getCoordinates();
 			for (var i = 0; i < coords.length; i++) {
-				if (isEqual(coords[i], vertex)) {
+				if (type == 'Polygon') {
+					for (var j = 0; j < coords[i].length; j++) {
+						if (isEqual(coords[i][j], vertex)) {
+							return true;
+						}
+					}
+				} else if (isEqual(coords[i], vertex)) {
 					return i > 0 && i < coords.length - 1;
 				}
 			}
@@ -491,12 +514,14 @@ $hulop.editor = function() {
 	}
 
 	function getEventFeature(event) {
+		var ignore;
 		return map.forEachFeatureAtPixel(event.pixel, function(feature) {
 			if (feature.getId()) {
 				// console.log(event.type + ' @ ' + feature.getId());
 				return feature;
 			}
-		});
+			ignore = null;
+		}) || ignore;
 	}
 
 	function splitLink(event) {
@@ -1017,7 +1042,7 @@ $hulop.editor = function() {
 
 	function merge(from, to) {
 		for (var name in from) {
-			READONLY_KEYS.exec(name) || NOCOPY_KEYS.exec(name) || (to[name] = from[name]);
+			READONLY_KEYS.exec(name) || NOCOPY_KEYS.exec(name) || (to[name] = from[name]) || $hulop.area.isReadOnly(name);
 		}
 	}
 
@@ -1278,6 +1303,9 @@ $hulop.editor = function() {
 			});
 		} else if (feature.get('facil_id')) {
 			style = styles.marker;
+		} else if ($hulop.area.getId(feature)) {
+			style = $hulop.area.getStyle(feature);
+			heights = $hulop.area.getHeights(feature);
 		} else {
 			console.log(feature);
 		}
@@ -1626,7 +1654,7 @@ $hulop.editor = function() {
 
 	function addFeatureList(obj) {
 		var p = obj.properties;
-		var id = p['node_id'] || p['link_id'] || p['facil_id'];
+		var id = p['node_id'] || p['link_id'] || p['facil_id'] || $hulop.area.getId(p);
 		if (source.getFeatureById(id)) {
 			console.error('Duplicated id' + id);
 			return;
@@ -1659,6 +1687,20 @@ $hulop.editor = function() {
 		return feature;
 	}
 
+	function newFeaturteCreated(feature) {
+		$('<tr>', {
+			'click' : function() {
+				showProperty(feature);
+			}
+		}).append($('<td>', {
+			'text' : getDisplayName(feature, true)
+		}), $('<td>', {
+			'text' : feature.getId()
+		})).appendTo('#list tbody');
+		setModified(feature);
+		showProperty(feature);
+	}
+
 	function getFeatureRow(id) {
 		var found = false;
 		return $('#list tbody tr').filter(function() {
@@ -1681,7 +1723,7 @@ $hulop.editor = function() {
 				var end = feature.get('end_id');
 				editable = start && end && source.getFeatureById(start) && source.getFeatureById(end);
 			} else {
-				editable = feature.get('node_id') || feature.get('facil_id');
+				editable = feature.get('node_id') || feature.get('facil_id') || $hulop.area.getId(feature);
 			}
 			showPropertyTable(feature);
 			var exitList = findExit(feature); // Exit informations
@@ -1816,8 +1858,8 @@ $hulop.editor = function() {
 	}
 
 	function propertyRow(feature, name, value) {
-		var info = information_items[getCategory(feature)];
-		var editable = !READONLY_KEYS.exec(name);
+		var info = information_items[getCategory(feature)] || {};
+		var editable = !READONLY_KEYS.exec(name) && !$hulop.area.isReadOnly(name);
 		if (name.startsWith('_NAVCOG_')) {
 			if (value.startsWith('{"')) {
 				value = JSON.stringify(JSON.parse(value), null, '\t');
@@ -1860,7 +1902,7 @@ $hulop.editor = function() {
 			}
 		}
 
-		var isString = STRING_KEYS.exec(name) || typeof feature.get(name) == 'string';
+		var isString = STRING_KEYS.exec(name) || typeof feature.get(name) == 'string' || $hulop.area.isString(name);
 		return $('<tr>', {
 			'class' : editable ? 'editable' : 'read_only'
 		}).append($('<td>', {
@@ -1988,9 +2030,14 @@ $hulop.editor = function() {
 		if (feature.get("facil_id")) {
 			return 'facility';
 		}
+		if ($hulop.area.getId(feature)) {
+			return $hulop.area.getCategory(feature);
+		}
 	}
 
 	return {
+		'version' : '2018',
+		'newFeaturteCreated' : newFeaturteCreated,
 		'toFeatureCollection': toFeatureCollection,
 		'downloadFile' : downloadFile,
 		'init' : init
