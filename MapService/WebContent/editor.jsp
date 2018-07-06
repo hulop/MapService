@@ -79,8 +79,11 @@
 				<li>(i18n_EDIT_ELEVATOR2)</li>
 				<strong>(i18n_ALIGN_LINKS)</strong>
 				<li>(i18n_ALIGN_LINKS1)</li>
-				<strong>Add an area polygon</strong>
-				<li>Click <button onclick="$hulop.area.addInteraction()">here</button>, then draw on the map</li>
+			</fieldset>
+			<fieldset>
+				<legend>Area</legend>
+				<li>Click <button onclick="$hulop.area.addInteraction()">add area</button> then draw polygon on the map.</li>
+				<li>See <strong>(i18n_VERTEX)</strong> to edit vertex</li>
 			</fieldset>
 			<fieldset class="modified" style="display:none">
 				<legend>(i18n_SAVE_MAP)</legend>

@@ -837,11 +837,11 @@ $hulop.editor = function() {
 	}
 
 	function canRemoveFeature(feature) {
-		return canRemoveNode(feature) || canRemoveLink(feature) || canRemovePOI(feature) || canRemoveExit(feature);
+		return canRemoveNode(feature) || canRemoveLink(feature) || canRemovePOI(feature) || canRemoveExit(feature) || canRemoveArea(feature);
 	}
 
 	function removeFeature(feature) {
-		var removed = removeNode(feature) || removeLink(feature) || removePOI(feature) || removeExit(feature);
+		var removed = removeNode(feature) || removeLink(feature) || removePOI(feature) || removeExit(feature) || removeArea(feature);
 		removed && $('.modified').show();
 		return removed;
 	}
@@ -913,6 +913,19 @@ $hulop.editor = function() {
 			return false;
 		}
 		source.removeFeature(poi);
+		showProperty();
+		return true;
+	}
+
+	function canRemoveArea(area) {
+		return $hulop.area.getId(area);
+	}
+
+	function removeArea(area) {
+		if (!canRemoveArea(area)) {
+			return false;
+		}
+		source.removeFeature(area);
 		showProperty();
 		return true;
 	}
