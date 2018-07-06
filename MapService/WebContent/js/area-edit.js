@@ -13,8 +13,7 @@ $hulop.area = function() {
 		'stroke' : new ol.style.Stroke({
 			'color' : 'rgba(0, 127, 0, 1)',
 			'width' : 3
-		}),
-		'zIndex' : -1
+		})
 	});
 	var selectStyle = new ol.style.Style({
 		'fill' : new ol.style.Fill({
@@ -24,7 +23,7 @@ $hulop.area = function() {
 			'color' : 'rgba(0, 153, 255, 1)',
 			'width' : 3
 		}),
-		'zIndex' : 1
+		'zIndex' : -1
 	});
 
 	var interaction;
