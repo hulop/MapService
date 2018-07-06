@@ -67,7 +67,7 @@ public class Hokoukukan {
 			}
 		} catch (Exception e) {
 		}
-		return null;
+		return "";
 	}
 
 }

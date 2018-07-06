@@ -484,11 +484,13 @@ $hulop.editor = function() {
 
 	function checkFeature(features) {
 		if (features.type == 'FeatureCollection' && features.features && features.features.length > 0) {
-			var p = features.features[0].properties;
-			if (p['node_id'] || p['link_id'] || p['facil_id']) {
-				return 'H30';
-			} else if (p['ノードID'] || p['リンクID'] || p['施設ID'] || p['出入口ID']) {
-				return 'H22';
+			for (var i = 0; i < features.features.length; i++) {
+				var p = features.features[i].properties;
+				if (p['node_id'] || p['link_id'] || p['facil_id']) {
+					return 'H30';
+				} else if (p['ノードID'] || p['リンクID'] || p['施設ID'] || p['出入口ID']) {
+					return 'H22';
+				}
 			}
 		}
 	}

@@ -22,6 +22,7 @@
 package hulop.hokoukukan.bean;
 
 import java.awt.geom.Line2D;
+import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -125,7 +126,7 @@ public class RouteSearchBean {
 			dh.add(mTempLink1);
 			dh.add(mTempLink2);
 		}
-		return dh.getResult();
+		return addStartArea(dh.getResult(), fromPoint);
 	}
 
 	private class DirectionHandler {
@@ -605,6 +606,64 @@ public class RouteSearchBean {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	private JSONArray addStartArea(JSONArray route, JSONObject startPos) {
+		if (startPos == null || route.length() < 2) {
+			return route;
+		}
+		JSONObject lastResult = null;
+		Path2D.Double lastPoly = null;
+		try {
+			List<Object> floors = startPos.has("floors") ? startPos.getJSONArray("floors") : null;
+			final Point2D.Double pt = new Point2D.Double(startPos.getDouble("lng"), startPos.getDouble("lat"));
+			for (Object feature : mFeatures) {
+				JSONObject json = (JSONObject) feature;
+				JSONObject properties = json.getJSONObject("properties");
+				if (!properties.has("hulop_area_id")) {
+					continue;
+				}
+				JSONObject geometry = json.getJSONObject("geometry");
+				if (!"Polygon".equals(geometry.getString("type"))) {
+					continue;
+				}
+				if (floors != null && properties.has("hulop_area_height")) {
+					Double floor = properties.getDouble("hulop_area_height");
+					if (!floors.contains((double)floor)) {
+						continue;
+					}
+				}
+				JSONArray coordinates = geometry.getJSONArray("coordinates").getJSONArray(0);
+				Path2D.Double poly = new Path2D.Double();
+				for (int i = 0; i < coordinates.length(); i++) {
+					JSONArray array = coordinates.getJSONArray(i);
+					double x = array.getDouble(0), y = array.getDouble(1);
+					if (i == 0) {
+						poly.moveTo(x, y);
+					} else {
+						poly.lineTo(x, y);
+					}
+				}
+				poly.closePath();
+				if (poly.contains(pt) && (lastPoly == null || lastPoly.contains(poly.getBounds2D()))) {
+					lastPoly = poly;
+					lastResult = json;
+				}
+			}
+			if (lastResult != null) {
+				JSONObject from = lastResult.getJSONObject("properties");
+				JSONObject to = route.getJSONObject(0).getJSONObject("properties");
+				for (Iterator<String> it = from.keys(); it.hasNext();) {
+					String key = it.next();
+					if (key.startsWith("hulop_area_")) {
+						to.put(key, from.get(key));
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return route;
 	}
 
 	private static double calc2Ddistance(JSONArray coordinates, Point2D.Double pt, int[] seg) throws Exception {
