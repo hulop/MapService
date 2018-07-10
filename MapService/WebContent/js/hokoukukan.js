@@ -154,6 +154,10 @@ $hulop.route = function() {
 		var type = obj.properties['経路の種類'];
 		var linkName = getText('LINK_TYPE_' + type);
 		var floorDiff = (obj.properties.targetHeight || 0) - (obj.properties.sourceHeight || 0);
+		if (floorDiff == 0 && (type == '11' || type == '12')) { // Tiny Escalator or Stairs
+			floorDiff = obj.properties.sourceNode == obj.properties['起点ノードID'] ? 0.1 : -0.1;
+//			console.log([floorDiff, obj]);
+		}
 		if (floorDiff != 0 && type == '10') { // Elevator
 			var floor = (obj.properties.targetHeight || 0);
 			if (floor >= 0) {
@@ -180,6 +184,10 @@ $hulop.route = function() {
 	function getAfterPrefix(obj) {
 		var floorDiff = (obj.properties.targetHeight || 0) - (obj.properties.sourceHeight || 0);
 		var type = obj.properties['経路の種類'];
+		if (floorDiff == 0 && (type == '11' || type == '12')) { // Tiny Escalator or Stairs
+			floorDiff = obj.properties.sourceNode == obj.properties['起点ノードID'] ? 0.1 : -0.1;
+//			console.log([floorDiff, obj]);
+		}
 		switch (type) {
 		case '5': // Crosswalk
 		case '7': // Moving walkway
