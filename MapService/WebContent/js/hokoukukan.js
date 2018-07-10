@@ -154,6 +154,13 @@ $hulop.route = function() {
 		var type = getRouteType(obj);
 		var linkName = getText('LINK_TYPE_' + type);
 		var floorDiff = (obj.properties.targetHeight || 0) - (obj.properties.sourceHeight || 0);
+		if (floorDiff == 0 && (type == 5 || type == 6)) { // Tiny Escalator or Stairs
+			floorDiff = obj.properties.sourceNode == obj.properties['start_id'] ? 0.1 : -0.1;
+			if (obj.properties['vtcl_slope'] == 3) {
+				floorDiff = - floorDiff;
+			}
+//			console.log([floorDiff, obj]);
+		}
 		if (floorDiff != 0 && type == 4) { // Elevator
 			var floor = (obj.properties.targetHeight || 0);
 			if (floor >= 0) {
@@ -180,6 +187,13 @@ $hulop.route = function() {
 	function getAfterPrefix(obj) {
 		var floorDiff = (obj.properties.targetHeight || 0) - (obj.properties.sourceHeight || 0);
 		var type = getRouteType(obj);
+		if (floorDiff == 0 && (type == 5 || type == 6)) { // Tiny Escalator or Stairs
+			floorDiff = obj.properties.sourceNode == obj.properties['start_id'] ? 0.1 : -0.1;
+			if (obj.properties['vtcl_slope'] == 3) {
+				floorDiff = - floorDiff;
+			}
+//			console.log([floorDiff, obj]);
+		}
 		switch (type) {
 		case 103: // Crosswalk
 		case 2: // Moving walkway
