@@ -25,7 +25,6 @@ SOFTWARE.
 
 The following files should be placed here.
 
-- JMapProjLib.jar
 - cloudant-client-2.7.0.jar
 - cloudant-http-2.7.0.jar
 - commons-codec-1.6.jar
