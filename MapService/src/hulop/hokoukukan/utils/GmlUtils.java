@@ -21,12 +21,8 @@
  *******************************************************************************/
 package hulop.hokoukukan.utils;
 
-import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import javax.xml.parsers.SAXParserFactory;
 
@@ -37,8 +33,8 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import com.jhlabs.map.proj.Projection;
-import com.jhlabs.map.proj.ProjectionFactory;
+//import com.jhlabs.map.proj.Projection;
+//import com.jhlabs.map.proj.ProjectionFactory;
 
 public class GmlUtils {
 
@@ -53,7 +49,7 @@ public class GmlUtils {
 	private static final String POSLIST = "gml:posList";
 	private static final String COORDINATES = "gml:coordinates";
 	private static final String POS = "gml:pos";
-	private static final Map<String, Projection> projectionCache = new HashMap<String, Projection>();
+//	private static final Map<String, Projection> projectionCache = new HashMap<String, Projection>();
 
 	public interface JSONListener {
 		public void onJSON(Object json);
@@ -218,54 +214,54 @@ public class GmlUtils {
 			}
 			break;
 		}
-		if (srsName == null) {
-			if (properties.getString("file").startsWith("nagoya")) {
-				srsName = "epsg:2449";
-			} else {
-				return geometry;
-			}
-		} else {
-			srsName = srsName.toLowerCase();
-		}
-		switch (srsName) {
-		case "epsg:4353":
-		case "epsg:4326":
-			break;
-		default:
-		// System.out.println("srsName: " + srsName);
-		// System.out.println(obj.toString(2));
-		{
-			Projection proj = projectionCache.get(srsName);
-			if (proj == null) {
-				projectionCache.put(srsName, proj = ProjectionFactory.getNamedPROJ4CoordinateSystem(srsName));
-			}
-			if (proj != null) {
-				// System.out.println(geometry.toString(2));
-				transform(geometry.getJSONArray("coordinates"), proj);
-				// System.out.println(geometry.toString(2));
-			}
-		}
-			break;
-		}
+//		if (srsName == null) {
+//			if (properties.getString("file").startsWith("nagoya")) {
+//				srsName = "epsg:2449";
+//			} else {
+//				return geometry;
+//			}
+//		} else {
+//			srsName = srsName.toLowerCase();
+//		}
+//		switch (srsName) {
+//		case "epsg:4353":
+//		case "epsg:4326":
+//			break;
+//		default:
+//		// System.out.println("srsName: " + srsName);
+//		// System.out.println(obj.toString(2));
+//		{
+//			Projection proj = projectionCache.get(srsName);
+//			if (proj == null) {
+//				projectionCache.put(srsName, proj = ProjectionFactory.getNamedPROJ4CoordinateSystem(srsName));
+//			}
+//			if (proj != null) {
+//				// System.out.println(geometry.toString(2));
+//				transform(geometry.getJSONArray("coordinates"), proj);
+//				// System.out.println(geometry.toString(2));
+//			}
+//		}
+//			break;
+//		}
 		return geometry;
 	}
 
-	private static void transform(JSONArray coord, Projection proj) throws JSONException {
-		if (coord.isEmpty()) {
-			return;
-		} else if (coord.get(0) instanceof JSONArray) {
-			for (JSONArray a : (List<JSONArray>) coord) {
-				transform(a, proj);
-			}
-		} else if (coord.length() == 2) {
-			Point2D.Double src = new Point2D.Double(coord.getDouble(0), coord.getDouble(1)), dst = new Point2D.Double();
-			proj.inverseTransform(src, dst);
-			// System.out.println(src + " => " + dst);
-			coord.set(0, dst.x);
-			coord.set(1, dst.y);
-		} else {
-			System.out.print("Unknown coord data");
-			System.out.print(coord.toString(2));
-		}
-	}
+//	private static void transform(JSONArray coord, Projection proj) throws JSONException {
+//		if (coord.isEmpty()) {
+//			return;
+//		} else if (coord.get(0) instanceof JSONArray) {
+//			for (JSONArray a : (List<JSONArray>) coord) {
+//				transform(a, proj);
+//			}
+//		} else if (coord.length() == 2) {
+//			Point2D.Double src = new Point2D.Double(coord.getDouble(0), coord.getDouble(1)), dst = new Point2D.Double();
+//			proj.inverseTransform(src, dst);
+//			// System.out.println(src + " => " + dst);
+//			coord.set(0, dst.x);
+//			coord.set(1, dst.y);
+//		} else {
+//			System.out.print("Unknown coord data");
+//			System.out.print(coord.toString(2));
+//		}
+//	}
 }
