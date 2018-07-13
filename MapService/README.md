@@ -38,7 +38,6 @@ $ find . -name README.md
 - [jQuery version 1.11.3](https://jquery.com/) (MIT License)
 - [jQuery Mobile version 1.4.5](https://jquerymobile.com/) (MIT License)
 - [jQuery-mobile-nestedlists](https://github.com/arschmitz/jquery-mobile-nestedlists) (MIT License)
-- [Java Map Projection Library](https://github.com/OSUCartography/JMapProjLib) (Apache License v2.0)
 - [Cloudant Java Client version 2.7.0](https://github.com/cloudant/java-cloudant) (Apache License v2.0)
 - [JGraphT version 0.9.1](http://jgrapht.org/) (Eclipse Public License v1.0)
 - [MongoDB Java Driver version 3.4.3](https://mongodb.github.io/mongo-java-driver/) (MIT License)
@@ -48,7 +47,6 @@ $ find . -name README.md
 - [Google Gson version 2.7](https://github.com/google/gson) (Apache License v2.0)
 - [OpenLayers version 4.6.4](https://openlayers.org/) (BSD License)
 - [IBM Cloud Object Storage Java SDK version 2.0.0](https://github.com/ibm/ibm-cos-sdk-java) (Apache License v2.0)
-- [D3 version 4.4.0](https://d3js.org/) (BSD License)
 
 ## Setup
 [SETUP.md](SETUP.md)
