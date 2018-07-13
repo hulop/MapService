@@ -1423,6 +1423,7 @@ $hulop.editor = function() {
 		}
 		syncLatlng(feature);
 		poi_lines && drawPoiLines(feature);
+		setModified(feature);
 	}
 
 	function setGeometry(feature, geometry) {
