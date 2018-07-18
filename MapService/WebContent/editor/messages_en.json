@@ -76,11 +76,11 @@
 			},
 			"floor": {
 				"name": "Floor number",
-				"desc": "Floor number (A location between floors shall be expressed with a decimal point such as \"1.5.\" Outdoors shall be \"0.\")"
+				"desc": "Floor number (A location between floors shall be expressed with a decimal point such as \"1.5.\" Above-ground outdoors shall be \"0.\")"
 			},
 			"in_out": {
-				"name": "TODO: in_out",
-				"desc": "TODO"
+				"name": "Facility in/out classification",
+				"desc": "1: out of the facility, 2: in/out boundary of the facility, 3: in the facility"
 			},
 			"link#_id": {
 				"name": "Connected link ID",
@@ -106,51 +106,51 @@
 			},
 			"rt_struct": {
 				"name": "Route structure",
-				"desc": "1: physical separation provided between roadways and sidewalks, 2: no physical separation provided between roadways and sidewalks, 3: pedestrian crossing, 4: road crossing without road marking for pedestrian crossing, 5: underpass, 6: pedestrian crossing bridge, 99: other"
+				"desc": "1: physical separation provided between roadways and sidewalks, 2: no physical separation provided between roadways and sidewalks, 3: pedestrian crossing, 4: road crossing without road marking for pedestrian crossing, 5: underpass, 6: pedestrian crossing bridge, 7: passage in facility, 8: other route structure, 99: unknown"
 			},
 			"route_type": {
 				"name": "Route type",
-				"desc": "0: no corresponding attribute information, 1: moving walkway, 2: railroad crossing, 3: elevator, 4: escalator, 5: stairs, 6: slope, 99: other"
+				"desc": "1: no corresponding attribute information, 2: moving walkway, 3: railroad crossing, 4: elevator, 5: escalator, 6: stairs, 7: slope, 99: unknown"
 			},
 			"direction": {
 				"name": "Direction",
-				"desc": "0: both directions, 1: direction from source to target, 2: direction from target to source, 99: unknown"
+				"desc": "1: both directions, 2: direction from source to target, 3: direction from target to source, 99: unknown"
 			},
 			"width": {
 				"name": "Width",
-				"desc": "0: less than 1.0 m (wheelchair inaccessible), 1: 1.0 m to less than 2.0 m (wheelchair accessible (difficult to pass each other)), 2: 2.0 m to less than 3.0 m (wheelchair accessible (possible to pass each other)), 3: 3.0 m or more (no problem in wheelchair accessibility), 99: unknown"
+				"desc": "1: less than 1.0 m, 2: 1.0 m to less than 2.0 m, 3: 2.0 m to less than 3.0 m, 4: 3.0 m or more, 99: unknown"
 			},
 			"vtcl_slope": {
 				"name": "Gradient",
-				"desc": "0: 5% or less (no problem in wheelchair accessibility), 1: more than 5% (problem in wheelchair accessibility), 99: unknown"
+				"desc": "1: 5% or less, 2: more than 5% (target higher than source), 3: more than 5% (target lower than source), 99: unknown"
 			},
 			"lev_diff": {
 				"name": "Step",
-				"desc": "0: 2 cm or less (no problem in wheelchair accessibility), 1: more than 2 cm (problem in wheelchair accessibility), 99: unknown"
+				"desc": "1: 2 cm or less, 2: more than 2 cm, 99: unknown"
 			},
 			"tfc_signal": {
 				"name": "Signals for pedestrians",
-				"desc": "0: without signals for pedestrians, 1: with pedestrian-vehicle separated signals, 2: with pedestrian-control signals, 3: other signals than these, 99: unknown"
+				"desc": "1: without signals for pedestrians, 2: with pedestrian-vehicle separated signals, 3: with pedestrian-control signals, 4: other signals than these, 99: unknown"
 			},
 			"tfc_s_type": {
 				"name": "Types of signals for pedestrians",
-				"desc": "0: without sound equipment, 1: with sound equipment (without a button for visually impaired person), 2: with sound equipment (with a button for visually impaired person), 99: unknown"
+				"desc": "1: without sound equipment, 2: with sound equipment (without a button for visually impaired person), 3: with sound equipment (with a button for visually impaired person), 99: unknown"
 			},
 			"brail_tile": {
 				"name": "Tactile walking surface indicators",
-				"desc": "0: without tactile walking surface indicators, etc., 1: with tactile walking surface indicators, etc., 99: unknown"
+				"desc": "1: without tactile walking surface indicators, etc., 2: with tactile walking surface indicators, etc., 99: unknown"
 			},
 			"elevator": {
 				"name": "Elevator type",
-				"desc": "0: without elevator, 1: with elevator (not accessible), 2: with elevator (accessible), 99: unknown"
+				"desc": "1: without elevator, 2: with elevator (not accessible), 3: with elevator (accessible to wheelchair users), 4: with elevator (accessible to visually impaired persons), 5: with elevator (accessible to wheelchair users and visually impaired persons), 99: unknown"
 			},
 			"start_time": {
 				"name": "Service start time",
-				"desc": "Enter service start time if the service time is limited. Leave this field blank if the service time is not limited. Enter \"99\" if it is unknown. The format is \"HH-MM.\""
+				"desc": "Enter service start time if the service time is limited. Leave this field blank if the service time is not limited. Enter \"99\" if it is unknown. The format is \"HHMM.\""
 			},
 			"end_time": {
 				"name": "Service end time",
-				"desc": "Enter service end time if the service time is limited. Leave this field blank if the service time is not limited. Enter \"99\" if it is unknown. The format is \"HH-MM.\""
+				"desc": "Enter service end time if the service time is limited. Leave this field blank if the service time is not limited. Enter \"99\" if it is unknown. The format is \"HHMM.\""
 			},
 			"start_date": {
 				"name": "Service start date",
@@ -166,7 +166,7 @@
 			},
 			"tfc_restr": {
 				"name": "Restricted traffic",
-				"desc": "0: freely accessible, 1: access undesirable (private space), 2: fare payment required, 99: unknown"
+				"desc": "1: freely accessible, 2: access undesirable (private space), 3: fare payment required, 99: unknown"
 			},
 			"w_min": {
 				"name": "Minimum width",
@@ -206,7 +206,7 @@
 			},
 			"condition": {
 				"name": "Road surface condition",
-				"desc": "0: no problem in accessibility, 1: soil, 2: gravel, 3: other, 99: unknown"
+				"desc": "1: no problem in wheelchair accessibility, 2: problem in wheelchair accessibility, 99: unknown"
 			},
 			"levDif_max": {
 				"name": "Maximum step height",
@@ -226,19 +226,19 @@
 			},
 			"handrail": {
 				"name": "Handrail",
-				"desc": "0: none, 1: on the right, 2: on the left, 3: on both sides, 99: unknown (The direction is as seen from the source.)"
+				"desc": "1: none, 2: on the right, 3: on the left, 4: on both sides, 99: unknown (The direction is as seen from the source.)"
 			},
 			"roof": {
 				"name": "Roof",
-				"desc": "0: none, 1: yes, 99: unknown"
+				"desc": "1: none, 2: yes, 99: unknown"
 			},
 			"waterway": {
 				"name": "Uncovered street gutter or ditch",
-				"desc": "0: none, 1: yes, 99: unknown"
+				"desc": "1: none, 2: yes, 99: unknown"
 			},
 			"bus_stop": {
 				"name": "Bus stop",
-				"desc": "0: none, 1: yes, 99: unknown"
+				"desc": "1: none, 2: yes, 99: unknown"
 			},
 			"bus_s_lat": {
 				"name": "Latitude of a bus stop",
@@ -250,7 +250,7 @@
 			},
 			"facility": {
 				"name": "Support equipment",
-				"desc": "0: none, 1: accessible escalator for wheelchair, 2: stair lift, 3: step lift, 4: audio guidance device, 5: other support equipment, 99: unknown (Equipment requiring human intervention is excluded.)"
+				"desc": "1: none, 2: accessible escalator for wheelchair, 3: stair lift, 4: step lift, 5: audio guidance device, 6: other support equipment, 99: unknown (Equipment requiring human intervention is excluded.)"
 			},
 			"facil_lat": {
 				"name": "Latitude of support equipment",
@@ -270,7 +270,7 @@
 			},
 			"door_type": {
 				"name": "Door type",
-				"desc": "0: none, 1: automatic door, 2: press-button automatic door, 3: manual sliding door, 4: manual door, 5: revolving door, 6: other door, 99: unknown"
+				"desc": "1: none, 2: automatic door, 3: press-button automatic door, 4: manual sliding door, 5: manual door, 6: revolving door, 7: other door, 99: unknown"
 			},
 			"tfc_s_lat": {
 				"name": "Latitude of a traffic signal",
@@ -286,7 +286,7 @@
 			},
 			"main_user": {
 				"name": "Main users",
-				"desc": "0: pedestrian, 1: vehicle, 99: unknown"
+				"desc": "1: pedestrian, 2: vehicle, 99: unknown"
 			},
 			"st_name": {
 				"name": "Name of a street or an intersection",
@@ -300,15 +300,15 @@
 			},
 			"facil_type": {
 				"name": "Facility type",
-				"desc": "1：Public offices, etc., 2： Educational and cultural facilities, etc., 3：Medical facilities, 4：Health and welfare facilities, 5：Commercial facilities, 6：Accommodations, 7： Parks and athletic facilities, 8：Tourist facilities, 9：Transport facilities, 10： Public toilets (standalone), 99：Other facilities"
+				"desc": "1: public offices, etc., 2: educational and cultural facilities, etc., 3: medical facilities, 4: health and welfare facilities, 5: commercial facilities, 6: accommodations, 7: parks and athletic facilities, 8: tourist facilities, 9: transport facilities, 10: public toilets (standalone), 99: other facilities"
 			},
 			"evacuation": {
 				"name": "Evacuation center and area",
-				"desc": "0: none designated, 1: designated emergency evacuation center, 2: designated evacuation center, 3: welfare evacuation site, 4: both 1 and 2, 5: both 1 and 3, 6: both 2 and 3, 7: all of 1, 2, and 3, 99: unknown"
+				"desc": "1: none designated, 2: designated emergency evacuation center, 3: designated evacuation center, 4: welfare evacuation site, 5: both 2 and 3, 6: both 2 and 4, 7: both 3 and 4, 8: all of 2, 3, and 4, 99: unknown"
 			},
 			"temporary": {
 				"name": "Temporary stay facility",
-				"desc": "0: none designated, 1: designated, 99: unknown"
+				"desc": "1: none designated, 2: designated, 99: unknown"
 			},
 			"name": {
 				"name": "Name",
@@ -339,44 +339,44 @@
 				"desc": "Longitude of the center position. Enter a value in decimal notation (e.g., 139.7512700)."
 			},
 			"move_floor": {
-				"name": "TODO: move_floor",
-				"desc": "TODO"
+				"name": "Moving between floors",
+				"desc": "1: none, 2: yes, 99: unknown"
 			},
 			"toilet": {
 				"name": "Toilets",
-				"desc": "0: none, 1: general toilets, 2: multipurpose toilets (ostomate), 3: multipurpose toilets (baby changing station), 4: multipurpose toilets (ostomate, baby changing station, and others), 99: unknown"
+				"desc": "1: none, 2: general toilets, 3: multi-functional toilets (without equipment for ostomates, nor diaper change bed), 4: multi-functional toilets (with equipment for ostomates), 5: multi-functional toilets (with diaper change bed), 6: multi-functional toilets (with equipment for ostomates, and diaper change bed), 99: unknown"
 			},
 			"elevator": {
 				"name": "Elevators",
-				"desc": "0: without elevator, 1: with elevator (not wheelchair accessible), 2: with elevator (wheelchair accessible), 99: unknown"
+				"desc": "1: without elevator, 2: with elevator (without barrier-free equipment), 3: with elevator (accessible to wheelchair users), 4: with elevator (accessible to visually impaired persons), 5: with elevator (accessible to both wheelchair users and visually impaired persons), 99: unknown"
 			},
 			"escalator": {
 				"name": "Escalators",
-				"desc": "0: none, 1: yes, 99: unknown"
+				"desc": "1: none, 2: yes, 99: unknown"
 			},
 			"parking": {
 				"name": "Accessible parking",
-				"desc": "0: none, 1: parking for general visitors, 2: wheelchair accessible parking, 3: both 1 and 2, 99: unknown"
+				"desc": "1: none, 2: parking for general visitors, 3: wheelchair accessible parking, 4: both 2 and 3, 99: unknown"
 			},
 			"barrier": {
 				"name": "Wheelchair accessible entrance",
-				"desc": "0: none, 1: with wheelchair accessible entrance, 99: unknown (If the step at the entrance is approximately 2 cm or less or there is a slope, enter \"1: with wheelchair accessible entrance.\")"
+				"desc": "1: none, 2: with wheelchair accessible entrance, 99: unknown (If the step at the entrance is approximately 2 cm or less or there is a slope or the entrance is judged to be accessible because there is an elevator for wheelchair users, etc., enter \"2: with wheelchair accessible entrance.\")"
 			},
 			"nursing": {
 				"name": "Nursing rooms",
-				"desc": "0: none, 1: yes, 99: unknown"
+				"desc": "1: none, 2: yes, 99: unknown"
 			},
 			"brail_tile": {
 				"name": "Tactile walking surface indicators",
-				"desc": "0: none, 1: yes, 99: unknown"
+				"desc": "1: none, 2: yes, 99: unknown"
 			},
 			"info": {
 				"name": "Information offices",
-				"desc": "0: none, 1: yes (not accessible to hearing-impaired persons), 2: yes (accessible to hearing-impaired persons), 99: unknown"
+				"desc": "1: none, 2: yes (not accessible to hearing-impaired persons), 3: yes (accessible to hearing-impaired persons), 99: unknown"
 			},
 			"info_board": {
 				"name": "Information board",
-				"desc": "0: none, 1: yes (not accessible to visually impaired persons), 2: yes (accessible to visually impaired persons), 99: unknown"
+				"desc": "1: none, 2: yes (not accessible to visually impaired persons), 3: yes (accessible to visually impaired persons), 99: unknown"
 			},
 			"name_hira": {
 				"name": "Name (hiragana)",
@@ -424,7 +424,7 @@
 			},
 			"flood": {
 				"name": "Designated for storm and flood damage",
-				"desc": "0: not possible, 1: possible, 99: unknown"
+				"desc": "1: not possible, 2: possible, 99: unknown"
 			},
 			"ent#_lat": {
 				"name": "Latitude of entrance #",
@@ -440,15 +440,15 @@
 			},
 			"ent#_w": {
 				"name": "Width of entrance #",
-				"desc": "0: less than 1.0 m, 1: 1.0 m to less than 1.5 m, 2: 1.5 m to less than 2.0 m, 3: 2.0 m or more, 99: unknown (Evaluate the minimum width in a relevant link.)"
+				"desc": "1: less than 1.0 m, 2: 1.0 m to less than 2.0 m, 3: 2.0 m to less than 3.0 m, 4: 3.0 m or more, 99: unknown (Evaluate the minimum width in a relevant link.)"
 			},
 			"ent#_d": {
 				"name": "Door type of entrance #",
-				"desc": "0: none, 1: automatic door, 2: press-button automatic door, 3: manual sliding door, 4: manual door, 5: revolving door, 6: other door, 99: unknown"
+				"desc": "1: none, 2: automatic door, 3: press-button automatic door, 4: manual sliding door, 5: manual door, 6: revolving door, 7: other door, 99: unknown"
 			},
 			"ent#_brr": {
 				"name": "Wheelchair accessible entrance #",
-				"desc": "0: none, 1: with wheelchair accessible entrance, 99: unknown (If the step at the entrance is approximately 2 cm or less or there is a slope, enter \"1: with wheelchair accessible entrance.\")"
+				"desc": "1: none, 2: with wheelchair accessible entrance, 99: unknown (If the step at the entrance is approximately 2 cm or less or there is a slope or the entrance is judged to be accessible because there is an elevator for wheelchair users, etc., enter \"2: with wheelchair accessible entrance.\")"
 			},
 			"ent#_fl": {
 				"name": "Floor number of entrance #",
