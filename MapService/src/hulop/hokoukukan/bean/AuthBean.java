@@ -83,7 +83,8 @@ public class AuthBean {
 			}
 			System.out.println("remoteAddr=" + remoteAddr);
 			if (!patAcceptIP.matcher(remoteAddr).matches()) {
-				response.sendError(HttpServletResponse.SC_FORBIDDEN, remoteAddr + " is not accepted");
+				response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Forbidden");
+				System.err.println(remoteAddr + " is not accepted");
 				return null;
 			}
 		}
