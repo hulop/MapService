@@ -24,6 +24,7 @@ package hulop.hokoukukan.bean;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -52,11 +53,40 @@ public class AuthBean {
 		System.out.println("supportedRoles=" + supportedRoles.toString());
 	}
 
+	private static Pattern patAcceptIP = null;
+	static {
+		try {
+			String env = System.getenv("ACCEPT_IP_ADDRESS");
+			if (env != null) {
+				patAcceptIP = Pattern.compile(env);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		System.out.println("patAcceptIP=" + patAcceptIP);
+	}
+
 	public AuthBean() {
 		init();
 	}
 
 	public Object login(HttpServletRequest request, HttpServletResponse response) throws Exception {
+//		System.out.println("getRemoteAddr : " + request.getRemoteAddr());
+//		for (Enumeration<String> names = request.getHeaderNames(); names.hasMoreElements();) {
+//			String name = names.nextElement();
+//			System.out.println(name + " : " + request.getHeader(name));
+//		}
+		if (patAcceptIP != null) {
+			String remoteAddr = request.getHeader("X-Client-Ip");
+			if (remoteAddr == null) {
+				remoteAddr = request.getRemoteAddr();
+			}
+			System.out.println("remoteAddr=" + remoteAddr);
+			if (!patAcceptIP.matcher(remoteAddr).matches()) {
+				response.sendError(HttpServletResponse.SC_FORBIDDEN, remoteAddr + " is not accepted");
+				return null;
+			}
+		}
 		String user = request.getParameter("user");
 		String password = request.getParameter("password");
 		Object user_profile = user != null && password != null ? createProfile(user, password) : getProfile(request);
