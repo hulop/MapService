@@ -27,29 +27,31 @@ SOFTWARE.
 
 Before you get started, make sure you have the following dependencies installed on your machine:
 
-- [Eclipse IDE for Java EE Developers Mars2 or later](http://www.eclipse.org/downloads/packages/eclipse-ide-java-ee-developers/mars2)
-- (Optional) Component from Eclipse Marketplace
+- [Eclipse IDE for Java EE Developers](https://www.eclipse.org/downloads/)
+- Component from Eclipse Marketplace
   - [IBM Eclipse Tools for IBM Cloud](https://developer.ibm.com/wasdev/downloads/#asset/tools-IBM_Eclipse_Tools_for_IBM_Cloud)
-  - IBM WebSphere Application Server Liberty Developer Tools
-- (Optional) [Cloud Foundry cf command](https://console.ng.bluemix.net/docs/cli/reference/cfcommands/index.html)
+  - [IBM Liberty Developer Tools for Eclipse](https://developer.ibm.com/wasdev/downloads/#asset/tools-IBM_Liberty_Developer_Tools_for_Eclipse_Oxygen)
 
 ## Database
 
 The server can use one of the follwing database system
 
-1. [Cloudant](https://console.ng.bluemix.net/catalog/services/cloudant-nosql-db/)
-2. MongoDB at localhost or at [Compose](https://console.bluemix.net/docs/services/ComposeForMongoDB/index.html#about-compose-for-mongodb)
+1. [IBM Cloudant](https://console.bluemix.net/catalog/services/cloudant)
+2. MongoDB at localhost or [Compose for MongoDB](https://console.bluemix.net/docs/services/ComposeForMongoDB/index.html#about-compose-for-mongodb)
 
 ## Deploy MapService Server
 
 After you setup Eclipse, you have the following options to deploy server.
 
-1. Export WAR file. Then execute `cf push your_app_name -p war_file_name`
+1. Define IBM Bluemix Server. Then push MapService app to Bluemix  
+[Liberty for Java / Getting started tutorial](https://console.bluemix.net/docs/runtimes/liberty/getting-started.html)  
+[Develop applications using IBM Eclipse Tools for IBM Cloud](https://console.bluemix.net/docs/runtimes/liberty/eclipseDevelop.html)  
+[Deploying apps with IBM Eclipse Tools for IBM Cloud](https://console.bluemix.net/docs/manageapps/eclipsetools/eclipsetools.html)  
+[Build and deploy a sample Liberty application to Bluemix](https://www.ibm.com/developerworks/cloud/library/cl-libertyapp-bluemix/index.html)  
+[Options for pushing Liberty apps](https://console.bluemix.net/docs/runtimes/liberty/optionsForPushing.html)
 
-2. Define IBM Bluemix Server. Then push MapService app to Bluemix
-
-3. Setup your own J2EE Container (WAS Liberty recommneended). Then deploy server manually.
- - https://developer.ibm.com/wasdev/
+2. Setup your own J2EE Container (WAS Liberty recommneended). Then deploy server manually.  
+[WebSphere Liberty](https://developer.ibm.com/wasdev/)
 
 After you deploy MapService Server, you need to add a DB service
 - If you are not using Bluemix, you need to provide `VCAP_SERVICES` Environment variable
