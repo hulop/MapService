@@ -145,6 +145,7 @@ $hulop.location = function() {
 			lastLocation && showLocation(lastLocation = crd);
 			return;
 		}
+		$hulop.screen_filter && $hulop.screen_filter.onUpdateLocation(crd);
 		var ll = locationFilter && locationFilter($hulop.util.newLatLng(crd.latitude, crd.longitude));
 		if (ll) {
 			crd.latitude = ll[1];

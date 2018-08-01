@@ -31,6 +31,7 @@ if (id == null || (agreeBean.isAgreementSupported() && !agreeBean.getAgreed(id))
 <script type="text/javascript" src="js/FloorPlanOverlay.js"></script>
 <script type="text/javascript" src="js/indoor.js"></script>
 <script type="text/javascript" src="js/logging.js"></script>
+<script type="text/javascript" src="js/screen_filter.js"></script>
 <script type="text/javascript" src="mobile_ext.js"></script>
 <script type="text/javascript">
 	$(document).ready(function(){
