@@ -47,6 +47,7 @@ After you setup Eclipse, you have the following options to deploy server.
 [Liberty for Java / Getting started tutorial](https://console.bluemix.net/docs/runtimes/liberty/getting-started.html)  
 [Develop applications using IBM Eclipse Tools for IBM Cloud](https://console.bluemix.net/docs/runtimes/liberty/eclipseDevelop.html)  
 [Deploying apps with IBM Eclipse Tools for IBM Cloud](https://console.bluemix.net/docs/manageapps/eclipsetools/eclipsetools.html)  
+[Eclipse tools for IBM Cloud](https://www.ibm.com/cloud/eclipse)  
 [Build and deploy a sample Liberty application to Bluemix](https://www.ibm.com/developerworks/cloud/library/cl-libertyapp-bluemix/index.html)  
 [Options for pushing Liberty apps](https://console.bluemix.net/docs/runtimes/liberty/optionsForPushing.html)
 
@@ -192,3 +193,12 @@ HULOP\_INITIAL\_ROTATION\_MODE=mode (default: 1)
 
 HULOP\_DO\_NOT\_USE\_SAVED\_CENTER=true (default: false)
 - do not restore last map location
+
+HULOP\_SCREEN\_FILTER\_SPEED=meter per second (no default)
+- walking speed to apply screen filter
+
+HULOP\_SCREEN\_FILTER\_START\_TIMER=second (no default)
+- seconds before start screen filter
+
+HULOP\_SCREEN\_FILTER\_STOP\_TIMER=second (default: start / 2)
+- seconds before stop screen filter
