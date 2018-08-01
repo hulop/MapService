@@ -24,11 +24,17 @@ window.$hulop || eval('var $hulop={};');
 
 $hulop.screen_filter = function() {
 	var history = [], last;
+	var button, a;
 
 	function onUpdateLocation(crd) {
 		var start_timer = $hulop.config.SCREEN_FILTER_START_TIMER;
 		var walk_speed = $hulop.config.SCREEN_FILTER_SPEED;
 		if (!(start_timer && walk_speed && crd.provider == 'bleloc')) {
+			return;
+		}
+		button || showButton();
+		if (!use_filter()) {
+			filter();
 			return;
 		}
 		var stop_timer = $hulop.config.SCREEN_FILTER_STOP_TIMER || (start_timer / 2);
@@ -55,6 +61,41 @@ $hulop.screen_filter = function() {
 		}
 	}
 	
+	function showButton() {
+		var map = $hulop.map.getMap();
+		button = $('<div>', {
+			'class' : 'ol-unselectable ol-control TOP',
+			'css' : {
+				'z-index' : 10000
+			}
+		});
+		a = $('<a>', {
+			'href' : '#',
+			'class' : 'ui-btn ui-mini ui-shadow ui-corner-all ui-btn-icon-top',
+			'css' : {
+				'margin' : '0px',
+				'width' : '22px'
+			},
+			'on' : {
+				'click' : function(e) {
+					e.preventDefault();
+					e.target.blur();
+					a.toggleClass('ui-icon-forbidden');
+					a.toggleClass('ui-icon-alert');
+					localStorage.setItem('screen_filter', use_filter());
+				}
+			}
+		}).appendTo(button);
+		a.addClass(localStorage.getItem('screen_filter') == 'false' ? 'ui-icon-forbidden' : 'ui-icon-alert');
+		map.addControl(new ol.control.Control({
+			'element' : button[0]
+		}));
+	}
+
+	function use_filter() {
+		return a && a.hasClass('ui-icon-alert');
+	}
+
 	function filter(options) {
 		console.log([ 'filter', options ]);
 		if (options) {
