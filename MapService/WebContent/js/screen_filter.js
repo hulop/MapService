@@ -32,7 +32,10 @@ $hulop.screen_filter = function() {
 		if (!(start_timer && walk_speed && crd.provider == 'bleloc')) {
 			return;
 		}
-		button || showButton();
+		if (isPopupOpen()) {
+			return;
+		}
+		$hulop.config.SCREEN_FILTER_NO_BUTTON || button || showButton();
 		if (!use_filter()) {
 			filter();
 			return;
@@ -83,6 +86,7 @@ $hulop.screen_filter = function() {
 					a.toggleClass('ui-icon-forbidden');
 					a.toggleClass('ui-icon-alert');
 					localStorage.setItem('screen_filter', use_filter());
+					use_filter() || showPopup('歩きスマホ防止機能：解除時メッセージ', 3 * 1000);
 				}
 			}
 		}).appendTo(button);
@@ -90,10 +94,26 @@ $hulop.screen_filter = function() {
 		map.addControl(new ol.control.Control({
 			'element' : button[0]
 		}));
+		showPopup('歩きスマホ防止機能：起動時メッセージ', 10 * 1000);
 	}
 
 	function use_filter() {
 		return a && a.hasClass('ui-icon-alert');
+	}
+
+	function showPopup(text, timeout) {
+		$('#popupText').text(text);
+		$('#popupDialog').css({
+			'z-index' : 10000
+		});
+		$('#popupDialog').popup('open');
+		timeout && setTimeout(function() {
+			$('#popupDialog').popup('close');
+		}, timeout);
+	}
+
+	function isPopupOpen() {
+		$('#popupDialog').parent().hasClass("ui-popup-active");
 	}
 
 	function filter(options) {
