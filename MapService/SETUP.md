@@ -202,3 +202,6 @@ HULOP\_SCREEN\_FILTER\_START\_TIMER=second (no default)
 
 HULOP\_SCREEN\_FILTER\_STOP\_TIMER=second (default: start / 2)
 - seconds before stop screen filter
+
+HULOP\_SCREEN\_FILTER\_NO\_BUTTON=true (default: false)
+- do not show screen filter disable button

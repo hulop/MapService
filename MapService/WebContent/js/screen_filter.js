@@ -35,7 +35,7 @@ $hulop.screen_filter = function() {
 		if (isPopupOpen()) {
 			return;
 		}
-		$hulop.config.SCREEN_FILTER_NO_BUTTON || button || showButton();
+		$hulop.config.SCREEN_FILTER_NO_BUTTON == 'true' || button || showButton();
 		if (!use_filter()) {
 			filter();
 			return;
