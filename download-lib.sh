@@ -12,5 +12,9 @@ curl -L -O https://rawgit.com/arschmitz/jquery-mobile-nestedlists/master/jquery.
 curl -L -O https://jquerymobile.com/resources/download/jquery.mobile-1.4.5.zip
 unzip -o jquery.mobile-1.4.5.zip -x "demos/**" "jquery.mobile.*" && rm jquery.mobile-1.4.5.zip
 
+cd ../js/lib
+curl -Lo qrcode.zip https://github.com/davidshimjs/qrcodejs/zipball/master
+unzip -oj qrcode.zip */qrcode.js && rm qrcode.zip
+
 cd $pwd
 
