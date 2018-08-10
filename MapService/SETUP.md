@@ -205,3 +205,6 @@ HULOP\_SCREEN\_FILTER\_STOP\_TIMER=second (default: start / 2)
 
 HULOP\_SCREEN\_FILTER\_NO\_BUTTON=true (default: false)
 - do not show screen filter disable button
+
+ACCEPT\_IP\_ADDRESS=Regular expression (no default)
+- Allow administration access only from certain IP Address
