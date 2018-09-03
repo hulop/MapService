@@ -24,8 +24,10 @@ window.$hulop || eval('var $hulop={};');
 
 $hulop.messages = function() {
 	var messages = {};
-	var defaultLang = ((navigator.languages && navigator.languages[0]) || navigator.browserLanguage || navigator.language || navigator.userLanguage || 'en')
-			.substr(0, 2);
+	var defaultLang = ((navigator.languages && navigator.languages[0]) || navigator.browserLanguage || navigator.language || navigator.userLanguage || 'en');
+	if (!defaultLang.startsWith('zh')) {
+		defaultLang = defaultLang.substr(0, 2);
+	}
 
 	function loadMessages(language) {
 		$.ajax({
