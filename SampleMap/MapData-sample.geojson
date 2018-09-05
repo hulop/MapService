@@ -4,66 +4,6 @@
 		{
 			"type": "Feature",
 			"geometry": {
-				"type": "Point",
-				"coordinates": [
-					-0.000116005539894104,
-					0.00003218650817871094
-				]
-			},
-			"properties": {
-				"file": "EDITOR",
-				"対応施設ID": "EDITOR_poi_1486112550616",
-				"category": "出入口情報",
-				"出入口ID": "EDITOR_exit_1486112608648",
-				"対応ノードID": "EDITOR_node_1486112601650",
-				"出入口の名称": ""
-			},
-			"_id": "EDITOR_exit_1486112608648"
-		},
-		{
-			"type": "Feature",
-			"geometry": {
-				"type": "Point",
-				"coordinates": [
-					0.0001535564661026001,
-					0.00012539327144622803
-				]
-			},
-			"properties": {
-				"出入口の名称:ja": "",
-				"file": "EDITOR",
-				"対応施設ID": "EDITOR_poi_1486112476350",
-				"扉の種類": "2",
-				"category": "出入口情報",
-				"出入口ID": "EDITOR_exit_1486112614029",
-				"対応ノードID": "EDITOR_node_1486112611272",
-				"出入口の名称": ""
-			},
-			"_id": "EDITOR_exit_1486112614029"
-		},
-		{
-			"type": "Feature",
-			"geometry": {
-				"type": "Point",
-				"coordinates": [
-					-0.00013880431652069092,
-					-0.0002393871545791626
-				]
-			},
-			"properties": {
-				"出入口の名称:ja": "エントランス",
-				"file": "EDITOR",
-				"対応施設ID": "EDITOR_poi_1486112708102",
-				"category": "出入口情報",
-				"出入口ID": "EDITOR_exit_1486113974599",
-				"対応ノードID": "EDITOR_node_1486112656238",
-				"出入口の名称": "Entrance"
-			},
-			"_id": "EDITOR_exit_1486113974599"
-		},
-		{
-			"type": "Feature",
-			"geometry": {
 				"type": "LineString",
 				"coordinates": [
 					[
@@ -77,24 +17,29 @@
 				]
 			},
 			"properties": {
-				"リンクID": "EDITOR_link_1486112660288",
-				"終点ノードID": "EDITOR_node_1486112656238",
-				"方向性": "0",
-				"通行制限": "0",
-				"経路の種類": "8",
-				"手すり": "0",
-				"リンク延長": "26.9",
-				"起点ノードID": "EDITOR_node_1486112653687",
-				"屋根の有無": "0",
-				"縦断勾配1": "0",
-				"file": "EDITOR",
-				"段差": "0",
-				"路面状況": "0",
-				"縦断勾配2": "0",
-				"横断勾配": "0",
-				"蓋のない溝や水路の有無": "0",
-				"主な利用者": "0",
-				"category": "リンクの情報"
+				"rt_struct": 7,
+				"route_type": 1,
+				"direction": 1,
+				"width": 99,
+				"vtcl_slope": 1,
+				"lev_diff": 1,
+				"tfc_signal": 99,
+				"tfc_s_type": 99,
+				"brail_tile": 99,
+				"elevator": 99,
+				"roof": 1,
+				"link_id": "EDITOR_link_1486112660288",
+				"end_id": "EDITOR_node_1486112656238",
+				"tfc_restr": 1,
+				"handrail": 1,
+				"distance": 26.9,
+				"start_id": "EDITOR_node_1486112653687",
+				"vSlope_max": 0,
+				"hulop_file": "EDITOR",
+				"condition": 1,
+				"hSlope_max": 0,
+				"waterway": 1,
+				"main_user": 1
 			},
 			"_id": "EDITOR_link_1486112660288"
 		},
@@ -114,24 +59,29 @@
 				]
 			},
 			"properties": {
-				"リンクID": "EDITOR_link_1486112662959",
-				"終点ノードID": "EDITOR_node_1486112652519",
-				"方向性": "0",
-				"通行制限": "0",
-				"経路の種類": "8",
-				"手すり": "0",
-				"リンク延長": "2.8",
-				"起点ノードID": "EDITOR_node_1486112653687",
-				"屋根の有無": "0",
-				"縦断勾配1": "0",
-				"file": "EDITOR",
-				"段差": "0",
-				"路面状況": "0",
-				"縦断勾配2": "0",
-				"横断勾配": "0",
-				"蓋のない溝や水路の有無": "0",
-				"主な利用者": "0",
-				"category": "リンクの情報"
+				"rt_struct": 7,
+				"route_type": 1,
+				"direction": 1,
+				"width": 99,
+				"vtcl_slope": 1,
+				"lev_diff": 1,
+				"tfc_signal": 99,
+				"tfc_s_type": 99,
+				"brail_tile": 99,
+				"elevator": 99,
+				"roof": 1,
+				"link_id": "EDITOR_link_1486112662959",
+				"end_id": "EDITOR_node_1486112652519",
+				"tfc_restr": 1,
+				"handrail": 1,
+				"distance": 2.8,
+				"start_id": "EDITOR_node_1486112653687",
+				"vSlope_max": 0,
+				"hulop_file": "EDITOR",
+				"condition": 1,
+				"hSlope_max": 0,
+				"waterway": 1,
+				"main_user": 1
 			},
 			"_id": "EDITOR_link_1486112662959"
 		},
@@ -151,24 +101,29 @@
 				]
 			},
 			"properties": {
-				"リンクID": "EDITOR_link_1486112665295",
-				"終点ノードID": "EDITOR_node_1486112649722",
-				"方向性": "0",
-				"通行制限": "0",
-				"経路の種類": "8",
-				"手すり": "0",
-				"リンク延長": "18.2",
-				"起点ノードID": "EDITOR_node_1486112652519",
-				"屋根の有無": "0",
-				"縦断勾配1": "0",
-				"file": "EDITOR",
-				"段差": "0",
-				"路面状況": "0",
-				"縦断勾配2": "0",
-				"横断勾配": "0",
-				"蓋のない溝や水路の有無": "0",
-				"主な利用者": "0",
-				"category": "リンクの情報"
+				"rt_struct": 7,
+				"route_type": 1,
+				"direction": 1,
+				"width": 99,
+				"vtcl_slope": 1,
+				"lev_diff": 1,
+				"tfc_signal": 99,
+				"tfc_s_type": 99,
+				"brail_tile": 99,
+				"elevator": 99,
+				"roof": 1,
+				"link_id": "EDITOR_link_1486112665295",
+				"end_id": "EDITOR_node_1486112649722",
+				"tfc_restr": 1,
+				"handrail": 1,
+				"distance": 18.2,
+				"start_id": "EDITOR_node_1486112652519",
+				"vSlope_max": 0,
+				"hulop_file": "EDITOR",
+				"condition": 1,
+				"hSlope_max": 0,
+				"waterway": 1,
+				"main_user": 1
 			},
 			"_id": "EDITOR_link_1486112665295"
 		},
@@ -188,24 +143,29 @@
 				]
 			},
 			"properties": {
-				"リンクID": "EDITOR_link_1486112667695",
-				"終点ノードID": "EDITOR_node_1486112646665",
-				"方向性": "0",
-				"通行制限": "0",
-				"経路の種類": "8",
-				"手すり": "0",
-				"リンク延長": "17.4",
-				"起点ノードID": "EDITOR_node_1486112649722",
-				"屋根の有無": "0",
-				"縦断勾配1": "0",
-				"file": "EDITOR",
-				"段差": "0",
-				"路面状況": "0",
-				"縦断勾配2": "0",
-				"横断勾配": "0",
-				"蓋のない溝や水路の有無": "0",
-				"主な利用者": "0",
-				"category": "リンクの情報"
+				"rt_struct": 7,
+				"route_type": 1,
+				"direction": 1,
+				"width": 99,
+				"vtcl_slope": 1,
+				"lev_diff": 1,
+				"tfc_signal": 99,
+				"tfc_s_type": 99,
+				"brail_tile": 99,
+				"elevator": 99,
+				"roof": 1,
+				"link_id": "EDITOR_link_1486112667695",
+				"end_id": "EDITOR_node_1486112646665",
+				"tfc_restr": 1,
+				"handrail": 1,
+				"distance": 17.4,
+				"start_id": "EDITOR_node_1486112649722",
+				"vSlope_max": 0,
+				"hulop_file": "EDITOR",
+				"condition": 1,
+				"hSlope_max": 0,
+				"waterway": 1,
+				"main_user": 1
 			},
 			"_id": "EDITOR_link_1486112667695"
 		},
@@ -225,24 +185,29 @@
 				]
 			},
 			"properties": {
-				"リンクID": "EDITOR_link_1486112674024",
-				"終点ノードID": "EDITOR_node_1486112611272",
-				"方向性": "0",
-				"通行制限": "0",
-				"経路の種類": "8",
-				"手すり": "0",
-				"リンク延長": "3.9",
-				"起点ノードID": "EDITOR_node_1486112646665",
-				"屋根の有無": "0",
-				"縦断勾配1": "0",
-				"file": "EDITOR",
-				"段差": "0",
-				"路面状況": "0",
-				"縦断勾配2": "0",
-				"横断勾配": "0",
-				"蓋のない溝や水路の有無": "0",
-				"主な利用者": "0",
-				"category": "リンクの情報"
+				"rt_struct": 7,
+				"route_type": 1,
+				"direction": 1,
+				"width": 99,
+				"vtcl_slope": 1,
+				"lev_diff": 1,
+				"tfc_signal": 99,
+				"tfc_s_type": 99,
+				"brail_tile": 99,
+				"elevator": 99,
+				"roof": 1,
+				"link_id": "EDITOR_link_1486112674024",
+				"end_id": "EDITOR_node_1486112611272",
+				"tfc_restr": 1,
+				"handrail": 1,
+				"distance": 3.9,
+				"start_id": "EDITOR_node_1486112646665",
+				"vSlope_max": 0,
+				"hulop_file": "EDITOR",
+				"condition": 1,
+				"hSlope_max": 0,
+				"waterway": 1,
+				"main_user": 1
 			},
 			"_id": "EDITOR_link_1486112674024"
 		},
@@ -262,24 +227,29 @@
 				]
 			},
 			"properties": {
-				"リンクID": "EDITOR_link_1486112685311",
-				"終点ノードID": "EDITOR_node_1486112652519",
-				"方向性": "0",
-				"通行制限": "0",
-				"経路の種類": "8",
-				"手すり": "0",
-				"リンク延長": "3.3",
-				"起点ノードID": "EDITOR_node_1486112601650",
-				"屋根の有無": "0",
-				"縦断勾配1": "0",
-				"file": "EDITOR",
-				"段差": "0",
-				"路面状況": "0",
-				"縦断勾配2": "0",
-				"横断勾配": "0",
-				"蓋のない溝や水路の有無": "0",
-				"主な利用者": "0",
-				"category": "リンクの情報"
+				"rt_struct": 7,
+				"route_type": 1,
+				"direction": 1,
+				"width": 99,
+				"vtcl_slope": 1,
+				"lev_diff": 1,
+				"tfc_signal": 99,
+				"tfc_s_type": 99,
+				"brail_tile": 99,
+				"elevator": 99,
+				"roof": 1,
+				"link_id": "EDITOR_link_1486112685311",
+				"end_id": "EDITOR_node_1486112652519",
+				"tfc_restr": 1,
+				"handrail": 1,
+				"distance": 3.3,
+				"start_id": "EDITOR_node_1486112601650",
+				"vSlope_max": 0,
+				"hulop_file": "EDITOR",
+				"condition": 1,
+				"hSlope_max": 0,
+				"waterway": 1,
+				"main_user": 1
 			},
 			"_id": "EDITOR_link_1486112685311"
 		},
@@ -293,14 +263,13 @@
 				]
 			},
 			"properties": {
-				"file": "EDITOR",
-				"緯度経度桁数コード": "3",
-				"接続リンクID1": "EDITOR_link_1486112685311",
-				"経度": "-0.00.00.418",
-				"緯度": "0.00.00.116",
-				"category": "ノード情報",
-				"ノードID": "EDITOR_node_1486112601650",
-				"高さ": "1"
+				"hulop_file": "EDITOR",
+				"link1_id": "EDITOR_link_1486112685311",
+				"lon": -0.000116005539894104,
+				"lat": 0.00003218650817871094,
+				"node_id": "EDITOR_node_1486112601650",
+				"floor": 1,
+				"in_out": 3
 			},
 			"_id": "EDITOR_node_1486112601650"
 		},
@@ -314,14 +283,13 @@
 				]
 			},
 			"properties": {
-				"file": "EDITOR",
-				"緯度経度桁数コード": "3",
-				"接続リンクID1": "EDITOR_link_1486112674024",
-				"経度": "0.00.00.553",
-				"緯度": "0.00.00.451",
-				"category": "ノード情報",
-				"ノードID": "EDITOR_node_1486112611272",
-				"高さ": "1"
+				"hulop_file": "EDITOR",
+				"link1_id": "EDITOR_link_1486112674024",
+				"lon": 0.0001535564661026001,
+				"lat": 0.00012539327144622803,
+				"node_id": "EDITOR_node_1486112611272",
+				"floor": 1,
+				"in_out": 3
 			},
 			"_id": "EDITOR_node_1486112611272"
 		},
@@ -335,15 +303,14 @@
 				]
 			},
 			"properties": {
-				"file": "EDITOR",
-				"緯度経度桁数コード": "3",
-				"接続リンクID1": "EDITOR_link_1486112667695",
-				"経度": "0.00.00.625",
-				"接続リンクID2": "EDITOR_link_1486112674024",
-				"緯度": "0.00.00.350",
-				"category": "ノード情報",
-				"ノードID": "EDITOR_node_1486112646665",
-				"高さ": "1"
+				"hulop_file": "EDITOR",
+				"link1_id": "EDITOR_link_1486112667695",
+				"lon": 0.00017367303371429443,
+				"link2_id": "EDITOR_link_1486112674024",
+				"lat": 0.00009723007681827767,
+				"node_id": "EDITOR_node_1486112646665",
+				"floor": 1,
+				"in_out": 3
 			},
 			"_id": "EDITOR_node_1486112646665"
 		},
@@ -357,15 +324,14 @@
 				]
 			},
 			"properties": {
-				"file": "EDITOR",
-				"緯度経度桁数コード": "3",
-				"接続リンクID1": "EDITOR_link_1486112665295",
-				"経度": "0.00.00.176",
-				"接続リンクID2": "EDITOR_link_1486112667695",
-				"緯度": "0.00.00.012",
-				"category": "ノード情報",
-				"ノードID": "EDITOR_node_1486112649722",
-				"高さ": "1"
+				"hulop_file": "EDITOR",
+				"link1_id": "EDITOR_link_1486112665295",
+				"lon": 0.00004895031452178955,
+				"link2_id": "EDITOR_link_1486112667695",
+				"lat": 0.000003352761254404868,
+				"node_id": "EDITOR_node_1486112649722",
+				"floor": 1,
+				"in_out": 3
 			},
 			"_id": "EDITOR_node_1486112649722"
 		},
@@ -379,16 +345,15 @@
 				]
 			},
 			"properties": {
-				"file": "EDITOR",
-				"緯度経度桁数コード": "3",
-				"接続リンクID1": "EDITOR_link_1486112662959",
-				"経度": "-0.00.00.413",
-				"接続リンクID3": "EDITOR_link_1486112685311",
-				"接続リンクID2": "EDITOR_link_1486112665295",
-				"緯度": "0.00.00.010",
-				"category": "ノード情報",
-				"ノードID": "EDITOR_node_1486112652519",
-				"高さ": "1"
+				"hulop_file": "EDITOR",
+				"link1_id": "EDITOR_link_1486112662959",
+				"lon": -0.00011466443538665773,
+				"link3_id": "EDITOR_link_1486112685311",
+				"link2_id": "EDITOR_link_1486112665295",
+				"lat": 0.0000026822090006817234,
+				"node_id": "EDITOR_node_1486112652519",
+				"floor": 1,
+				"in_out": 3
 			},
 			"_id": "EDITOR_node_1486112652519"
 		},
@@ -402,15 +367,14 @@
 				]
 			},
 			"properties": {
-				"file": "EDITOR",
-				"緯度経度桁数コード": "3",
-				"接続リンクID1": "EDITOR_link_1486112660288",
-				"経度": "-0.00.00.502",
-				"接続リンクID2": "EDITOR_link_1486112662959",
-				"緯度": "0.00.00.010",
-				"category": "ノード情報",
-				"ノードID": "EDITOR_node_1486112653687",
-				"高さ": "1"
+				"hulop_file": "EDITOR",
+				"link1_id": "EDITOR_link_1486112660288",
+				"lon": -0.00013947486877441406,
+				"link2_id": "EDITOR_link_1486112662959",
+				"lat": 0.0000026822090006817234,
+				"node_id": "EDITOR_node_1486112653687",
+				"floor": 1,
+				"in_out": 3
 			},
 			"_id": "EDITOR_node_1486112653687"
 		},
@@ -424,14 +388,13 @@
 				]
 			},
 			"properties": {
-				"file": "EDITOR",
-				"緯度経度桁数コード": "3",
-				"接続リンクID1": "EDITOR_link_1486112660288",
-				"経度": "-0.00.00.500",
-				"緯度": "-0.00.00.862",
-				"category": "ノード情報",
-				"ノードID": "EDITOR_node_1486112656238",
-				"高さ": "1"
+				"hulop_file": "EDITOR",
+				"link1_id": "EDITOR_link_1486112660288",
+				"lon": -0.00013880431652069092,
+				"lat": -0.0002393871545791626,
+				"node_id": "EDITOR_node_1486112656238",
+				"floor": 1,
+				"in_out": 3
 			},
 			"_id": "EDITOR_node_1486112656238"
 		},
@@ -445,15 +408,29 @@
 				]
 			},
 			"properties": {
-				"file": "EDITOR",
-				"緯度経度桁数コード": "3",
-				"階層": "1",
-				"経度": "0.00.00.485",
-				"緯度": "0.00.00.519",
-				"多目的トイレ": "2",
-				"男女別": "3",
-				"category": "公共用トイレの情報",
-				"施設ID": "EDITOR_poi_1486112476350"
+				"facil_type": 10,
+				"name_ja": "",
+				"name_en": "",
+				"address": "",
+				"tel": "",
+				"toilet": 4,
+				"elevator": 99,
+				"escalator": 99,
+				"parking": 99,
+				"barrier": 99,
+				"nursing": 99,
+				"brail_tile": 99,
+				"hulop_file": "EDITOR",
+				"move_floor": 1,
+				"lon": 0.00013478100299835205,
+				"lat": 0.00014416873455047607,
+				"sex": 3,
+				"facil_id": "EDITOR_poi_1486112476350",
+				"ent1_d": 3,
+				"ent1_lat": 0.00012527777777777778,
+				"ent1_lon": 0.00015361111111111112,
+				"ent1_fl": 1,
+				"ent1_node": "EDITOR_node_1486112611272"
 			},
 			"_id": "EDITOR_poi_1486112476350"
 		},
@@ -467,15 +444,26 @@
 				]
 			},
 			"properties": {
-				"名称:ja": "ホール",
-				"file": "EDITOR",
-				"緯度経度桁数コード": "3",
-				"経度": "-0.00.00.642",
-				"緯度": "0.00.00.476",
-				"名称": "Auditorium",
-				"category": "公共施設の情報",
-				"名称:en": "Auditorium",
-				"施設ID": "EDITOR_poi_1486112550616"
+				"facil_type": 99,
+				"name_ja": "ホール",
+				"name_en": "Auditorium",
+				"address": "",
+				"tel": "",
+				"toilet": 99,
+				"elevator": 99,
+				"escalator": 99,
+				"parking": 99,
+				"barrier": 99,
+				"nursing": 99,
+				"brail_tile": 99,
+				"hulop_file": "EDITOR",
+				"lon": -0.00017836689949035645,
+				"lat": 0.00013209879399767033,
+				"facil_id": "EDITOR_poi_1486112550616",
+				"ent1_lat": 0.00003222222222222222,
+				"ent1_lon": -0.0001161111111111111,
+				"ent1_fl": 1,
+				"ent1_node": "EDITOR_node_1486112601650"
 			},
 			"_id": "EDITOR_poi_1486112550616"
 		},
@@ -489,14 +477,28 @@
 				]
 			},
 			"properties": {
-				"名称:ja": "サンプル ビル",
-				"file": "EDITOR",
-				"緯度経度桁数コード": "3",
-				"経度": "0.00.00.232",
-				"緯度": "-0.00.00.512",
-				"名称": "Sample building",
-				"category": "公共施設の情報",
-				"施設ID": "EDITOR_poi_1486112708102"
+				"facil_type": 99,
+				"name_ja": "サンプル ビル",
+				"name_en": "Sample building",
+				"address": "",
+				"tel": "",
+				"toilet": 99,
+				"elevator": 99,
+				"escalator": 99,
+				"parking": 99,
+				"barrier": 99,
+				"nursing": 99,
+				"brail_tile": 99,
+				"hulop_file": "EDITOR",
+				"lon": 0.00006437301635742188,
+				"lat": -0.00014215707778930664,
+				"facil_id": "EDITOR_poi_1486112708102",
+				"ent1_n_ja": "エントランス",
+				"ent1_lat": -0.00023944444444444444,
+				"ent1_lon": -0.0001388888888888889,
+				"ent1_fl": 1,
+				"ent1_node": "EDITOR_node_1486112656238",
+				"ent1_n": "Entrance"
 			},
 			"_id": "EDITOR_poi_1486112708102"
 		}
