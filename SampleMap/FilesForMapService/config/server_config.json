@@ -4,19 +4,19 @@
 	"preset_for_blind":
 	{
 		"src": "location/presets/blind.plist",
-		"size": 1429
+		"size": 1370
 	},
 
 	"preset_for_wheelchair":
 	{
 		"src": "location/presets/wheelchair.plist",
-		"size": 1434
+		"size": 1375
 	},
 
 	"preset_for_sighted":
 	{
 		"src": "location/presets/general.plist",
-		"size": 1434
+		"size": 1375
 	},
 
 	"map_files":
