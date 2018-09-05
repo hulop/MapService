@@ -45,6 +45,10 @@ $hulop.messages = function() {
 			},
 			'error' : function(XMLHttpRequest, textStatus, errorThrown) {
 				console.error(textStatus + ' (' + XMLHttpRequest.status + '): ' + errorThrown);
+				if (XMLHttpRequest.status == 404 && language != 'en') {
+					loadMessages($hulop.messages.defaultLang = defaultLang = 'en');
+					return;
+				}
 				(XMLHttpRequest.status == 404) && (messages[language] = {});
 			}
 		});
