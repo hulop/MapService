@@ -255,8 +255,9 @@ public class RouteData {
 		}
 
 		public String getI18n(JSONObject properties, String key) throws JSONException {
-			return hasLangString(properties, key) ? properties.getString(key + "_" + mLang)
+			String text = hasLangString(properties, key) ? properties.getString(key + "_" + mLang)
 					: properties.has(key) ? properties.getString(key) : "";
+			return text.isEmpty() && properties.has(key + "_en") ? properties.getString(key + "_en") : text;
 		}
 
 		public boolean hasLangString(JSONObject properties, String key) {
