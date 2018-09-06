@@ -29,8 +29,6 @@ $hulop.route = function() {
 	 */
 
 	var user = new Date().getTime();
-	var lang = ((navigator.languages && navigator.languages[0]) || navigator.browserLanguage || navigator.language || navigator.userLanguage || 'en').substr(0,
-			2);
 	var offline = false;
 	var naviCondition = {};
 
@@ -289,7 +287,7 @@ $hulop.route = function() {
 	function sendData(type, url, data, callback) {
 		data.quiet || $hulop.util.loading(true);
 		data.user = data.user || ($hulop.logging && $hulop.logging.getClientId()) || user;
-		data.lang = data.lang || lang;
+		data.lang = data.lang || $hulop.messages.defaultLang;
 		$.ajax({
 			'type' : type,
 			'url' : url,

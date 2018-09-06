@@ -26,21 +26,8 @@ $hulop.editor = function() {
 
 	function i18nMenu(properties) {
 		var result = [];
-		[ 'en', 'ja', 'es', 'fr' ].forEach(function(lang) {
-			switch (lang) {
-			case 'en':
-				result.push('group:I18N_EN');
-				break;
-			case 'ja':
-				result.push('group:I18N_JA');
-				break;
-			case 'es':
-				result.push('group:I18N_ES');
-				break;
-			case 'fr':
-				result.push('group:I18N_FR');
-				break;
-			}
+		[ 'en', 'ja', 'es', 'fr', 'ko', 'zh-CN' ].forEach(function(lang) {
+			result.push('group:I18N_' + lang);
 			properties.forEach(function(p) {
 				result.push(p + ':' + lang);
 				lang == 'ja' && result.push(p + ':' + lang + '-Pron');
