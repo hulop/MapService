@@ -1956,6 +1956,9 @@ $hulop.editor = function() {
 
 	return {
 		'version' : 'h22',
+		'findExit' : findExit,
+		'showProperty' : showProperty,
+		'getHeights' : getHeights,
 		'newFeaturteCreated' : newFeaturteCreated,
 		'toFeatureCollection': toFeatureCollection,
 		'downloadFile' : downloadFile,
