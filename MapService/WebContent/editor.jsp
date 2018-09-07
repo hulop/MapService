@@ -103,6 +103,8 @@
 			<fieldset>
 				<legend>Special</legend>
 				<button id="delete_button">Delete All</button>
+				|
+				<button onclick="window.open('facil_name_editor.html','facil_name_editor','width=1600,height=900,resizable=yes,scrollbars=yes');">Facility name editor</button>
 			</fieldset>
 		</div>
 	</div>

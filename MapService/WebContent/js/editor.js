@@ -2040,6 +2040,9 @@ $hulop.editor = function() {
 
 	return {
 		'version' : '2018',
+		'findExit' : findExit,
+		'showProperty' : showProperty,
+		'getHeights' : getHeights,
 		'newFeaturteCreated' : newFeaturteCreated,
 		'toFeatureCollection': toFeatureCollection,
 		'downloadFile' : downloadFile,
