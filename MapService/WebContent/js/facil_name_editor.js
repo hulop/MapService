@@ -1,4 +1,5 @@
 var $names = [ 'facil_id', 'floors', 'hulop_building', 'hulop_major_category', 'hulop_sub_category', 'hulop_show_labels_zoomlevel' ];
+var $numbers = ['hulop_show_labels_zoomlevel'];
 $names = $names.concat([ 'name_ja', 'name_hira', 'name_en', 'name_es', 'name_fr', 'name_ko', 'name_zh-CN' ]);
 $names = $names.concat([ 'hulop_long_description', 'hulop_long_description_ja', 'hulop_long_description_hira',
 		'hulop_long_description_en', 'hulop_long_description_es', 'hulop_long_description_fr', 'hulop_long_description_ko',
@@ -10,6 +11,44 @@ $(document).ready(function() {
 	var $hulop = window.opener.$hulop;
 	function floorText(floor) {
 		return (floor < 0 ? 'B' + (-floor) : floor) + 'F';
+	}
+	function createCell(feature, name, value, editable, rowspan) {
+		var color = '#eee';
+		if (editable) {
+			color = '#fff';
+			if (value) {
+				var text = value.trim().replace(/[\t\r\n]/g, ' ');
+				if (value != text) {
+					console.error('"' + value + '" > "' + text + '"')
+					feature.set(name, value = text);
+					color = 'lightblue';
+				}
+			}
+		}
+		var td = $('<td>', {
+			'rowspan' : rowspan || 1,
+			'contenteditable' : editable,
+			'css' : {
+				'background-color' : color
+			},
+			'text' : value
+		});
+		if (editable) {
+			var onInput = function(event) {
+				var text = $(event.target).text().trim().replace(/[\t\r\n]/g, ' ');
+				if ($numbers.indexOf(name) == -1) {
+					feature.set(name, text);
+				} else {
+					if (text == '' || isNaN(text)) {
+						feature.unset(name);
+					} else {
+						feature.set(name, Number(text));
+					}
+				}
+			};
+			td.on('input', onInput);
+		}
+		return td;
 	}
 
 	$('body').empty();
@@ -45,19 +84,8 @@ $(document).ready(function() {
 			}).appendTo(tbody);
 			var exitList = $hulop.editor.findExit(feature);
 			$names.forEach(function(name, col) {
-				var text = feature.get(name) || '';
-				if (name == 'floors') {
-					text = floors.map(floorText);
-				}
-				var editable = col > 1;
-				tr.append($('<td>', {
-					'rowspan' : exitList.length || 1,
-					'contenteditable' : editable,
-					'css' : {
-						'background-color' : editable ? '#fff' : '#eee'
-					},
-					'text' : text
-				}));
+				var value = name == 'floors' ? floors.map(floorText) : feature.get(name);
+				tr.append(createCell(feature, name, value, col > 1, exitList.length));
 			});
 			exitList.forEach(function(exit, row) {
 				if (row > 0) {
@@ -72,15 +100,9 @@ $(document).ready(function() {
 					$hulop.indoor.showFloor(floor);
 				});
 				$exit_names.forEach(function(name, col) {
-					var text = name == 'ent#_fl' ? floorText(floor) : feature.get(name.replace('#', exit.ent_index)) || '';
-					var editable = col > 1;
-					tr.append($('<td>', {
-						'contenteditable' : editable,
-						'css' : {
-							'background-color' : editable ? '#fff' : '#eee'
-						},
-						'text' : text
-					}));
+					name = name.replace('#', exit.ent_index);
+					var value = /ent\d_fl/.test(name) ? floorText(floor) : feature.get(name);
+					tr.append(createCell(feature, name, value, col > 1));
 				});
 			});
 		}
