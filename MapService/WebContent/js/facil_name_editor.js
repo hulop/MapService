@@ -20,7 +20,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-var $hulop = window.opener.$hulop;
 var $names = [ '施設ID', 'floors', 'entrances', 'building', 'major_category', 'sub_category', 'show_labels_zoomlevel' ];
 var $numbers = [];
 $names = $names.concat([ '名称', '名称:ja', '名称:ja-Pron', '名称:en', '名称:es', '名称:fr', '名称:ko', '名称:zh-CN' ]);
@@ -84,18 +83,20 @@ $(document).ready(function() {
 		});
 	}
 
-	function createFacil() {
+	function createTable(target, names, head_color) {
 		// Create table
-		$('#facil').empty();
-		var table = $('<table>').appendTo($('#facil'));
+		target.empty();
+		var table = $('<table>', {
+			'class' : 'display cell-border compact'
+		}).appendTo(target);
 
 		// Create thead
 		var thead = $('<thead>').appendTo(table);
 		var head_tr = $('<tr>').appendTo(thead);
-		$names.forEach(function(name) {
+		names.forEach(function(name) {
 			head_tr.append($('<th>', {
 				'css' : {
-					'background-color' : 'lightgreen'
+					'background-color' : head_color
 				},
 				'text' : name.replace(/^hulop_/, '')
 			}));
@@ -103,46 +104,22 @@ $(document).ready(function() {
 		return table;
 	}
 
-	function createExit(target) {
-		// Create table
-		target.empty();
-		var table = $('<table>').appendTo(target);
-
-		// Create thead
-		var thead = $('<thead>').appendTo(table);
-		var head_tr = $('<tr>').appendTo(thead);
-		$exit_names.forEach(function(name) {
-			head_tr.append($('<th>', {
-				'css' : {
-					'background-color' : 'lightblue'
-				},
-				'text' : name
-			}));
-		});
-		return table;
-	}
-
 	// Create tbody
 	function createCell(feature, name, value, editable) {
-		var color = '#eee';
-		if (editable) {
-			color = '#fff';
-			if (value) {
-				var text = value.trim().replace(/[\t\r\n]/g, ' ');
-				if (value != text) {
-					console.error('"' + value + '" > "' + text + '"')
-					feature.set(name, value = text);
-					color = 'lightblue';
-				}
+		var color;
+		if (editable && value) {
+			var text = value.trim().replace(/[\t\r\n]/g, ' ');
+			if (value != text) {
+				console.error('"' + value + '" > "' + text + '"')
+				feature.set(name, value = text);
+				color = 'lightblue';
 			}
 		}
 		var td = $('<td>', {
 			'contenteditable' : editable,
-			'css' : {
-				'background-color' : color
-			},
 			'text' : value
 		});
+		color && td.css('background-color', color);
 		if (editable) {
 			var onInput = function(event) {
 				var text = $(event.target).text().trim().replace(/[\t\r\n]/g, ' ');
@@ -161,7 +138,7 @@ $(document).ready(function() {
 		return td;
 	}
 
-	var table = createFacil();
+	var table = createTable($('#facil'), $names, 'lightgreen');
 	var tbody = $('<tbody>').appendTo(table);
 	var current_facil;
 	getFacilList().forEach(function(facil) {
@@ -175,7 +152,7 @@ $(document).ready(function() {
 						$('#exit').empty();
 						return;
 					}
-					var table = createExit($('#exit'));
+					var table = createTable($('#exit'), $exit_names, 'lightblue');
 					var tbody = $('<tbody>').appendTo(table);
 					exitList.forEach(function(exit, index) {
 						var body_tr = $('<tr>', {
