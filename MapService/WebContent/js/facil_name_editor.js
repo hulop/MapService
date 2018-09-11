@@ -1,4 +1,27 @@
-var $names = [ '施設ID', 'floors', 'building', 'major_category', 'sub_category', 'show_labels_zoomlevel' ];
+/*******************************************************************************
+ * Copyright (c) 2014, 2017 IBM Corporation, Carnegie Mellon University and
+ * others
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ ******************************************************************************/
+var $hulop = window.opener.$hulop;
+var $names = [ '施設ID', 'floors', 'entrances', 'building', 'major_category', 'sub_category', 'show_labels_zoomlevel' ];
 var $numbers = [];
 $names = $names.concat([ '名称', '名称:ja', '名称:ja-Pron', '名称:en', '名称:es', '名称:fr', '名称:ko', '名称:zh-CN' ]);
 $names = $names.concat([ 'long_description', 'long_description:ja', 'long_description:ja-Pron', 'long_description:en',
@@ -6,12 +29,101 @@ $names = $names.concat([ 'long_description', 'long_description:ja', 'long_descri
 var $exit_names = [ '対応ノードID', '高さ', '出入口の名称', '出入口の名称:ja', '出入口の名称:ja-Pron', '出入口の名称:en', '出入口の名称:es', '出入口の名称:fr', '出入口の名称:ko',
 		'出入口の名称:zh-CN' ];
 
+function isFacility(feature) {
+	return feature.get('施設ID') && feature.get('major_category') != '_nav_poi_' && feature.get('category') != '公共用トイレの情報';
+}
+
+function getExitList(feature) {
+	return $hulop.editor.findExit(feature).map(function(exit) {
+		var source = $hulop.map.getRouteLayer().getSource();
+		var node = source.getFeatureById(exit.get('対応ノードID'));
+		var floor = Number(node && node.get('高さ'));
+		return {
+			'feature' : exit,
+			'floor' : floor,
+			'data' : $exit_names.map(function(name, col) {
+				return {
+					'name' : name,
+					'value' : name == '高さ' ? floorText(floor) : exit.get(name)
+				};
+			})
+		};
+	});
+}
+
+function floorText(floor) {
+	return (floor < 0 ? 'B' + (-floor) : floor) + 'F';
+}
+
 $(document).ready(function() {
-	var $hulop = window.opener.$hulop;
-	function floorText(floor) {
-		return (floor < 0 ? 'B' + (-floor) : floor) + 'F';
+	function getFacilList() {
+		var source = $hulop.map.getRouteLayer().getSource();
+		return source.getFeatures().filter(isFacility).map(function(feature) {
+			var floors = $hulop.editor.getHeights(feature).sort();
+			return {
+				'feature' : feature,
+				'data' : $names.map(function(name, col) {
+					var value;
+					switch (name) {
+					case 'floors':
+						value = floors.map(floorText);
+						break;
+					case 'entrances':
+						value = $hulop.editor.findExit(feature).length;
+						break;
+					default:
+						value = feature.get(name);
+						break;
+					}
+					return {
+						'name' : name,
+						'value' : value
+					};
+				})
+			};
+		});
 	}
-	function createCell(feature, name, value, editable, rowspan) {
+
+	function createFacil() {
+		// Create table
+		$('#facil').empty();
+		var table = $('<table>').appendTo($('#facil'));
+
+		// Create thead
+		var thead = $('<thead>').appendTo(table);
+		var head_tr = $('<tr>').appendTo(thead);
+		$names.forEach(function(name) {
+			head_tr.append($('<th>', {
+				'css' : {
+					'background-color' : 'lightgreen'
+				},
+				'text' : name.replace(/^hulop_/, '')
+			}));
+		});
+		return table;
+	}
+
+	function createExit(target) {
+		// Create table
+		target.empty();
+		var table = $('<table>').appendTo(target);
+
+		// Create thead
+		var thead = $('<thead>').appendTo(table);
+		var head_tr = $('<tr>').appendTo(thead);
+		$exit_names.forEach(function(name) {
+			head_tr.append($('<th>', {
+				'css' : {
+					'background-color' : 'lightblue'
+				},
+				'text' : name
+			}));
+		});
+		return table;
+	}
+
+	// Create tbody
+	function createCell(feature, name, value, editable) {
 		var color = '#eee';
 		if (editable) {
 			color = '#fff';
@@ -25,7 +137,6 @@ $(document).ready(function() {
 			}
 		}
 		var td = $('<td>', {
-			'rowspan' : rowspan || 1,
 			'contenteditable' : editable,
 			'css' : {
 				'background-color' : color
@@ -50,60 +161,42 @@ $(document).ready(function() {
 		return td;
 	}
 
-	$('body').empty();
-	var table = $('<table>').appendTo($('body'));
-	var thead = $('<thead>').appendTo(table);
+	var table = createFacil();
 	var tbody = $('<tbody>').appendTo(table);
-	var head_tr = $('<tr>').appendTo(thead);
-	$names.forEach(function(name) {
-		head_tr.append($('<th>', {
-			'css' : {
-				'background-color' : 'lightgreen'
-			},
-			'text' : name
-		}));
-	});
-	$exit_names.forEach(function(name) {
-		head_tr.append($('<th>', {
-			'css' : {
-				'background-color' : 'lightblue'
-			},
-			'text' : name
-		}));
-	});
-
-	var source = $hulop.map.getRouteLayer().getSource();
-	source.getFeatures().forEach(function(feature) {
-		if (feature.get('施設ID') && feature.get('major_category') != '_nav_poi_' && feature.get('category') != '公共用トイレの情報') {
-			var floors = $hulop.editor.getHeights(feature).sort();
-			tr = $('<tr>', {
-				'click' : function() {
-					$hulop.editor.showProperty(feature);
+	var current_facil;
+	getFacilList().forEach(function(facil) {
+		var body_tr = $('<tr>', {
+			'click' : function(event) {
+				if (current_facil != facil) {
+					current_facil = facil;
+					$hulop.editor.showProperty(facil.feature);
+					var exitList = getExitList(facil.feature);
+					if (exitList.length == 0) {
+						$('#exit').empty();
+						return;
+					}
+					var table = createExit($('#exit'));
+					var tbody = $('<tbody>').appendTo(table);
+					exitList.forEach(function(exit, index) {
+						var body_tr = $('<tr>', {
+							'click' : function() {
+								$hulop.indoor.showFloor(exit.floor);
+							}
+						}).appendTo(tbody);
+						exit.data.forEach(function(item, col) {
+							body_tr.append(createCell(exit.feature, item.name, item.value, col > 1));
+						});
+					});
+					table.DataTable();
 				}
-			}).appendTo(tbody);
-			var exitList = $hulop.editor.findExit(feature);
-			$names.forEach(function(name, col) {
-				var value = name == 'floors' ? floors.map(floorText) : feature.get(name);
-				tr.append(createCell(feature, name, value, col > 1, exitList.length));
-			});
-			exitList.forEach(function(exit, row) {
-				if (row > 0) {
-					tr = $('<tr>', {
-						'click' : function() {
-							$hulop.editor.showProperty(feature);
-						}
-					}).appendTo(tbody);
+				if (event.target.cellIndex == 2) {
+					// $(document).scrollTop($('#exit').offset().top);
 				}
-				var node = source.getFeatureById(exit.get('対応ノードID'));
-				var floor = Number(node && node.get('高さ'));
-				tr.click(function() {
-					$hulop.indoor.showFloor(floor);
-				});
-				$exit_names.forEach(function(name, col) {
-					var value = name == '高さ' ? floorText(floor) : exit.get(name);
-					tr.append(createCell(exit, name, value, col > 1));
-				});
-			});
-		}
+			}
+		}).appendTo(tbody);
+		facil.data.forEach(function(item, col) {
+			body_tr.append(createCell(facil.feature, item.name, item.value, col > 2));
+		});
 	});
+	table.DataTable()
 });

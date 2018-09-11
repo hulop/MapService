@@ -17,11 +17,10 @@ curl -Lo qrcode.zip https://github.com/davidshimjs/qrcodejs/zipball/master
 unzip -oj qrcode.zip */qrcode.js && rm qrcode.zip
 
 curl -L -O https://jqueryui.com/resources/download/jquery-ui-1.11.4.zip
-unzip jquery-ui-1.11.4.zip && rm jquery-ui-1.11.4.zip
+unzip -o jquery-ui-1.11.4.zip && rm jquery-ui-1.11.4.zip
 
-curl -L -O https://github.com/DataTables/DataTables/archive/1.10.6.zip
-#unzip 1.10.6.zip -x "DataTables-1.10.6/examples/**" "DataTables-1.10.6/media/unit_testing/**" && rm 1.10.6.zip
-unzip 1.10.6.zip && rm 1.10.6.zip
+curl -L -O https://github.com/DataTables/DataTables/archive/1.10.10.zip
+unzip -o 1.10.10.zip -x "DataTables-1.10.10/examples/**" && rm 1.10.10.zip
 
 cd $pwd
 
