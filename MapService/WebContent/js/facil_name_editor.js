@@ -32,13 +32,13 @@ function isFacility(feature) {
 	return feature.get('施設ID') && feature.get('major_category') != '_nav_poi_' && feature.get('category') != '公共用トイレの情報';
 }
 
-function getExitList(feature) {
+function getExitList(source, feature) {
 	return $hulop.editor.findExit(feature).map(function(exit) {
-		var source = $hulop.map.getRouteLayer().getSource();
 		var node = source.getFeatureById(exit.get('対応ノードID'));
 		var floor = Number(node && node.get('高さ'));
 		return {
 			'feature' : exit,
+			'node' : node,
 			'floor' : floor,
 			'data' : $exit_names.map(function(name, col) {
 				return {
@@ -84,8 +84,7 @@ $(document).ready(function() {
 		}, 1000);
 	}
 
-	function getFacilList() {
-		var source = $hulop.map.getRouteLayer().getSource();
+	function getFacilList(source) {
 		return source.getFeatures().filter(isFacility).map(function(feature) {
 			var floors = $hulop.editor.getHeights(feature).sort();
 			return {
@@ -171,14 +170,15 @@ $(document).ready(function() {
 	var table = createTable($('#facil'), $names, 'lightgreen');
 	var tbody = $('<tbody>').appendTo(table);
 	var current_facil;
-	getFacilList().forEach(function(facil) {
+	var source = $hulop.map.getRouteLayer().getSource();
+	getFacilList(source).forEach(function(facil) {
 		var body_tr = $('<tr>', {
 			'click' : function(event) {
 				flash(facil.feature);
 				if (current_facil != facil) {
 					current_facil = facil;
 					$hulop.editor.showProperty(facil.feature);
-					var exitList = getExitList(facil.feature);
+					var exitList = getExitList(source, facil.feature);
 					if (exitList.length == 0) {
 						$('#exit').empty();
 						return;
@@ -192,6 +192,7 @@ $(document).ready(function() {
 						var body_tr = $('<tr>', {
 							'click' : function() {
 								$hulop.indoor.showFloor(exit.floor);
+								exit.node && flash(exit.node);
 							}
 						}).appendTo(tbody);
 						exit.data.forEach(function(item, col) {
