@@ -55,12 +55,42 @@ function floorText(floor) {
 }
 
 $(document).ready(function() {
+	var flashLayer = new ol.layer.Vector({
+		'source' : new ol.source.Vector(),
+		'style' : new ol.style.Style({
+			'image' : new ol.style.Circle({
+				'radius' : 20,
+				'fill' : new ol.style.Fill({
+					'color' : 'rgba(0,0,0,0.25)'
+				}),
+				'stroke' : new ol.style.Stroke({
+					'color' : '#FFF',
+					'width' : 3
+				})
+			})
+		}),
+		'zIndex' : 999
+	});
+	var map = $hulop.map.getMap();
+	$(window).bind("beforeunload", function() {
+		map.removeLayer(flashLayer);
+	});
+	map.addLayer(flashLayer);
+
+	function flash(point) {
+		flashLayer.getSource().addFeature(point);
+		setTimeout(function() {
+			flashLayer.getSource().removeFeature(point);
+		}, 1000);
+	}
+
 	function getFacilList() {
 		var source = $hulop.map.getRouteLayer().getSource();
 		return source.getFeatures().filter(isFacility).map(function(feature) {
 			var floors = $hulop.editor.getHeights(feature).sort();
 			return {
 				'feature' : feature,
+				'floors' : floors,
 				'data' : $names.map(function(name, col) {
 					var value;
 					switch (name) {
@@ -144,6 +174,7 @@ $(document).ready(function() {
 	getFacilList().forEach(function(facil) {
 		var body_tr = $('<tr>', {
 			'click' : function(event) {
+				flash(facil.feature);
 				if (current_facil != facil) {
 					current_facil = facil;
 					$hulop.editor.showProperty(facil.feature);
@@ -151,6 +182,9 @@ $(document).ready(function() {
 					if (exitList.length == 0) {
 						$('#exit').empty();
 						return;
+					}
+					if (facil.floors.indexOf($hulop.indoor.getCurrentFloor()) == -1) {
+						$hulop.indoor.showFloor(facil.floors[0]);
 					}
 					var table = createTable($('#exit'), $exit_names, 'lightblue');
 					var tbody = $('<tbody>').appendTo(table);
