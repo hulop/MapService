@@ -97,7 +97,7 @@ $(document).ready(function() {
 					var value;
 					switch (name) {
 					case 'floors':
-						value = floors.map(floorText);
+						value = floors.map(floorText).join(',');
 						break;
 					case 'entrances':
 						value = $hulop.editor.findExit(feature).length;
@@ -213,5 +213,43 @@ $(document).ready(function() {
 			body_tr.append(createCell(facil.feature, item.name, item.value, col > 2));
 		});
 	});
-	table.DataTable()
+	table.DataTable();
+
+	function downloadFile(data, filename) {
+		var blob = new Blob([ data ], {
+			type : 'text/json;charset=utf-8;'
+		});
+		if (navigator.msSaveBlob) {
+			navigator.msSaveBlob(blob, filename);
+		} else {
+			var link = document.createElement('a');
+			if (link.download !== undefined) {
+				var url = URL.createObjectURL(blob);
+				link.setAttribute('href', url);
+				link.setAttribute('download', filename);
+			} else {
+				link.href = 'data:attachment/json,' + data;
+			}
+			link.style = 'visibility:hidden';
+			document.body.appendChild(link);
+			link.click();
+			document.body.removeChild(link);
+		}
+	}
+
+	function export_json() {
+		var json = getFacilList(source).map(function(facil) {
+			var array = facil.data;
+			getExitList(source, facil.feature).forEach(function(exit) {
+				array = array.concat(exit.data);
+			});
+			return array;
+		});
+		downloadFile(JSON.stringify(json, null, '\t'), 'facilities.json');
+	}
+
+	$('<button>', {
+		'text' : 'Export JSON',
+		'click' : export_json
+	}).appendTo($('#tools'));
 });
