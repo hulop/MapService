@@ -2043,6 +2043,7 @@ $hulop.editor = function() {
 		'findExit' : findExit,
 		'showProperty' : showProperty,
 		'getHeights' : getHeights,
+		'prepareData' : prepareData,
 		'newFeaturteCreated' : newFeaturteCreated,
 		'toFeatureCollection': toFeatureCollection,
 		'downloadFile' : downloadFile,
