@@ -86,7 +86,9 @@ $(document).ready(function() {
 
 	function getFacilList(source) {
 		return source.getFeatures().filter(isFacility).map(function(feature) {
-			var floors = $hulop.editor.getHeights(feature).sort();
+			var floors = $hulop.editor.getHeights(feature).sort(function(a, b) {
+				return a - b;
+			});
 			return {
 				'feature' : feature,
 				'floors' : floors,

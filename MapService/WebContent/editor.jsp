@@ -35,6 +35,7 @@
 <script type="text/javascript" src="js/area-edit.js"></script>
 <script type="text/javascript" src="js/editor.js"></script>
 <script type="text/javascript" src="js/login-monitor.js"></script>
+<script type="text/javascript" src="js/editor_ext.js"></script>
 <script type="text/javascript">
 	$(document).ready(function(){
 		console.log("Map init");
@@ -50,6 +51,8 @@
 			<fieldset>
 				<legend>(i18n_LOAD_DATA)</legend>
 				(i18n_MOVE_POINTER)
+				<br>
+				Use <button onclick="$hulop.editor.prepareData($hulop.map.getCenter(), $hulop.config.MAX_RADIUS || 500)">load all</button> for easy operation.
 			</fieldset>
 			<fieldset>
 				<legend>(i18n_ADD_ELEMENTS)</legend>
@@ -81,9 +84,15 @@
 				<li>(i18n_ALIGN_LINKS1)</li>
 			</fieldset>
 			<fieldset>
-				<legend>Area</legend>
-				<li>Click <button onclick="$hulop.area.addInteraction()">add area</button> then draw polygon on the map.</li>
-				<li>See <strong>(i18n_VERTEX)</strong> to edit vertex</li>
+				<legend>More tools</legend>
+				Click <button onclick="$hulop.area.addInteraction()">add area</button> then draw polygon on the map. See <strong>(i18n_VERTEX)</strong> to edit vertex.
+				<hr>
+				Use <button onclick="window.open('facil_name_editor.html','facil_name_editor','width=1600,height=900,resizable=yes,scrollbars=yes');">facility name editor</button> for translation.
+				<hr>
+				Create a node, then click <button onclick="$hulop.editor.ext.createElevator($hulop.editor.editingFeature)">create elevator</button> to create elevator links.
+				<hr>
+				Select an elevator link, then click <button onclick="$hulop.editor.ext.changeElevator($hulop.editor.editingFeature,0)">change elevator type</button> or 
+				<button onclick="$hulop.editor.ext.changeElevator($hulop.editor.editingFeature,1)">change elevator equipments</button> to replace all elevator properties.
 			</fieldset>
 			<fieldset class="modified" style="display:none">
 				<legend>(i18n_SAVE_MAP)</legend>
@@ -102,8 +111,6 @@
 			<fieldset>
 				<legend>Special</legend>
 				<button id="delete_button">Delete All</button>
-				|
-				<button onclick="window.open('facil_name_editor.html','facil_name_editor','width=1600,height=900,resizable=yes,scrollbars=yes');">Facility name editor</button>
 			</fieldset>
 		</div>
 	</div>
