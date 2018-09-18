@@ -64,7 +64,7 @@ $hulop.editor.ext = function() {
 				'link_id': linkID,
 				'start_id': node1.get('node_id'),
 				'end_id': node2.get('node_id'),
-				'rt_struct': node1.get('floor') == 0 && node2.get('floor') == 0 ? 1 : 7,
+				'rt_struct': 7,
 				'route_type': 4,
 				'elevator' : 99,
 				'direction': 1,
