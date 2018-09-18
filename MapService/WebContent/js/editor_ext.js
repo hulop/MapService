@@ -62,8 +62,8 @@ $hulop.editor.ext = function() {
 			'properties' : {
 				'hulop_file' : 'EDITOR',
 				'link_id': linkID,
-				'start_id': node1.get('node_id'),
-				'end_id': node2.get('node_id'),
+				'start_id': node1.getId(),
+				'end_id': node2.getId(),
 				'rt_struct': 7,
 				'route_type': 4,
 				'elevator' : 99,
