@@ -843,12 +843,11 @@ $hulop.editor = function() {
 
 	function createNode(latlng) {
 		var p = {
-			'category' : 'ノード情報'
+			'category' : 'ノード情報',
+			'ノードID' : newID('node'),
+			'高さ' : '' + getFloor()
 		};
-		p['ノードID'] = newID('node');
-		p['高さ'] = '' + getFloor();
-		var obj = newGeoJSON(p, latlng);
-		var feature = newFeature(obj);
+		var feature = newFeature(newGeoJSON(p, latlng));
 		showProperty(feature);
 		return feature;
 	}
@@ -878,14 +877,13 @@ $hulop.editor = function() {
 
 	function createPOI(latlng, category) {
 		var p = {
-			'category' : category
+			'category' : category,
+			'施設ID' : newID('poi')
 		};
-		p['施設ID'] = newID('poi');
 		if (category != '公共用トイレの情報') {
 			p['名称'] = '';
 		}
-		var obj = newGeoJSON(p, latlng);
-		var feature = newFeature(obj);
+		var feature = newFeature(newGeoJSON(p, latlng));
 		showProperty(feature);
 		return feature;
 	}
@@ -900,19 +898,6 @@ $hulop.editor = function() {
 			return false;
 		}
 		source.removeFeature(poi);
-		showProperty();
-		return true;
-	}
-
-	function canRemoveArea(area) {
-		return $hulop.area.getId(area);
-	}
-
-	function removeArea(area) {
-		if (!canRemoveArea(area)) {
-			return false;
-		}
-		source.removeFeature(area);
 		showProperty();
 		return true;
 	}
@@ -936,11 +921,11 @@ $hulop.editor = function() {
 			exitID = newID('exit');
 			addNodeExit(nodeID, exitID);
 			var p = {
-				'category' : '出入口情報'
+				'category' : '出入口情報',
+				'出入口ID' : exitID,
+				'対応ノードID' : nodeID,
+				'出入口の名称' : ''
 			};
-			p['出入口ID'] = exitID;
-			p['対応ノードID'] = nodeID;
-			p['出入口の名称'] = '';
 			var obj = newGeoJSON(p, ol.proj.transform(node.getGeometry().getCoordinates(), 'EPSG:3857', 'EPSG:4326'));
 			exit = newFeature(obj);
 		}
@@ -975,6 +960,19 @@ $hulop.editor = function() {
 		return true;
 	}
 
+	function canRemoveArea(area) {
+		return $hulop.area.getId(area);
+	}
+
+	function removeArea(area) {
+		if (!canRemoveArea(area)) {
+			return false;
+		}
+		source.removeFeature(area);
+		showProperty();
+		return true;
+	}
+
 	function createLink(node1, node2) {
 		if (node1 == node2) {
 			return false;
@@ -989,23 +987,23 @@ $hulop.editor = function() {
 			}
 		});
 		var p = {
-			'category' : 'リンクの情報'
+			'category' : 'リンクの情報',
+			'リンクID': linkID,
+			'起点ノードID': node1.get('ノードID'),
+			'終点ノードID': node2.get('ノードID'),
+			'経路の種類': '8',
+			'方向性': '0',
+			'通行制限': '0',
+			'手すり': '0',
+			'屋根の有無': '0',
+			'蓋のない溝や水路の有無': '0',
+			'主な利用者': '0',
+			'縦断勾配1': '0',
+			'縦断勾配2': '0',
+			'横断勾配': '0',
+			'路面状況': '0',
+			'段差': '0'
 		};
-		p['リンクID'] = linkID;
-		p['起点ノードID'] = node1.get('ノードID');
-		p['終点ノードID'] = node2.get('ノードID');
-		p['経路の種類'] = '8';
-		p['方向性'] = '0';
-		p['通行制限'] = '0';
-		p['手すり'] = '0';
-		p['屋根の有無'] = '0';
-		p['蓋のない溝や水路の有無'] = '0';
-		p['主な利用者'] = '0';
-		p['縦断勾配1'] = '0';
-		p['縦断勾配2'] = '0';
-		p['横断勾配'] = '0';
-		p['路面状況'] = '0';
-		p['段差'] = '0';
 		var obj = newGeoJSON(p, ol.proj.transform(node1.getGeometry().getCoordinates(), 'EPSG:3857', 'EPSG:4326'), ol.proj.transform(node2.getGeometry()
 				.getCoordinates(), 'EPSG:3857', 'EPSG:4326'));
 		var feature = newFeature(obj);
@@ -1960,6 +1958,7 @@ $hulop.editor = function() {
 		'showProperty' : showProperty,
 		'getHeights' : getHeights,
 		'prepareData' : prepareData,
+		'newFeature' : newFeature,
 		'newFeaturteCreated' : newFeaturteCreated,
 		'toFeatureCollection': toFeatureCollection,
 		'downloadFile' : downloadFile,

@@ -26,11 +26,61 @@ $hulop.editor.ext = function() {
 	var linkKey = '接続リンクID#', nodeKeys = [ '起点ノードID', '終点ノードID' ], typeKeys = [ 'エレベーター種別', 'elevator_equipments' ];
 	var numberKeys = [];
 	var elevetor_type_info = '\n  0: not included\n  1: braille and audio\n  2: wheelchair\n  3: 1&2\n  9: unknown';
-	function isElevatorLink(feature) {
-		return feature && feature.get('リンクID') && feature.get('エレベーター種別');
+	function isElevatorLink(link) {
+		return link && link.get('リンクID') && link.get('エレベーター種別');
 	}
-	function isElevetorNode(feature) {
-		return feature && feature.get('ノードID');
+	function isElevetorNode(node) {
+		return node && node.get('ノードID');
+	}
+	function getFloor(node) {
+		return Number(node && node.get('高さ'));
+	}
+	function createNode(nodeID, geometry, floor) {
+		return $hulop.editor.newFeature({
+			'type' : 'Feature',
+			'geometry' : geometry,
+			'properties' : {
+				'file' : 'EDITOR',
+				'category' : 'ノード情報',
+				'ノードID' : nodeID,
+				'高さ' : '' + floor
+			}
+		});
+	}
+	function createElevatorLink(linkID, geometry, node1, node2) {
+		[ node1, node2 ].forEach(function(node) {
+			for (var i = 1; i <= 99; i++) {
+				if (!node.get('接続リンクID' + i)) {
+					node.set('接続リンクID' + i, linkID)
+					break;
+				}
+			}
+		});
+		return $hulop.editor.newFeature({
+			'type' : 'Feature',
+			'geometry' : geometry,
+			'properties' : {
+				'file' : 'EDITOR',
+				'category' : 'リンクの情報',
+				'リンクID' : linkID,
+				'起点ノードID' : node1.get('ノードID'),
+				'終点ノードID' : node2.get('ノードID'),
+				'経路の種類' : '10',
+				'エレベーター種別' : '9',
+				'方向性' : '0',
+				'通行制限' : '0',
+				'手すり' : '0',
+				'屋根の有無' : '0',
+				'蓋のない溝や水路の有無' : '0',
+				'主な利用者' : '0',
+				'縦断勾配1' : '0',
+				'縦断勾配2' : '0',
+				'横断勾配' : '0',
+				'路面状況' : '0',
+				'段差' : '0',
+				'リンク延長' : '0'
+			}
+		});
 	}
 
 	// Common
@@ -84,17 +134,31 @@ $hulop.editor.ext = function() {
 			} catch (e) {
 			}
 		}
-		console.log(array);
-		if (!Array.isArray(array) || array.length == 0) {
+		var nodeFloor = getFloor(feature);
+		if (!Array.isArray(array) || array.length < 2 || array.indexOf(nodeFloor) == -1) {
 			alert('Invalid floor numbers ' + floors);
 			return;
 		}
+		var geometry = {
+			'type' : 'Point',
+			'coordinates' : ol.proj.transform(feature.getGeometry().getCoordinates(), 'EPSG:3857', 'EPSG:4326')
+		};
+		var time = new Date().getTime(), nodes = [];
 		array = array.sort(function(a, b) {
 			return a - b;
 		}).filter(function(item, pos, self) {
 			return self.indexOf(item) == pos;
 		})
-		alert('floors=' + array.toString());
+		array.forEach(function(floor) {
+			if (floor == nodeFloor) {
+				nodes.push(feature);
+				return;
+			}
+			nodes.push(createNode('EDITOR_node_' + time++, geometry, floor));
+		});
+		for (var i = 1; i < nodes.length; i++) {
+			createElevatorLink('EDITOR_link_' + time++, geometry, nodes[i - 1], nodes[i]);
+		}
 	}
 
 	function changeElevator(feature, type) {
