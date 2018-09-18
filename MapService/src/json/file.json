@@ -5,12 +5,12 @@
 	{
 		"files": 
 		{
-			"map": "function (doc) { doc.properties && doc.properties.file && emit(doc.properties.file, doc._rev); }"
+			"map": "function (doc) { doc.properties && doc.properties.hulop_file && emit(doc.properties.hulop_file, doc._rev); }"
 		},
 
 		"count": 
 		{
-			"map": "function (doc) { doc.properties && doc.properties.file && emit(doc.properties.file, 1); }",
+			"map": "function (doc) { doc.properties && doc.properties.hulop_file && emit(doc.properties.hulop_file, 1); }",
 			"reduce": "_count"
 		}
 	}

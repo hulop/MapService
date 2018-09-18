@@ -26,11 +26,59 @@ $hulop.editor.ext = function() {
 	var linkKey = 'link#_id', nodeKeys = [ 'start_id', 'end_id' ], typeKeys = [ 'elevator', 'hulop_elevator_equipments' ];
 	var numberKeys = ['elevator'];
 	var elevetor_type_info = '\n  1: without elevator\n  2: with elevator (not accessible)\n  3: with elevator (accessible to wheelchair users)\n  4: with elevator (accessible to visually impaired persons)\n  5: with elevator (accessible to wheelchair users and visually impaired persons)\n  99: unknown';
-	function isElevatorLink(feature) {
-		return feature && feature.get('link_id') && (feature.get('route_type') == 4);
+	function isElevatorLink(link) {
+		return link && link.get('link_id') && (link.get('route_type') == 4);
 	}
-	function isElevetorNode(feature) {
-		return feature && feature.get('node_id');
+	function isElevetorNode(node) {
+		return node && node.get('node_id');
+	}
+	function getFloor(node) {
+		return node && node.get('floor');
+	}
+	function createNode(nodeID, geometry, floor) {
+		return $hulop.editor.newFeature({
+			'type' : 'Feature',
+			'geometry' : geometry,
+			'properties' : {
+				'hulop_file' : 'EDITOR',
+				'node_id' : nodeID,
+				'floor' : '' + floor,
+				'in_out': floor == 0 ? 1 : 3
+			}
+		});
+	}
+	function createElevatorLink(linkID, geometry, node1, node2) {
+		[ node1, node2 ].forEach(function(node) {
+			for (var i = 1; i <= 99; i++) {
+				if (!node.get('link' + i + '_id')) {
+					node.set('link' + i + '_id', linkID)
+					break;
+				}
+			}
+		});
+		return $hulop.editor.newFeature({
+			'type' : 'Feature',
+			'geometry' : geometry,
+			'properties' : {
+				'hulop_file' : 'EDITOR',
+				'link_id': linkID,
+				'start_id': node1.get('node_id'),
+				'end_id': node2.get('node_id'),
+				'rt_struct': node1.get('floor') == 0 && node2.get('floor') == 0 ? 1 : 7,
+				'route_type': 4,
+				'elevator' : 99,
+				'direction': 1,
+				'width': 99,
+				'vtcl_slope': 99,
+				'lev_diff': 99,
+				'tfc_signal': 99,
+				'tfc_s_type': 99,
+				'brail_tile': 99,
+				'elevator': 99,
+				'roof': 99,
+				'distance' : 0
+			}
+		});
 	}
 
 	// Common
@@ -84,17 +132,31 @@ $hulop.editor.ext = function() {
 			} catch (e) {
 			}
 		}
-		console.log(array);
-		if (!Array.isArray(array) || array.length == 0) {
+		var nodeFloor = getFloor(feature);
+		if (!Array.isArray(array) || array.length < 2 || array.indexOf(nodeFloor) == -1) {
 			alert('Invalid floor numbers ' + floors);
 			return;
 		}
+		var geometry = {
+			'type' : 'Point',
+			'coordinates' : ol.proj.transform(feature.getGeometry().getCoordinates(), 'EPSG:3857', 'EPSG:4326')
+		};
+		var time = new Date().getTime(), nodes = [];
 		array = array.sort(function(a, b) {
 			return a - b;
 		}).filter(function(item, pos, self) {
 			return self.indexOf(item) == pos;
 		})
-		alert('floors=' + array.toString());
+		array.forEach(function(floor) {
+			if (floor == nodeFloor) {
+				nodes.push(feature);
+				return;
+			}
+			nodes.push(createNode('EDITOR_node_' + time++, geometry, floor));
+		});
+		for (var i = 1; i < nodes.length; i++) {
+			createElevatorLink('EDITOR_link_' + time++, geometry, nodes[i - 1], nodes[i]);
+		}
 	}
 
 	function changeElevator(feature, type) {

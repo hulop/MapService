@@ -2044,6 +2044,7 @@ $hulop.editor = function() {
 		'showProperty' : showProperty,
 		'getHeights' : getHeights,
 		'prepareData' : prepareData,
+		'newFeature' : newFeature,
 		'newFeaturteCreated' : newFeaturteCreated,
 		'toFeatureCollection': toFeatureCollection,
 		'downloadFile' : downloadFile,

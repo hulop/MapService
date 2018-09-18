@@ -86,7 +86,7 @@ public class MongoAdapter implements DBAdapter {
 	@Override
 	public void prepare(File file) {
 		if (file != null) {
-			mapCol.remove(new BasicDBObject("properties.file", file.getPath()));
+			mapCol.remove(new BasicDBObject("properties.hulop_file", file.getPath()));
 		}
 		// insertList.clear();
 		// insertLogList.clear();
@@ -228,7 +228,7 @@ public class MongoAdapter implements DBAdapter {
 
 	@Override
 	public List<String> listFiles() {
-		return mapCol.distinct("properties.file");
+		return mapCol.distinct("properties.hulop_file");
 	}
 
 	private JSONObject find(DBCollection col, String id) {
