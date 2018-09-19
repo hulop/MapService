@@ -22,5 +22,8 @@ unzip -o jquery-ui-1.11.4.zip && rm jquery-ui-1.11.4.zip
 curl -L -O https://github.com/DataTables/DataTables/archive/1.10.10.zip
 unzip -o 1.10.10.zip -x "DataTables-1.10.10/examples/**" && rm 1.10.10.zip
 
+curl -L -O https://github.com/evanplaice/jquery-csv/archive/v0.8.9.zip
+unzip -o v0.8.9.zip jquery-csv-0.8.9/src/* && rm v0.8.9.zip
+
 cd $pwd
 

@@ -31,10 +31,20 @@ th {
 	href="js/lib/DataTables-1.10.10/media/css/jquery.dataTables.css">
 <script type="text/javascript"
 	src="js/lib/DataTables-1.10.10/media/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript"
+	src="js/lib/jquery-csv-0.8.9/src/jquery.csv.min.js"></script>
 <script type="text/javascript" src="js/facil_name_editor.js"></script>
 </head>
 <body>
-	<div id="tools"></div>
+	<div id="tools">
+		Export JSON:
+		<button onclick="export_json()">All</button>
+		| Export CSV:
+		<button onclick="export_facil_csv()">Facilities</button>
+		<button onclick="export_ent_csv()">Entrances</button>
+		| Import CSV: 
+		<input type="file" accept=".csv" onchange="import_file(this)">
+	</div>
 	<div id="facil"></div>
 	<div id="exit"></div>
 </body>

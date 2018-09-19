@@ -29,6 +29,8 @@ $names = $names.concat([ 'hulop_long_description', 'hulop_long_description_ja', 
 		'hulop_long_description_zh-CN' ]);
 var $exit_names = [ 'ent#_node', 'ent#_fl', 'ent#_n', 'ent#_n_ja', 'ent#_n_hira', 'ent#_n_en', 'ent#_n_es', 'ent#_n_fr',
 		'ent#_n_ko', 'ent#_n_zh-CN' ];
+var $facil_filter = [ 'facil_id', 'name_ja', 'name_en' ];
+var $facil_default = {};
 
 function isFacility(feature) {
 	return feature.get('facil_id') && feature.get('hulop_major_category') != '_nav_poi_' && feature.get('facil_type') != 10;
@@ -217,10 +219,25 @@ $(document).ready(function() {
 	});
 	table.DataTable();
 
-	function downloadFile(data, filename) {
-		var blob = new Blob([ data ], {
-			type : 'text/json;charset=utf-8;'
-		});
+	var bom = new Uint8Array([ 0xEF, 0xBB, 0xBF ]);
+	function downloadFile(arrays, filename) {
+		console.log([ arrays, filename ]);
+		var type, data, blob;
+		if (filename.endsWith('.json')) {
+			type = 'json';
+			data = JSON.stringify(arrays, null, '\t');
+			blob = new Blob([ data ], {
+				'type' : 'text/json;charset=utf-8;'
+			});
+		} else if (filename.endsWith('.csv')) {
+			type = 'csv';
+			data = $.csv.fromArrays(arrays);
+			blob = new Blob([ bom, data ], {
+				'type' : 'text/csv;charset=utf-8;'
+			});
+		} else {
+			return;
+		}
 		if (navigator.msSaveBlob) {
 			navigator.msSaveBlob(blob, filename);
 		} else {
@@ -230,7 +247,7 @@ $(document).ready(function() {
 				link.setAttribute('href', url);
 				link.setAttribute('download', filename);
 			} else {
-				link.href = 'data:attachment/json,' + data;
+				link.href = 'data:attachment/' + type + ',' + data;
 			}
 			link.style = 'visibility:hidden';
 			document.body.appendChild(link);
@@ -239,19 +256,76 @@ $(document).ready(function() {
 		}
 	}
 
-	function export_json() {
-		var json = getFacilList(source).map(function(facil) {
+	window.export_json = function() {
+		var arrays = getFacilList(source).map(function(facil) {
 			var array = facil.data;
 			getExitList(source, facil.feature).forEach(function(exit) {
 				array = array.concat(exit.data);
 			});
 			return array;
 		});
-		downloadFile(JSON.stringify(json, null, '\t'), 'facilities.json');
+		downloadFile(arrays, 'facilities-all.json');
 	}
 
-	$('<button>', {
-		'text' : 'Export JSON',
-		'click' : export_json
-	}).appendTo($('#tools'));
+	function values(item) {
+		return item.value;
+	}
+
+	function import_csv(csv) {
+		var arrays = $.csv.toArrays(csv);
+		console.log(arrays);
+		return 'Under construction. ' + arrays.length + ' rows ' + arrays[0].length + ' columns';
+	}
+
+	window.export_facil_csv = function() {
+		var arrays = [ $names ].concat(getFacilList(source).map(function(facil) {
+			return facil.data.map(values);
+		}));
+		downloadFile(arrays, 'facilities.csv');
+	}
+
+	window.export_ent_csv = function() {
+		var arrays = [ $facil_filter.concat($exit_names) ];
+		getFacilList(source).forEach(function(facil) {
+			function filter(item) {
+				return $facil_filter.indexOf(item.name) != -1;
+			}
+			function defaultValues(item, index) {
+				if (item.value) {
+					return item.value;
+				}
+				var name = $facil_default[item.name];
+				if (name) {
+					for (var i = 0; i < facil.data.length; i++) {
+						var item = facil.data[i];
+						if (item.name == name) {
+							return item.value;
+						}
+					}
+				}
+			}
+			var exitList = getExitList(source, facil.feature);
+			if (exitList.length > 0) {
+				var commons = facil.data.filter(filter).map(defaultValues);
+				exitList.forEach(function(exit, index) {
+					arrays.push(commons.concat(exit.data.map(values)));
+				});
+			}
+		});
+		downloadFile(arrays, 'entrances.csv');
+	}
+
+	window.import_file = function(input) {
+		var file = input.files[0];
+		if (file) {
+			console.log(file);
+			var fr = new FileReader();
+			fr.addEventListener('load', function(e) {
+				var result = import_csv(fr.result);
+				result && alert(result);
+			});
+			fr.readAsText(file);
+		}
+		input.value = '';
+	}
 });
