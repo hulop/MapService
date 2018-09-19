@@ -27,6 +27,11 @@ $names = $names.concat([ 'long_description', 'long_description:ja', 'long_descri
 		'long_description:es', 'long_description:fr', 'long_description:ko', 'long_description:zh-CN' ]);
 var $exit_names = [ '対応ノードID', '高さ', '出入口の名称', '出入口の名称:ja', '出入口の名称:ja-Pron', '出入口の名称:en', '出入口の名称:es', '出入口の名称:fr', '出入口の名称:ko',
 		'出入口の名称:zh-CN' ];
+var $facil_filter = [ '施設ID', '名称:ja', '名称:en' ];
+var $facil_default = {
+	'名称:ja' : '名称',
+	'名称:en' : '名称'
+};
 
 function isFacility(feature) {
 	return feature.get('施設ID') && feature.get('major_category') != '_nav_poi_' && feature.get('category') != '公共用トイレの情報';
@@ -214,10 +219,25 @@ $(document).ready(function() {
 	});
 	table.DataTable();
 
-	function downloadFile(data, filename) {
-		var blob = new Blob([ data ], {
-			type : 'text/json;charset=utf-8;'
-		});
+	var bom = new Uint8Array([ 0xEF, 0xBB, 0xBF ]);
+	function downloadFile(arrays, filename) {
+		console.log([ arrays, filename ]);
+		var type, data, blob;
+		if (filename.endsWith('.json')) {
+			type = 'json';
+			data = JSON.stringify(arrays, null, '\t');
+			blob = new Blob([ data ], {
+				'type' : 'text/json;charset=utf-8;'
+			});
+		} else if (filename.endsWith('.csv')) {
+			type = 'csv';
+			data = $.csv.fromArrays(arrays);
+			blob = new Blob([ bom, data ], {
+				'type' : 'text/csv;charset=utf-8;'
+			});
+		} else {
+			return;
+		}
 		if (navigator.msSaveBlob) {
 			navigator.msSaveBlob(blob, filename);
 		} else {
@@ -227,7 +247,7 @@ $(document).ready(function() {
 				link.setAttribute('href', url);
 				link.setAttribute('download', filename);
 			} else {
-				link.href = 'data:attachment/json,' + data;
+				link.href = 'data:attachment/' + type + ',' + data;
 			}
 			link.style = 'visibility:hidden';
 			document.body.appendChild(link);
@@ -236,19 +256,76 @@ $(document).ready(function() {
 		}
 	}
 
-	function export_json() {
-		var json = getFacilList(source).map(function(facil) {
+	window.export_json = function() {
+		var arrays = getFacilList(source).map(function(facil) {
 			var array = facil.data;
 			getExitList(source, facil.feature).forEach(function(exit) {
 				array = array.concat(exit.data);
 			});
 			return array;
 		});
-		downloadFile(JSON.stringify(json, null, '\t'), 'facilities.json');
+		downloadFile(arrays, 'facilities-all.json');
 	}
 
-	$('<button>', {
-		'text' : 'Export JSON',
-		'click' : export_json
-	}).appendTo($('#tools'));
+	function values(item) {
+		return item.value;
+	}
+
+	function import_csv(csv) {
+		var arrays = $.csv.toArrays(csv);
+		console.log(arrays);
+		return 'Under construction. ' + arrays.length + ' rows ' + arrays[0].length + ' columns';
+	}
+
+	window.export_facil_csv = function() {
+		var arrays = [ $names ].concat(getFacilList(source).map(function(facil) {
+			return facil.data.map(values);
+		}));
+		downloadFile(arrays, 'facilities.csv');
+	}
+
+	window.export_ent_csv = function() {
+		var arrays = [ $facil_filter.concat($exit_names) ];
+		getFacilList(source).forEach(function(facil) {
+			function filter(item) {
+				return $facil_filter.indexOf(item.name) != -1;
+			}
+			function defaultValues(item, index) {
+				if (item.value) {
+					return item.value;
+				}
+				var name = $facil_default[item.name];
+				if (name) {
+					for (var i = 0; i < facil.data.length; i++) {
+						var item = facil.data[i];
+						if (item.name == name) {
+							return item.value;
+						}
+					}
+				}
+			}
+			var exitList = getExitList(source, facil.feature);
+			if (exitList.length > 0) {
+				var commons = facil.data.filter(filter).map(defaultValues);
+				exitList.forEach(function(exit, index) {
+					arrays.push(commons.concat(exit.data.map(values)));
+				});
+			}
+		});
+		downloadFile(arrays, 'entrances.csv');
+	}
+
+	window.import_file = function(input) {
+		var file = input.files[0];
+		if (file) {
+			console.log(file);
+			var fr = new FileReader();
+			fr.addEventListener('load', function(e) {
+				var result = import_csv(fr.result);
+				result && alert(result);
+			});
+			fr.readAsText(file);
+		}
+		input.value = '';
+	}
 });
