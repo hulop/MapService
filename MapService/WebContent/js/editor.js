@@ -597,6 +597,7 @@ $hulop.editor = function() {
 		}
 		resetOriginal();
 		resetExit();
+		resetModified();
 		console.log(lastData);
 		$hulop.indoor && $hulop.indoor.setStyle(getStyle);
 		validate();
