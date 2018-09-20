@@ -159,6 +159,7 @@ $(document).ready(function() {
 	function createCell(feature, name, value, editable) {
 		var color;
 		if (editable && value) {
+			value = '' + value;
 			var text = value.trim().replace(/[\t\r\n]/g, ' ');
 			if (value != text) {
 				console.error('"' + value + '" > "' + text + '"')
