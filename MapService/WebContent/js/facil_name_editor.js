@@ -158,8 +158,7 @@ $(document).ready(function() {
 	// Create tbody
 	function createCell(feature, name, value, editable) {
 		var color;
-		if (editable && value) {
-			value = '' + value;
+		if (editable && value && typeof value === 'string') {
 			var text = value.trim().replace(/[\t\r\n]/g, ' ');
 			if (value != text) {
 				console.error('"' + value + '" > "' + text + '"')
