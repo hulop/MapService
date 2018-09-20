@@ -1198,7 +1198,7 @@ $hulop.editor = function() {
 						'width' : exit ? 3 : 2
 					})
 				}),
-				'zIndex' : 1
+				'zIndex' : floor == heights[0] ? 1.01 : 1
 			});
 		} else if (feature.get('link_id')) {
 			if (feature.get('route_type') == 4) {
