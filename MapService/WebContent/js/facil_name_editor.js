@@ -55,6 +55,21 @@ function getExitList(source, feature) {
 	});
 }
 
+function getFeatureKeys(facil, node, keys) {
+	var featureKeys;
+	$hulop.editor.findExit(facil).forEach(function(exit) {
+		if (exit.node_id == node.getId()) {
+			featureKeys = keys.map(function(key) {
+				return {
+					'feature' : facil,
+					'key' : key.replace('#', exit.ent_index)
+				};
+			});
+		}
+	});
+	return featureKeys;
+}
+
 function floorText(floor) {
 	return (floor < 0 ? 'B' + (-floor) : floor) + 'F';
 }
@@ -274,7 +289,77 @@ $(document).ready(function() {
 	function import_csv(csv) {
 		var arrays = $.csv.toArrays(csv);
 		console.log(arrays);
-		return 'Under construction. ' + arrays.length + ' rows ' + arrays[0].length + ' columns';
+		var rows = arrays.length;
+		if (rows < 2) {
+			return 'Empty data';
+		}
+		var header = arrays[0];
+		var isExit;
+		if (header.join() == $names.join()) {
+		} else if (header.join() == $facil_filter.concat($exit_names).join()) {
+			isExit = true;
+		} else {
+			return 'Unknown csv header';
+		}
+		var cols = header.length;
+		for (var i = 1; i < rows; i++) {
+			if (arrays[i].length != cols) {
+				return 'Incorrect column count ' + arrays[i].length + ' at row ' + (i + 1);
+			}
+		}
+		var same = 0, ignore = 0, remove = 0, change = 0, error = 0;
+		function update(feature, key, to) {
+			var from = feature.get(key);
+			if (from == to) {
+				same++;
+			} else if (to != '') {
+				if ($numbers.indexOf(key) == -1) {
+					feature.set(key, to);
+					change++;
+					console.log(key + ': change ' + from + ' to "' + to + '"');
+				} else {
+					if (isNaN(to)) {
+						error++;
+						console.error(key + ': error ' + to);
+					} else {
+						feature.set(key, Number(to));
+						change++;
+						console.log(key + ': change ' + from + ' to Number(' + to + ')');
+					}
+				}
+			} else if (from != undefined) {
+				feature.unset(key);
+				remove++;
+				console.log(key + ': remove ' + from);
+			} else {
+				ignore++;
+			}
+		}
+		for (var i = 1; i < arrays.length; i++) {
+			var row = arrays[i];
+			var facil = source.getFeatureById(row[0]);
+			if (isExit) {
+				var node = source.getFeatureById(row[3]);
+				var featureKeys = node && getFeatureKeys(facil, node, header);
+				if (featureKeys) {
+					featureKeys.forEach(function(item, index) {
+						index > 4 && update(item.feature, item.key, row[index]);
+					})
+				} else {
+					error++;
+					console.error([ 'getFeatureKeys()', facil, node, header ]);
+				}
+			} else {
+				header.forEach(function(key, index) {
+					index > 2 && update(facil, key, row[index]);
+				})
+			}
+		}
+		if (change || remove || error) {
+			(change || remove) && location.reload();
+			return (change + remove) + ' change(s), ' + error + ' error(s)';
+		}
+		return 'No changes';
 	}
 
 	window.export_facil_csv = function() {
