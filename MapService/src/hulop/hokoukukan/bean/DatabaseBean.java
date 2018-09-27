@@ -269,28 +269,30 @@ public class DatabaseBean {
 	}
 
 	public static Object getFacilities(double[] point, double distance, DBAdapter.GeometryType type) throws JSONException {
-//		JSONArray features = new JSONArray();
-//		adapter.getGeometry(point, distance, null, features, type);
-		JSONArray features = RouteData.getCache(point, distance).getFeatures();
+		RouteData rd = RouteData.getCache(point, distance);
+		JSONArray features = rd.getFeatures();
 		JSONObject siteMap = new JSONObject();
 		for (Object feature : features) {
 			try {
 				JSONObject properties = ((JSONObject) feature).getJSONObject("properties");
-				if (type == DBAdapter.GeometryType.TOILETS) {
-					if (properties.getInt("facil_type") == 10) {
-						switch (properties.getInt("toilet")) {
-						case 3:
-						case 4:
-						case 5:
-						case 6:
-							siteMap.put(properties.getString("facil_id"), feature);
-							break;
+				if (properties.has("facil_id")) {
+					if (type == DBAdapter.GeometryType.TOILETS) {
+						if (properties.getInt("facil_type") == 10) {
+							switch (properties.getInt("toilet")) {
+							case 3:
+							case 4:
+							case 5:
+							case 6:
+								siteMap.put(properties.getString("facil_id"), feature);
+								break;
+							}
 						}
+					} else {
+						siteMap.put(properties.getString("facil_id"), feature);
 					}
-				} else {
-					siteMap.put(properties.getString("facil_id"), feature);
 				}
 			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
 		return siteMap;

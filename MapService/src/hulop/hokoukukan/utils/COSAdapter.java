@@ -223,13 +223,12 @@ public class COSAdapter implements DBAdapter {
 	}
 
 	@Override
-	public void getGeometry(double[] center, double radius, JSONObject nodeMap, JSONArray features,
-			GeometryType toilet) {
-		db.getGeometry(center, radius, nodeMap, features, toilet);
+	public void getGeometry(double[] center, double radius, JSONObject nodeMap, JSONArray features) {
+		db.getGeometry(center, radius, nodeMap, features);
 	}
 
 	@Override
-	public String findNearestNode(double[] point, List<Double> floors) {
+	public String findNearestNode(double[] point, List<Object> floors) {
 		return db.findNearestNode(point, floors);
 	}
 

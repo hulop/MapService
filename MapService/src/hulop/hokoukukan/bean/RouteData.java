@@ -34,10 +34,11 @@ import org.apache.wink.json4j.JSONException;
 import org.apache.wink.json4j.JSONObject;
 
 import hulop.hokoukukan.utils.DBAdapter;
-import hulop.hokoukukan.utils.DBAdapter.GeometryType;
 import hulop.hokoukukan.utils.Hokoukukan;
 
 public class RouteData {
+
+	public static final String VERSION = "hokoukukan2018";
 
 	private static final long CACHE_EXPIRE = 60 * 60 * 1000;
 	private static final DBAdapter adapter = DatabaseBean.adapter;
@@ -121,18 +122,17 @@ public class RouteData {
 		mDoors = new JSONArray();
 		mLandMarks = new HashMap<String, JSONArray>();
 		mElevatorNodes = new HashSet<String>();
-		adapter.getGeometry(center, distance, mNodeMap, mFeatures, GeometryType.ANY);
+		adapter.getGeometry(center, distance, mNodeMap, mFeatures);
 		for (Object feature : mFeatures) {
 			try {
-				JSONObject properties = ((JSONObject) feature).getJSONObject("properties");
-				switch (Hokoukukan.getCategory(properties)) {
-				case Hokoukukan.CATEGORY_LINK:
+				JSONObject node = (JSONObject) feature;
+				JSONObject properties = node.getJSONObject("properties");
+				if (properties.has("link_id")) {
 					if (properties.getInt("route_type") == 4) {
 						mElevatorNodes.add(properties.getString("start_id"));
 						mElevatorNodes.add(properties.getString("end_id"));
 					}
-					break;
-				case Hokoukukan.CATEGORY_FACILITY:
+				} else if (properties.has("facil_id")) {
 					for (String ent_ : Hokoukukan.listEntrances(properties)) {
 						String ent_d = ent_ + "d";
 						if (properties.has(ent_d)) {
@@ -148,7 +148,6 @@ public class RouteData {
 							}
 						}
 					}
-					break;
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -201,12 +200,9 @@ public class RouteData {
 		for (Object feature : mFeatures) {
 			JSONObject json = (JSONObject) feature;
 			JSONObject properties = json.getJSONObject("properties");
-			String name = null, name_pron = null;
-			Object node = null;
-			switch (Hokoukukan.getCategory(properties)) {
-			case Hokoukukan.CATEGORY_FACILITY:
-				name = i18.getI18n(properties, "name");
-				name_pron = i18.getI18nPron(properties, "name");
+			if (properties.has("facil_id")) {
+				String name = i18.getI18n(properties, "name");
+				String name_pron = i18.getI18nPron(properties, "name");
 				for (String ent_ : Hokoukukan.listEntrances(properties)) {
 					String ent_n = ent_ + "n";
 					JSONObject poi = new JSONObject().put("name", name).put("name_pron", name_pron)
@@ -223,18 +219,14 @@ public class RouteData {
 						result.add(poi);
 					}
 				}
-				break;
 			}
 		}
 		for (int i = 0; i < result.length(); i++) {
 			JSONObject obj = result.getJSONObject(i);
 			try {
-				String nodeID = obj.getString("node");
-				if (mNodeMap.has(nodeID)) {
-					JSONObject node = mNodeMap.getJSONObject(nodeID);
-					obj.put("node_coordinates", node.getJSONObject("geometry").getJSONArray("coordinates"));
-					obj.put("node_height", node.getJSONObject("properties").getDouble("floor"));
-				}
+				JSONObject node = mNodeMap.getJSONObject(obj.getString("node"));
+				obj.put("node_coordinates", node.getJSONObject("geometry").getJSONArray("coordinates"));
+				obj.put("node_height", node.getJSONObject("properties").getDouble("floor"));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

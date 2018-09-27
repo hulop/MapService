@@ -31,10 +31,6 @@ import org.apache.wink.json4j.JSONObject;
 
 public class Hokoukukan {
 
-	public static final String CATEGORY_NODE = "node";
-	public static final String CATEGORY_LINK = "link";
-	public static final String CATEGORY_FACILITY = "facility";
-
 	private static final Pattern ENT_NODE = Pattern.compile("^(ent\\d+_)node$");
 
 	public static List<String> listEntrances(JSONObject properties) {
@@ -47,27 +43,4 @@ public class Hokoukukan {
 		}
 		return entrances;
 	}
-
-	public static String getCategory(JSONObject properties) {
-		try {
-			if (properties.getString("node_id").length() > 0) {
-				return CATEGORY_NODE;
-			}
-		} catch (Exception e) {
-		}
-		try {
-			if (properties.getString("link_id").length() > 0) {
-				return CATEGORY_LINK;
-			}
-		} catch (Exception e) {
-		}
-		try {
-			if (properties.getString("facil_id").length() > 0) {
-				return CATEGORY_FACILITY;
-			}
-		} catch (Exception e) {
-		}
-		return "";
-	}
-
 }

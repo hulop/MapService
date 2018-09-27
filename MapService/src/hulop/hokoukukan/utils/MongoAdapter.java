@@ -88,8 +88,6 @@ public class MongoAdapter implements DBAdapter {
 		if (file != null) {
 			mapCol.remove(new BasicDBObject("properties.hulop_file", file.getPath()));
 		}
-		// insertList.clear();
-		// insertLogList.clear();
 		insertCount = 0;
 	}
 
@@ -171,21 +169,11 @@ public class MongoAdapter implements DBAdapter {
 	}
 
 	@Override
-	public void getGeometry(double[] center, double radius, JSONObject nodeMap, JSONArray features, GeometryType toilet) {
+	public void getGeometry(double[] center, double radius, JSONObject nodeMap, JSONArray features) {
 		DBObject query = new BasicDBObject().append("geometry",
 				new BasicDBObject("$near",
 						new BasicDBObject("$geometry", new BasicDBObject("type", "Point").append("coordinates", center))
 								.append("$maxDistance", radius)));
-		switch (toilet) {
-		case TOILETS:
-			query.put("properties.facil_type", 10);
-			break;
-		case FACILITIES:
-			query.put("properties.facil_id", new BasicDBObject("$exists", true));
-			break;
-		default:
-			break;
-		}
 		System.out.println(query.toString());
 		DBCursor cursor = mapCol.find(query/* , new BasicDBObject("_id", 0) */);
 		try {
@@ -204,7 +192,7 @@ public class MongoAdapter implements DBAdapter {
 	}
 
 	@Override
-	public String findNearestNode(double[] point, List<Double> floors) {
+	public String findNearestNode(double[] point, List<Object> floors) {
 		BasicDBObject query = new BasicDBObject().append("geometry", new BasicDBObject("$near",
 				new BasicDBObject("$geometry", new BasicDBObject("type", "Point").append("coordinates", point))));
 		query.put("properties.node_id", new BasicDBObject("$exists", true));
