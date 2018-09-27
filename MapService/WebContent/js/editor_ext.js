@@ -83,7 +83,7 @@ $hulop.editor.ext = function() {
 
 	// Common
 	var separator = '\n------------------------------\n';
-	var elevetor_equipments_info = '\n  [_button_right_｜_button_right_braille_]\n  [_button_left_｜_button_left_braille_]';
+	var elevetor_equipments_info = '\n  [_button_right_|_button_right_braille_]\n  [_button_left_|_button_left_braille_]';
 	var elevetor_prompts = [ 'Change Elevator Type' + separator + 'Enter elevetor type' + elevetor_type_info,
 			'Change Elevator Equipments' + separator + 'Enter elevetor equipments' + elevetor_equipments_info ];
 	var source = $hulop.map.getRouteLayer().getSource();
