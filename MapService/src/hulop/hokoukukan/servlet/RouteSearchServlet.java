@@ -40,6 +40,7 @@ import org.apache.wink.json4j.JSONArray;
 import org.apache.wink.json4j.JSONObject;
 
 import hulop.hokoukukan.bean.DatabaseBean;
+import hulop.hokoukukan.bean.RouteData;
 import hulop.hokoukukan.bean.RouteSearchBean;
 import hulop.hokoukukan.utils.DBAdapter;
 
@@ -82,6 +83,15 @@ public class RouteSearchServlet extends HttpServlet {
 		long start = System.currentTimeMillis();
 		String user = request.getParameter("user");
 		String action = request.getParameter("action");
+		if ("info".equals(action) && RouteData.VERSION != null) {
+			try {
+				JSONObject result = new JSONObject().put("map_data", RouteData.VERSION);
+				sendJSON(result, request, response);
+				return;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 		if (user == null || action == null) {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid user or action");
 			return;

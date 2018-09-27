@@ -30,6 +30,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.apache.wink.json4j.JSONArray;
 import org.apache.wink.json4j.JSONException;
@@ -145,8 +146,7 @@ public class RouteSearchBean {
 		public void add(Object feature) throws JSONException {
 			JSONObject json = (JSONObject) feature;
 			JSONObject properties = json.getJSONObject("properties");
-			switch (properties.getString("category")) {
-			case "リンクの情報":
+			if (properties.has("リンクID")) {
 				double weight = 10.0f;
 				try {
 					weight = Double.parseDouble(properties.getString("リンク延長"));
@@ -157,14 +157,14 @@ public class RouteSearchBean {
 				}
 				weight = adjustAccWeight(properties, conditions, weight);
 				if (weight == WEIGHT_IGNORE) {
-					break;
+					return;
 				}
 				String start, end;
 				try {
 					start = properties.getString("起点ノードID");
 					end = properties.getString("終点ノードID");
 				} catch (Exception e) {
-					break;
+					return;
 				}
 				if (from == null) {
 					try {
@@ -173,7 +173,7 @@ public class RouteSearchBean {
 					} catch (Exception e) {
 					}
 					result.add(json);
-					break;
+					return;
 				}
 				g.addVertex(start);
 				g.addVertex(end);
@@ -201,7 +201,6 @@ public class RouteSearchBean {
 					g.setEdgeWeight(endStart, weight + add);
 					linkMap.put(endStart, json);
 				}
-				break;
 			}
 		}
 
@@ -549,14 +548,13 @@ public class RouteSearchBean {
 		return null;
 	}
 
+	private static final Pattern LINK_ID = Pattern.compile("^接続リンクID\\d+$");
+
 	private int countLinks(String node) {
 		try {
 			int count = 0;
-			JSONObject properties = getNode(node).getJSONObject("properties");
-			for (int i = 1; i <= 10; i++) {
-				if (properties.has("接続リンクID" + i)) {
-					count++;
-				}
+			for (Iterator<String> it = getNode(node).getJSONObject("properties").keys(); it.hasNext();) {
+				count += (LINK_ID.matcher(it.next()).matches() ? 1 : 0);
 			}
 			return count;
 		} catch (Exception e) {

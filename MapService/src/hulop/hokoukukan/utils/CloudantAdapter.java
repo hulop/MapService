@@ -207,22 +207,22 @@ public class CloudantAdapter implements DBAdapter {
 	}
 
 	@Override
-	public void getGeometry(double[] center, double radius, JSONObject nodeMap, JSONArray features, List<String> categories) {
+	public void getGeometry(double[] center, double radius, JSONObject nodeMap, JSONArray features) {
 		int limit = 200;
-		if (getGeometryRows(center, radius, limit * 100, 1, categories).size() > 0) {
+		if (getGeometryRows(center, radius, limit * 100, 1).size() > 0) {
 			System.err.println("more than 100 API calls expected");
 			return;
 		}
 		long start = System.currentTimeMillis();
 		try {
 			for (int skip = 0;; skip += limit) {
-				JsonArray rows = getGeometryRows(center, radius, skip, limit, categories);
+				JsonArray rows = getGeometryRows(center, radius, skip, limit);
 				for (int i = 0; i < rows.size(); i++) {
 					JsonObject row = (JsonObject) rows.get(i);
 					try {
 						JSONObject json = new JSONObject(row.get("doc").toString());
 						JSONObject properties = json.getJSONObject("properties");
-						if ("ノード情報".equals(properties.get("category"))) {
+						if (properties.has("ノードID")) {
 							nodeMap.put(properties.getString("ノードID"), json);
 						} else {
 							features.add(json);
@@ -251,7 +251,7 @@ public class CloudantAdapter implements DBAdapter {
 	}
 
 	@Override
-	public String findNearestNode(double[] point, List<String> floors) {
+	public String findNearestNode(double[] point, List<Object> floors) {
 		try {
 			int limit = floors == null ? 1 : 200;
 			for (int skip = 0; skip < 1000; skip += limit) {
@@ -323,15 +323,8 @@ public class CloudantAdapter implements DBAdapter {
 
 	}
 
-	private JsonArray getGeometryRows(double[] center, double radius, int skip, int limit, List<String> categories) {
+	private JsonArray getGeometryRows(double[] center, double radius, int skip, int limit) {
 		String index = "geoIndex";
-		if (categories != null) {
-			if (categories.contains("公共用トイレの情報")) {
-				index = "toiletIndex";
-			} else if (categories.contains("リンクの情報")) {
-				index = "linkIndex";
-			}
-		}
 		return (JsonArray) navi_db.findAny(JsonObject.class, String.format(
 				"%s/_design/geo/_geo/%s?lon=%f&lat=%f8&radius=%f&relation=intersects&skip=%d&limit=%d&include_docs=true",
 				navi_db.getDBUri(), index, center[0], center[1], radius, skip, limit))

@@ -300,38 +300,46 @@ public class DatabaseBean {
 		JSONArray features = rd.getFeatures();
 		JSONObject siteMap = new JSONObject();
 		for (Object feature : features) {
-			JSONObject properties = ((JSONObject)feature).getJSONObject("properties");
-			if (properties.has("施設ID")) {
-				if (type == DBAdapter.GeometryType.TOILETS) {
-					if ("公共用トイレの情報".equals(properties.getString("category")) && properties.has("多目的トイレ")) {
-						switch (properties.getString("多目的トイレ")) {
-						case "1":
-						case "2":
-							siteMap.put(properties.getString("施設ID"), feature);
-							break;
+			try {
+				JSONObject properties = ((JSONObject)feature).getJSONObject("properties");
+				if (properties.has("施設ID")) {
+					if (type == DBAdapter.GeometryType.TOILETS) {
+						if ("公共用トイレの情報".equals(properties.getString("category")) && properties.has("多目的トイレ")) {
+							switch (properties.getString("多目的トイレ")) {
+							case "1":
+							case "2":
+								siteMap.put(properties.getString("施設ID"), feature);
+								break;
+							}
 						}
+					} else {
+						siteMap.put(properties.getString("施設ID"), feature);
 					}
-				} else {
-					siteMap.put(properties.getString("施設ID"), feature);
 				}
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
 		JSONArray exitList = new JSONArray();
 		JSONObject nodeMap = new JSONObject();
 		for (Object feature : features) {
-			JSONObject properties = ((JSONObject) feature).getJSONObject("properties");
-			if (properties.has("出入口ID") && properties.has("対応施設ID") && properties.has("対応ノードID")) {
-				String siteId = properties.getString("対応施設ID");
-				String nodeId = properties.getString("対応ノードID");
-				if (siteMap.has(siteId)) {
-					if (!nodeMap.has(nodeId)) {
-						JSONObject node = rd.getNodeMap().getJSONObject(nodeId);
-						if (node != null) {
-							nodeMap.put(nodeId, node);
+			try {
+				JSONObject properties = ((JSONObject) feature).getJSONObject("properties");
+				if (properties.has("出入口ID") && properties.has("対応施設ID") && properties.has("対応ノードID")) {
+					String siteId = properties.getString("対応施設ID");
+					String nodeId = properties.getString("対応ノードID");
+					if (siteMap.has(siteId)) {
+						if (!nodeMap.has(nodeId)) {
+							JSONObject node = rd.getNodeMap().getJSONObject(nodeId);
+							if (node != null) {
+								nodeMap.put(nodeId, node);
+							}
 						}
+						exitList.add(feature);
 					}
-					exitList.add(feature);
 				}
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
 		JSONObject result = new JSONObject();

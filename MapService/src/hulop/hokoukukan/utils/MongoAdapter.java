@@ -88,8 +88,6 @@ public class MongoAdapter implements DBAdapter {
 		if (file != null) {
 			mapCol.remove(new BasicDBObject("properties.file", file.getPath()));
 		}
-		// insertList.clear();
-		// insertLogList.clear();
 		insertCount = 0;
 	}
 
@@ -171,21 +169,18 @@ public class MongoAdapter implements DBAdapter {
 	}
 
 	@Override
-	public void getGeometry(double[] center, double radius, JSONObject nodeMap, JSONArray features, List<String> categories) {
+	public void getGeometry(double[] center, double radius, JSONObject nodeMap, JSONArray features) {
 		DBObject query = new BasicDBObject().append("geometry",
 				new BasicDBObject("$near",
 						new BasicDBObject("$geometry", new BasicDBObject("type", "Point").append("coordinates", center))
 								.append("$maxDistance", radius)));
-		if (categories != null) {
-			query.put("properties.category", new BasicDBObject("$in", categories));
-		}
 		System.out.println(query.toString());
 		DBCursor cursor = mapCol.find(query/* , new BasicDBObject("_id", 0) */);
 		try {
 			while (cursor.hasNext()) {
 				JSONObject json = new JSONObject(cursor.next().toString());
 				JSONObject properties = json.getJSONObject("properties");
-				if ("ノード情報".equals(properties.get("category"))) {
+				if (properties.has("ノードID")) {
 					nodeMap.put(properties.getString("ノードID"), json);
 				} else {
 					features.add(json);
@@ -197,10 +192,10 @@ public class MongoAdapter implements DBAdapter {
 	}
 
 	@Override
-	public String findNearestNode(double[] point, List<String> floors) {
+	public String findNearestNode(double[] point, List<Object> floors) {
 		BasicDBObject query = new BasicDBObject().append("geometry", new BasicDBObject("$near",
 				new BasicDBObject("$geometry", new BasicDBObject("type", "Point").append("coordinates", point))));
-		query.put("properties.category", "ノード情報");
+		query.put("properties.ノードID", new BasicDBObject("$exists", true));
 		if (floors != null) {
 			query.put("properties.高さ", new BasicDBObject("$in", floors));
 		}

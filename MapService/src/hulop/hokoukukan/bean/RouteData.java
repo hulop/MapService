@@ -37,6 +37,8 @@ import hulop.hokoukukan.utils.DBAdapter;
 
 public class RouteData {
 
+	public static final String VERSION = null;
+
 	private static final long CACHE_EXPIRE = 60 * 60 * 1000;
 	private static final DBAdapter adapter = DatabaseBean.adapter;
 	private final JSONObject mNodeMap, mExitNodes;
@@ -120,28 +122,33 @@ public class RouteData {
 		mDoors = new JSONArray();
 		mLandMarks = new HashMap<String, JSONArray>();
 		mElevatorNodes = new HashSet<String>();
-		adapter.getGeometry(center, distance, mNodeMap, mFeatures, null);
+		adapter.getGeometry(center, distance, mNodeMap, mFeatures);
 		for (Object feature : mFeatures) {
-			JSONObject node = (JSONObject) feature;
-			JSONObject properties = node.getJSONObject("properties");
-			if ("リンクの情報".equals(properties.getString("category")) && "10".equals(properties.getString("経路の種類"))) {
-				mElevatorNodes.add(properties.getString("起点ノードID"));
-				mElevatorNodes.add(properties.getString("終点ノードID"));
-			}
-			if ("出入口情報".equals(properties.getString("category"))) {
-				if (properties.has("対応施設ID")) {
-					mExitNodes.append(properties.getString("対応施設ID"), node);
-				}
-				if (properties.has("対応ノードID") && properties.has("扉の種類")) {
-					String door = properties.getString("扉の種類");
-					switch (door) {
-					case "":
-					case "0":
-						break;
-					default:
-						mDoors.add(properties);
+			try {
+				JSONObject node = (JSONObject) feature;
+				JSONObject properties = node.getJSONObject("properties");
+				if (properties.has("リンクID")) {
+					if ("10".equals(properties.getString("経路の種類"))) {
+						mElevatorNodes.add(properties.getString("起点ノードID"));
+						mElevatorNodes.add(properties.getString("終点ノードID"));
+					}
+				} else if (properties.has("出入口ID")) {
+					if (properties.has("対応施設ID")) {
+						mExitNodes.append(properties.getString("対応施設ID"), node);
+					}
+					if (properties.has("対応ノードID") && properties.has("扉の種類")) {
+						String door = properties.getString("扉の種類");
+						switch (door) {
+						case "":
+						case "0":
+							break;
+						default:
+							mDoors.add(properties);
+						}
 					}
 				}
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
 		mLastRef = System.currentTimeMillis();
@@ -191,52 +198,46 @@ public class RouteData {
 		for (Object feature : mFeatures) {
 			JSONObject json = (JSONObject) feature;
 			JSONObject properties = json.getJSONObject("properties");
-			String category = properties.getString("category"), name = null, name_pron = null;
-			Object node = null;
-			switch (category) {
-			case "出入口情報":
+			String category = properties.getString("category");
+			if (properties.has("出入口ID")) {
 				if (i18.hasI18n(properties, "出入口の名称") && properties.has("対応ノードID") && !properties.has("対応施設ID")) {
-					name = i18.getI18n(properties, "出入口の名称");
-					name_pron = i18.getI18nPron(properties, "出入口の名称");
-					node = properties.getString("対応ノードID");
+					String name = i18.getI18n(properties, "出入口の名称");
+					String name_pron = i18.getI18nPron(properties, "出入口の名称");
+					String node = properties.getString("対応ノードID");
 					result.add(new JSONObject().put("category", category).put("name", name).put("name_pron", name_pron)
 							.put("node", node));
 				}
-				break;
-			default:
-				if (properties.has("施設ID")) {
-					name = i18.getI18n(properties, "名称");
-					name_pron = i18.getI18nPron(properties, "名称");
-					String siteId = properties.getString("施設ID");
-					if (mExitNodes.has(siteId)) {
-						node = mExitNodes.get(siteId);
-						for (JSONObject obj : (List<JSONObject>) node) {
-							JSONObject p = obj.getJSONObject("properties");
-							String n = null;
-							if (p.has("対応ノードID")) {
-								n = p.getString("対応ノードID");
-							} else if (p.has("出入口ノード")) {
-								n = p.getString("出入口ノード");
-							}
-							if (n != null) {
-								JSONObject poi = new JSONObject().put("category", category).put("name", name)
-										.put("name_pron", name_pron).put("node", n).put("properties", properties);
-								poi.put("geometry", json.get("geometry"));
-								if (i18.hasI18n(p, "出入口の名称")) {
-									String exit = i18.getI18n(p, "出入口の名称");
-									String exit_pron = i18.getI18nPron(p, "出入口の名称");
-									if (!"#".equals(exit)) {
-										poi.put("exit", exit).put("exit_pron", exit_pron);
-										result.add(poi);
-									}
-								} else {
+			} else if (properties.has("施設ID")) {
+				String name = i18.getI18n(properties, "名称");
+				String name_pron = i18.getI18nPron(properties, "名称");
+				String siteId = properties.getString("施設ID");
+				if (mExitNodes.has(siteId)) {
+					Object node = mExitNodes.get(siteId);
+					for (JSONObject obj : (List<JSONObject>) node) {
+						JSONObject p = obj.getJSONObject("properties");
+						String n = null;
+						if (p.has("対応ノードID")) {
+							n = p.getString("対応ノードID");
+						} else if (p.has("出入口ノード")) {
+							n = p.getString("出入口ノード");
+						}
+						if (n != null) {
+							JSONObject poi = new JSONObject().put("category", category).put("name", name)
+									.put("name_pron", name_pron).put("node", n).put("properties", properties);
+							poi.put("geometry", json.get("geometry"));
+							if (i18.hasI18n(p, "出入口の名称")) {
+								String exit = i18.getI18n(p, "出入口の名称");
+								String exit_pron = i18.getI18nPron(p, "出入口の名称");
+								if (!"#".equals(exit)) {
+									poi.put("exit", exit).put("exit_pron", exit_pron);
 									result.add(poi);
 								}
+							} else {
+								result.add(poi);
 							}
 						}
 					}
 				}
-				break;
 			}
 		}
 		for (int i = 0; i < result.length(); i++) {
