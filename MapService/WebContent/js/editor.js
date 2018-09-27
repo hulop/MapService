@@ -203,12 +203,7 @@ $hulop.editor = function() {
 				try {
 					var features = JSON.parse(fileText);
 					if (features.type == 'FeatureCollection' && features.features) {
-						var fmt = checkFeature(features);
-						if (fmt == 'H22' && $hulop.editor.importV1) {
-							features.features = $hulop.editor.importV1(features.features);
-							fmt = checkFeature(features);
-						}
-						if (fmt != 'H30') {
+						if ($hulop.editor.importV1 && $hulop.editor.importV1(features) != '2018') {
 							return;
 						}
 						var bounds;
@@ -467,19 +462,6 @@ $hulop.editor = function() {
 			});
 		});
 		initData();
-	}
-
-	function checkFeature(features) {
-		if (features.type == 'FeatureCollection' && features.features && features.features.length > 0) {
-			for (var i = 0; i < features.features.length; i++) {
-				var p = features.features[i].properties;
-				if (p['node_id'] || p['link_id'] || p['facil_id']) {
-					return 'H30';
-				} else if (p['ノードID'] || p['リンクID'] || p['施設ID'] || p['出入口ID']) {
-					return 'H22';
-				}
-			}
-		}
 	}
 
 	var vertex;

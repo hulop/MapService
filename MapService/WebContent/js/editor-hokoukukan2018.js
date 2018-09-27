@@ -20,10 +20,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-$hulop.editor.importV1 = function(v1features) {
+$hulop.editor.importV1 = function(features) {
+	function checkFeature(features) {
+		if (features.type == 'FeatureCollection' && features.features && features.features.length > 0) {
+			for (var i = 0; i < features.features.length; i++) {
+				var p = features.features[i].properties;
+				if (p['node_id'] || p['link_id'] || p['facil_id']) {
+					return '2018';
+				} else if (p['ノードID'] || p['リンクID'] || p['施設ID'] || p['出入口ID']) {
+					return 'H22';
+				}
+			}
+		}
+	}
+	var fmt = checkFeature(features);
+	if (fmt != 'H22') {
+		return fmt;
+	}
 	// create index
 	var nodeMap = {}, entranceMap = {};
-	v1features.forEach(function(feature) {
+	features.features.forEach(function(feature) {
 		var fp = feature.properties;
 		if (fp) {
 			var id;
@@ -31,8 +47,8 @@ $hulop.editor.importV1 = function(v1features) {
 			(id = fp['対応施設ID']) && (entranceMap[id] || (entranceMap[id] = [])).push(feature);
 		}
 	});
-
-	return convert(v1features);
+	features.features = convert(features.features);
+	return checkFeature(features);
 
 	/*
 	 * convert from v1 to v2
