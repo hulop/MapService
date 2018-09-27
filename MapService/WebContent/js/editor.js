@@ -71,6 +71,7 @@ $hulop.editor = function() {
 	var READONLY_NAMES = [ 'ノードID', '緯度経度桁数コード', '緯度', '経度', 'リンクID', '起点ノードID', '終点ノードID', 'リンク延長', '出入口ID', '対応ノードID', '対応施設ID', '施設ID', '接続リンクID1',
 			'接続リンクID2', '接続リンクID3', '接続リンクID4', '接続リンクID5', '接続リンクID6', '接続リンクID7', '接続リンクID8', '接続リンクID9', '接続リンクID10', 'geometry' ];
 	var EDITOR_FILE = 'EDITOR';
+	var MAX_INDEX = 10;
 	var downKey, keyState = {}, ADD_KEY = 65, DO_POI_KEY = 68, SPLIT_KEY = 83, COPY_KEY = 67, PASTE_KEY = 86;
 	var lastData, map, source, select, modify, callback, start_feature, poi_lines, editingFeature, editingProperty, clipboardFeature;
 	var start_point, switch_line, from_feature;
@@ -497,13 +498,13 @@ $hulop.editor = function() {
 		array[isStart ? 0 : array.length - 1] = to.getGeometry().getCoordinates();
 		link.setGeometry(new ol.geom.LineString(array));
 		link.set(isStart ? '起点ノードID' : '終点ノードID', toNode);
-		for (var i = 1; i <= 10; i++) {
+		for (var i = 1; i <= MAX_INDEX; i++) {
 			if (from.get('接続リンクID' + i) == linkId) {
 				from.unset('接続リンクID' + i);
 				break;
 			}
 		}
-		for (var i = 1; i <= 10; i++) {
+		for (var i = 1; i <= MAX_INDEX; i++) {
 			if (!to.get('接続リンクID' + i)) {
 				to.set('接続リンクID' + i, linkId);
 				break;
@@ -848,7 +849,7 @@ $hulop.editor = function() {
 		if (!nodeID || hasNodeExit(node)) {
 			return false;
 		}
-		for (var i = 1; i <= 10; i++) {
+		for (var i = 1; i <= MAX_INDEX; i++) {
 			var linkId = node.get('接続リンクID' + i);
 			if (linkId && source.getFeatureById(linkId)) {
 				return false;
@@ -970,7 +971,7 @@ $hulop.editor = function() {
 		}
 		var linkID = newID('link');
 		[ node1, node2 ].forEach(function(node) {
-			for (var i = 1; i <= 10; i++) {
+			for (var i = 1; i <= MAX_INDEX; i++) {
 				if (!node.get('接続リンクID' + i)) {
 					node.set('接続リンクID' + i, linkID)
 					break;
@@ -1030,7 +1031,7 @@ $hulop.editor = function() {
 		}
 		var linkID = link.get('リンクID');
 		nodes.forEach(function(node) {
-			for (var i = 1; i <= 10; i++) {
+			for (var i = 1; i <= MAX_INDEX; i++) {
 				if (node.get('接続リンクID' + i) == linkID) {
 					node.unset('接続リンクID' + i);
 					setModified(node);
@@ -1294,7 +1295,7 @@ $hulop.editor = function() {
 		}
 		if (feature.get('ノードID')) {
 			addNode(feature);
-			for (var i = 1; i <= 10; i++) {
+			for (var i = 1; i <= MAX_INDEX; i++) {
 				var linkID = feature.get('接続リンクID' + i);
 				var link = linkID && source.getFeatureById(linkID);
 				link && addLink(link);
@@ -1322,7 +1323,7 @@ $hulop.editor = function() {
 		if (nodeID) {
 			var nodeCoordinate = feature.getGeometry().getCoordinates();
 			var latlng = ol.proj.transform(nodeCoordinate, 'EPSG:3857', 'EPSG:4326');
-			for (var i = 1; i <= 10; i++) {
+			for (var i = 1; i <= MAX_INDEX; i++) {
 				var linkID = feature.get('接続リンクID' + i);
 				var link = linkID && source.getFeatureById(linkID);
 				if (link && link != dragPoint) {
@@ -1559,13 +1560,13 @@ $hulop.editor = function() {
 					array[isStart ? 0 : array.length - 1] = feature.getGeometry().getCoordinates();
 					editingFeature.setGeometry(new ol.geom.LineString(array));
 					editingFeature.set(isStart ? '起点ノードID' : '終点ノードID', clickNode);
-					for (var i = 1; i <= 10; i++) {
+					for (var i = 1; i <= MAX_INDEX; i++) {
 						if (from_feature.get('接続リンクID' + i) == editLink) {
 							from_feature.unset('接続リンクID' + i);
 							break;
 						}
 					}
-					for (var i = 1; i <= 10; i++) {
+					for (var i = 1; i <= MAX_INDEX; i++) {
 						if (!feature.get('接続リンクID' + i)) {
 							feature.set('接続リンクID' + i, editLink);
 							break;
@@ -1907,7 +1908,7 @@ $hulop.editor = function() {
 			var category = feature.get('category');
 			switch (category) {
 			case 'ノード情報':
-				for (var i = 1; i <= 10; i++) {
+				for (var i = 1; i <= MAX_INDEX; i++) {
 					var linkId = feature.get('接続リンクID' + i);
 					if (linkId) {
 						var link = source.getFeatureById(linkId);
