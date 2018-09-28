@@ -86,7 +86,7 @@ $hulop.screen_filter = function() {
 					a.toggleClass('ui-icon-forbidden');
 					a.toggleClass('ui-icon-alert');
 					localStorage.setItem('screen_filter', use_filter());
-					use_filter() || showPopup('歩きスマホ防止機能：解除時メッセージ', 3 * 1000);
+					use_filter() || showPopup($m('DONT_LOOK_WHILE_WALKING'), 3 * 1000);
 				}
 			}
 		}).appendTo(button);
@@ -94,7 +94,7 @@ $hulop.screen_filter = function() {
 		map.addControl(new ol.control.Control({
 			'element' : button[0]
 		}));
-		showPopup('歩きスマホ防止機能：起動時メッセージ', 10 * 1000);
+		showPopup($m('DONT_LOOK_WHILE_WALKING'), 10 * 1000);
 	}
 
 	function use_filter() {
