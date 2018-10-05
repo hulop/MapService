@@ -41,7 +41,7 @@ public class RouteData {
 
 	private static final long CACHE_EXPIRE = 60 * 60 * 1000;
 	private static final DBAdapter adapter = DatabaseBean.adapter;
-	private final JSONObject mNodeMap, mExitNodes;
+	private final JSONObject mNodeMap, mFacilEntrances;
 	private final JSONArray mFeatures, mDoors;
 	private final Map<String, JSONArray> mLandMarks;
 	private final Set<String> mElevatorNodes;
@@ -117,7 +117,7 @@ public class RouteData {
 		mCenter = center;
 		mRange = distance;
 		mNodeMap = new JSONObject();
-		mExitNodes = new JSONObject();
+		mFacilEntrances = new JSONObject();
 		mFeatures = new JSONArray();
 		mDoors = new JSONArray();
 		mLandMarks = new HashMap<String, JSONArray>();
@@ -125,8 +125,7 @@ public class RouteData {
 		adapter.getGeometry(center, distance, mNodeMap, mFeatures);
 		for (Object feature : mFeatures) {
 			try {
-				JSONObject node = (JSONObject) feature;
-				JSONObject properties = node.getJSONObject("properties");
+				JSONObject properties = ((JSONObject) feature).getJSONObject("properties");
 				if (properties.has("リンクID")) {
 					if ("10".equals(properties.getString("経路の種類"))) {
 						mElevatorNodes.add(properties.getString("起点ノードID"));
@@ -134,7 +133,7 @@ public class RouteData {
 					}
 				} else if (properties.has("出入口ID")) {
 					if (properties.has("対応施設ID")) {
-						mExitNodes.append(properties.getString("対応施設ID"), node);
+						mFacilEntrances.append(properties.getString("対応施設ID"), properties);
 					}
 					if (properties.has("対応ノードID") && properties.has("扉の種類")) {
 						String door = properties.getString("扉の種類");
@@ -210,11 +209,9 @@ public class RouteData {
 			} else if (properties.has("施設ID")) {
 				String name = i18.getI18n(properties, "名称");
 				String name_pron = i18.getI18nPron(properties, "名称");
-				String siteId = properties.getString("施設ID");
-				if (mExitNodes.has(siteId)) {
-					Object node = mExitNodes.get(siteId);
-					for (JSONObject obj : (List<JSONObject>) node) {
-						JSONObject p = obj.getJSONObject("properties");
+				String facil_id = properties.getString("施設ID");
+				if (mFacilEntrances.has(facil_id)) {
+					for (JSONObject p : (List<JSONObject>) mFacilEntrances.get(facil_id)) {
 						String n = null;
 						if (p.has("対応ノードID")) {
 							n = p.getString("対応ノードID");
