@@ -42,7 +42,7 @@ public class RouteData {
 
 	private static final long CACHE_EXPIRE = 60 * 60 * 1000;
 	private static final DBAdapter adapter = DatabaseBean.adapter;
-	private final JSONObject mNodeMap;
+	private final JSONObject mNodeMap, mNodeFacilities;
 	private final JSONArray mFeatures, mDoors;
 	private final Map<String, JSONArray> mLandMarks;
 	private final Set<String> mElevatorNodes;
@@ -118,6 +118,7 @@ public class RouteData {
 		mCenter = center;
 		mRange = distance;
 		mNodeMap = new JSONObject();
+		mNodeFacilities = new JSONObject();
 		mFeatures = new JSONArray();
 		mDoors = new JSONArray();
 		mLandMarks = new HashMap<String, JSONArray>();
@@ -125,8 +126,7 @@ public class RouteData {
 		adapter.getGeometry(center, distance, mNodeMap, mFeatures);
 		for (Object feature : mFeatures) {
 			try {
-				JSONObject node = (JSONObject) feature;
-				JSONObject properties = node.getJSONObject("properties");
+				JSONObject properties = ((JSONObject) feature).getJSONObject("properties");
 				if (properties.has("link_id")) {
 					if (properties.getInt("route_type") == 4) {
 						mElevatorNodes.add(properties.getString("start_id"));
@@ -134,6 +134,8 @@ public class RouteData {
 					}
 				} else if (properties.has("facil_id")) {
 					for (String ent_ : Hokoukukan.listEntrances(properties)) {
+						String node_id = properties.getString(ent_ + "node");
+						mNodeFacilities.append(node_id, properties);
 						String ent_d = ent_ + "d";
 						if (properties.has(ent_d)) {
 							int door = properties.getInt(ent_d);
@@ -142,8 +144,7 @@ public class RouteData {
 							case 99:
 								break;
 							default:
-								mDoors.add(new JSONObject().put("node", properties.getString(ent_ + "node")).put("door",
-										door));
+								mDoors.add(new JSONObject().put("node", node_id).put("door", door));
 								break;
 							}
 						}
@@ -164,6 +165,10 @@ public class RouteData {
 
 	public JSONObject getNodeMap() {
 		return mNodeMap;
+	}
+
+	public JSONObject getNodeFacilities() {
+		return mNodeFacilities;
 	}
 
 	public JSONArray getFeatures() {

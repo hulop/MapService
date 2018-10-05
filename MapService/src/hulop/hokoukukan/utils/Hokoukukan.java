@@ -21,6 +21,8 @@
  *******************************************************************************/
 package hulop.hokoukukan.utils;
 
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -31,6 +33,7 @@ import org.apache.wink.json4j.JSONObject;
 
 public class Hokoukukan {
 
+	private static final String no_serv_d = "no_serv_d", start_time = "start_time", end_time = "end_time";
 	private static final Pattern ENT_NODE = Pattern.compile("^(ent\\d+_)node$");
 
 	public static List<String> listEntrances(JSONObject properties) {
@@ -42,5 +45,76 @@ public class Hokoukukan {
 			}
 		}
 		return entrances;
+	}
+
+	private static int SERVICE_TIME_DIFF = Integer.MAX_VALUE;
+	static {
+		try {
+			SERVICE_TIME_DIFF = Integer.parseInt(System.getenv("SERVICE_TIME_DIFF"));
+			System.out.println("OffsetDateTime: " + OffsetDateTime.now(ZoneOffset.ofTotalSeconds(SERVICE_TIME_DIFF * 60)));
+		} catch (Exception e) {
+		}
+	}
+	private static final Pattern PAT_TIME = Pattern.compile("^(\\d\\d)-?(\\d\\d)$");
+	private static final Pattern PAT_DATE = Pattern.compile("^(\\d+)$");
+
+	public static boolean available(JSONObject properties) {
+		if (SERVICE_TIME_DIFF < Integer.MAX_VALUE) {
+			OffsetDateTime dt = OffsetDateTime.now(ZoneOffset.ofTotalSeconds(SERVICE_TIME_DIFF * 60));
+			int date = dt.getDayOfWeek().getValue();
+			int hour = dt.getHour();
+			int min = dt.getMinute();
+			try {
+				if (properties.has(no_serv_d)) {
+					Matcher m = PAT_DATE.matcher(properties.getString(no_serv_d));
+					if (m.matches()) {
+						for (char ch : m.group(1).toCharArray()) {
+							if (date == Character.getNumericValue(ch)) {
+								return false;
+							}
+						}
+					}
+				}
+				if (properties.has(start_time)) {
+					Matcher m = PAT_TIME.matcher(properties.getString(start_time));
+					if (m.matches()) {
+						int hh = Integer.parseInt(m.group(1));
+						if (hour < hh || (hour == hh && min < Integer.parseInt(m.group(2)))) {
+							return false;
+						}
+					}
+				}
+				if (properties.has(end_time)) {
+					Matcher m = PAT_TIME.matcher(properties.getString(end_time));
+					if (m.matches()) {
+						int hh = Integer.parseInt(m.group(1));
+						if (hour > hh || (hour == hh && min >= Integer.parseInt(m.group(2)))) {
+							return false;
+						}
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return true;
+	}
+
+	public static boolean availableAll(List<JSONObject> list) {
+		for (JSONObject properties : list) {
+			if (!available(properties)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	public static boolean availableAny(List<JSONObject> list) {
+		for (JSONObject properties : list) {
+			if (available(properties)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }
