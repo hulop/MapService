@@ -42,6 +42,7 @@ import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 
 import hulop.hokoukukan.servlet.RouteSearchServlet;
 import hulop.hokoukukan.utils.DBAdapter;
+import hulop.hokoukukan.utils.Hokoukukan;
 
 public class RouteSearchBean {
 
@@ -51,7 +52,7 @@ public class RouteSearchBean {
 	private static final double STAIR_WEIGHT = RouteSearchServlet.getEnvInt("STAIR_WEIGHT", 300);
 	private static final double ELEVATOR_WEIGHT = RouteSearchServlet.getEnvInt("ELEVATOR_WEIGHT", 300);
 	private long mLastInit = System.currentTimeMillis();
-	private JSONObject mNodeMap, mTempNode, mTempLink1, mTempLink2;
+	private JSONObject mNodeMap, mNodeFacilities, mTempNode, mTempLink1, mTempLink2;
 	private JSONArray mFeatures, mLandmarks, mDoors;
 	private Set<String> mElevatorNodes;
 
@@ -63,6 +64,7 @@ public class RouteSearchBean {
 		RouteData rd = cache ? RouteData.getCache(point, distance) : new RouteData(point, distance);
 		mTempNode = mTempLink1 = mTempLink2 = null;
 		mNodeMap = rd.getNodeMap();
+		mNodeFacilities = rd.getNodeFacilities();
 		mFeatures = rd.getFeatures();
 		mLandmarks = rd.getLandmarks(lang);
 		mDoors = rd.getDoors();
@@ -83,7 +85,17 @@ public class RouteSearchBean {
 	}
 
 	public JSONArray getLandmarks() {
-		return mLandmarks;
+		JSONArray result = new JSONArray();
+		for (JSONObject obj : (List<JSONObject>)mLandmarks) {
+			try {
+				if (Hokoukukan.available(obj.getJSONObject("properties"))) {
+					result.put(obj);
+				}
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
+		return result;
 	}
 
 	public Object getDirection(String from, String to, Map<String, String> conditions) throws JSONException {
@@ -146,7 +158,7 @@ public class RouteSearchBean {
 		public void add(Object feature) throws JSONException {
 			JSONObject json = (JSONObject) feature;
 			JSONObject properties = json.getJSONObject("properties");
-			if (properties.has("リンクID")) {
+			if (properties.has("リンクID") && Hokoukukan.available(properties)) {
 				double weight = 10.0f;
 				try {
 					weight = Double.parseDouble(properties.getString("リンク延長"));
@@ -214,8 +226,11 @@ public class RouteSearchBean {
 						t = t.trim();
 						if (t.length() > 0) {
 							try {
-								List<DefaultWeightedEdge> p = DijkstraShortestPath.findPathBetween(g, from,
-										extractNode(t));
+								String node_id = extractNode(t);
+								if (mNodeFacilities.has(node_id) && !Hokoukukan.availableAny(mNodeFacilities.getJSONArray(node_id))) {
+									continue;
+								}
+								List<DefaultWeightedEdge> p = DijkstraShortestPath.findPathBetween(g, from, node_id);
 								if (p != null && p.size() > 0) {
 									double totalWeight = 0;
 									for (DefaultWeightedEdge edge : p) {

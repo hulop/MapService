@@ -41,7 +41,7 @@ public class RouteData {
 
 	private static final long CACHE_EXPIRE = 60 * 60 * 1000;
 	private static final DBAdapter adapter = DatabaseBean.adapter;
-	private final JSONObject mNodeMap, mFacilEntrances;
+	private final JSONObject mNodeMap, mNodeFacilities, mFacilEntrances;
 	private final JSONArray mFeatures, mDoors;
 	private final Map<String, JSONArray> mLandMarks;
 	private final Set<String> mElevatorNodes;
@@ -117,12 +117,24 @@ public class RouteData {
 		mCenter = center;
 		mRange = distance;
 		mNodeMap = new JSONObject();
+		mNodeFacilities = new JSONObject();
 		mFacilEntrances = new JSONObject();
 		mFeatures = new JSONArray();
 		mDoors = new JSONArray();
 		mLandMarks = new HashMap<String, JSONArray>();
 		mElevatorNodes = new HashSet<String>();
 		adapter.getGeometry(center, distance, mNodeMap, mFeatures);
+		JSONObject facilProperties = new JSONObject();
+		for (Object feature : mFeatures) {
+			try {
+				JSONObject properties = ((JSONObject) feature).getJSONObject("properties");
+				if (properties.has("施設ID")) {
+					facilProperties.put(properties.getString("施設ID"), properties);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 		for (Object feature : mFeatures) {
 			try {
 				JSONObject properties = ((JSONObject) feature).getJSONObject("properties");
@@ -133,7 +145,11 @@ public class RouteData {
 					}
 				} else if (properties.has("出入口ID")) {
 					if (properties.has("対応施設ID")) {
-						mFacilEntrances.append(properties.getString("対応施設ID"), properties);
+						String facil_id = properties.getString("対応施設ID");
+						mFacilEntrances.append(facil_id, properties);
+						if (properties.has("対応ノードID") && facilProperties.has(facil_id)) {
+							mNodeFacilities.append(properties.getString("対応ノードID"), facilProperties.getJSONObject(facil_id));
+						}
 					}
 					if (properties.has("対応ノードID") && properties.has("扉の種類")) {
 						String door = properties.getString("扉の種類");
@@ -161,6 +177,10 @@ public class RouteData {
 
 	public JSONObject getNodeMap() {
 		return mNodeMap;
+	}
+
+	public JSONObject getNodeFacilities() {
+		return mNodeFacilities;
 	}
 
 	public JSONArray getFeatures() {
