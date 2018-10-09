@@ -55,6 +55,7 @@ public class RouteSearchBean {
 	private JSONObject mNodeMap, mNodeFacilities, mTempNode, mTempLink1, mTempLink2;
 	private JSONArray mFeatures, mLandmarks, mDoors;
 	private Set<String> mElevatorNodes;
+	private RouteData routeCache;
 
 	public RouteSearchBean() {
 	}
@@ -70,6 +71,11 @@ public class RouteSearchBean {
 		mDoors = rd.getDoors();
 		mElevatorNodes = rd.getElevatorNodes();
 		mLastInit = System.currentTimeMillis();
+		routeCache = cache ? rd : null;
+	}
+
+	public boolean isValid() {
+		return routeCache != null ? RouteData.isCacheValid(routeCache) : true;
 	}
 
 	public long getLastInit() {
@@ -85,17 +91,18 @@ public class RouteSearchBean {
 	}
 
 	public JSONArray getLandmarks() {
-		JSONArray result = new JSONArray();
-		for (JSONObject obj : (List<JSONObject>)mLandmarks) {
-			try {
-				if (Hokoukukan.available(obj.getJSONObject("properties"))) {
-					result.put(obj);
-				}
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
-		}
-		return result;
+		return mLandmarks;
+//		JSONArray result = new JSONArray();
+//		for (JSONObject obj : (List<JSONObject>)mLandmarks) {
+//			try {
+//				if (Hokoukukan.available(obj.getJSONObject("properties"))) {
+//					result.put(obj);
+//				}
+//			} catch (JSONException e) {
+//				e.printStackTrace();
+//			}
+//		}
+//		return result;
 	}
 
 	public Object getDirection(String from, String to, Map<String, String> conditions) throws JSONException {

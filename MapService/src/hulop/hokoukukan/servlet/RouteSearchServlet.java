@@ -149,6 +149,8 @@ public class RouteSearchServlet extends HttpServlet {
 			if (bean == null) {
 				response.sendError(HttpServletResponse.SC_REQUEST_TIMEOUT, "Please restart session");
 				return;
+			} else {
+				reStart = reStart || !bean.isValid();
 			}
 
 			if (reStart) {

@@ -113,6 +113,10 @@ public class RouteData {
 		}
 	}
 
+	public static boolean isCacheValid(RouteData rd) {
+		return gRouteCache.contains(rd);
+	}
+
 	public RouteData(double[] center, double distance) throws JSONException {
 		mCenter = center;
 		mRange = distance;
