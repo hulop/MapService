@@ -208,3 +208,6 @@ HULOP\_SCREEN\_FILTER\_NO\_BUTTON=true (default: false)
 
 ACCEPT\_IP\_ADDRESS=Regular expression (no default)
 - Allow administration access only from certain IP Address
+
+SERVICE\_TIME\_DIFF=UTC time offset in minutes (no default)
+- set this value to apply service limitation date and time on route search
