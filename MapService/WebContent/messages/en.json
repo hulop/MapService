@@ -85,6 +85,7 @@
 	"PRESET": "Preset:",
 	"HEALTHY": "General pedestrian",
 	"WHEELCHAIR": "Wheelchair user",
+	"STROLLER": "Stroller user",
 	"CUSTOM": "Customize",
 	"MIN_WIDTH": "Minimum width:",
 	"MIN_WIDTH_1": "More than 2m",

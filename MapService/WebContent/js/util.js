@@ -110,6 +110,16 @@ $hulop.util = function() {
 				$('#mvw').val('1');
 				$('#elv').val('2');
 				break;
+			case '3':
+				$('#min_width').val('3');
+				$('#slope').val('9');
+				$('#road_condition').val('1');
+				$('#stairs').val('1');
+				$('#deff_LV').val('3');
+				$('#esc').val('1');
+				$('#mvw').val('9');
+				$('#elv').val('9');
+				break;
 			}
 			if (preset == '9') {
 				$('.custom_menues').show();
@@ -137,6 +147,9 @@ $hulop.util = function() {
 			break;
 		case 'user_wheelchair':
 			preset = '2';
+			break;
+		case 'user_stroller':
+			preset = '3';
 			break;
 		default:
 			return;
