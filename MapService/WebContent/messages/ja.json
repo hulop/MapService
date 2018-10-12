@@ -86,6 +86,7 @@
 	"PRESET": "プリセット:",
 	"HEALTHY": "一般歩行者",
 	"WHEELCHAIR": "車いす利用者",
+	"STROLLER": "ベビーカー利用者",
 	"CUSTOM": "カスタム",
 	"MIN_WIDTH": "最小幅員:",
 	"MIN_WIDTH_1": "3.0m以上",

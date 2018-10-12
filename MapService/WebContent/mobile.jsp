@@ -166,6 +166,7 @@ if (id == null || (agreeBean.isAgreementSupported() && !agreeBean.getAgreed(id))
 			<select data-mini="true" id="preset" name='preset'>
 					<option value="1" i18n selected>HEALTHY</option>
 					<option value="2" i18n>WHEELCHAIR</option>
+					<option value="3" i18n>STROLLER</option>
 					<option value="9" i18n>CUSTOM</option>
 			</select>
 			<div class="custom_menues">
