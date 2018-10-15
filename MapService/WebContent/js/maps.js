@@ -673,7 +673,14 @@ $hulop.map = function() {
 		}
 
 		try {
-			$('#wheelchair_mode').prop('checked', $hulop.util.getPreferences().preset == '2').flipswitch('refresh');
+//			$('#wheelchair_mode').prop('checked', $hulop.util.getPreferences().preset == '2').flipswitch('refresh');
+			var preset = $hulop.util.getPreferences().preset;
+			if (preset == '1' || preset == '2') {
+				$('#wheelchair_switch').show();
+				$('#wheelchair_mode').prop('checked', preset == '2').flipswitch('refresh');
+			} else {
+				$('#wheelchair_switch').hide();
+			}
 		} catch (e) {
 		}
 		console.log('showRoute');
