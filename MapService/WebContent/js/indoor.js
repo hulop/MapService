@@ -171,8 +171,8 @@ $hulop.indoor = function() {
 				'dist' : toiletDist
 			}, function(data) {
 				console.log('Get Toilets: ' + (new Date().getTime() - start) + 'ms');
-				for (var id in data) {
-					var site = data[id];
+				for (var id in data.siteMap) {
+					var site = data.siteMap[id];
 					var properties = site.properties;
 					var floors = [];
 					for (var key in properties) {

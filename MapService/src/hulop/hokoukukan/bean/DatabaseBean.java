@@ -105,27 +105,6 @@ public class DatabaseBean {
 		System.err.println("importNavcogJSON not supported");
 	}
 
-	private static String[] ID_KEYS = new String[] { "node_id", "link_id", "facil_id" };
-
-	private static void preInsert(Object json) {
-		if (json instanceof JSONObject) {
-			JSONObject obj = (JSONObject) json;
-			if (obj.has("properties")) {
-				try {
-					JSONObject p = obj.getJSONObject("properties");
-					for (String key : ID_KEYS) {
-						if (p.has(key)) {
-							((JSONObject) json).put("_id", p.getString(key));
-							break;
-						}
-					}
-				} catch (JSONException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-	}
-
 	public static void importMapData(File zipFile, File file, String dataType) {
 		final String dbDir = file.getName();
 		InputStream is = null;
@@ -272,6 +251,7 @@ public class DatabaseBean {
 		RouteData rd = RouteData.getCache(point, distance);
 		JSONArray features = rd.getFeatures();
 		JSONObject siteMap = new JSONObject();
+		JSONArray areaList = new JSONArray();
 		for (Object feature : features) {
 			try {
 				JSONObject properties = ((JSONObject) feature).getJSONObject("properties");
@@ -290,12 +270,17 @@ public class DatabaseBean {
 					} else {
 						siteMap.put(properties.getString("facil_id"), feature);
 					}
+				} else if (properties.has("hulop_area_id")) {
+					areaList.add(feature);
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
-		return siteMap;
+		JSONObject result = new JSONObject();
+		result.put("siteMap", siteMap);
+		result.put("areaList", areaList);
+		return result;
 	}
 
 	private static boolean flushWaiting = false;
