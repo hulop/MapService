@@ -29,6 +29,8 @@ $hulop.editor.importV1 = function(features) {
 					return '2018';
 				} else if (p['ノードID'] || p['リンクID'] || p['施設ID'] || p['出入口ID']) {
 					return 'H22';
+				} else if (p['hulop_area_id']) {
+					return p['category'] ? 'H22' : '2018';
 				}
 			}
 		}

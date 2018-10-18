@@ -25,7 +25,7 @@ window.$hulop || eval('var $hulop={};');
 $hulop.indoor = function() {
 
 	var overlayMap = {}, floors = [], activeFloor = null, activeFloorName = null, enabled = false, styleOptions;
-	var map, floorButton, toiletMarkers = [];
+	var map, floorButton, toiletMarkers = [], buildings = [], lastBuilding;
 
 	var toiletImage = new ol.style.Style({
 		'image' : new ol.style.Icon({
@@ -200,15 +200,25 @@ $hulop.indoor = function() {
 				}
 				console.log(toiletMarkers.length + ' accessible toilets');
 				showToilets(getCurrentFloor());
+				buildings = (data.areaList || []).filter(function(feature) {
+					return !(feature.properties.hulop_area_localization || feature.properties.hulop_area_navigation);
+				}).map(function(feature) {
+					return {
+						'polygon' : new ol.geom.Polygon(feature.geometry.coordinates),
+						'building' : feature.properties.hulop_area_name
+					};
+				}).sort(function(a, b) {
+					return a.polygon.getArea() - b.polygon.getArea();
+				});
 			});
 		}
 		$hulop.util.isMobile() && initToilets();
 	}
 
 	function showFloor(floor) {
-//		if (floor && floor % 1 != 0) {
-//			return;
-//		}
+// if (floor && floor % 1 != 0) {
+// return;
+// }
 		floors = [];
 		var activeMaps = [];
 		var zoom = map.getView().getZoom();
@@ -298,6 +308,22 @@ $hulop.indoor = function() {
 		return (index != -1) && (index == 0 || floors[index - 1] < height) && (index == floors.length - 1 || height < floors[index + 1]) 
 	}
 
+	function onLog(data) {
+		if (data.event == 'location') {
+			for (var i = 0; i < buildings.length; i++) {
+				var bdg = buildings[i];
+				if (bdg.polygon.intersectsCoordinate([ data.longitude, data.latitude ])) {
+					data.building = bdg.building;
+					break;
+				}
+			}
+			if (lastBuilding != data.building) {
+				lastBuilding = data.building;
+				$hulop.util.logText('buildingChanged,' + JSON.stringify(data));
+			}
+		}
+	}
+
 	return {
 		'setStyle' : function(style) {
 			styleOptions = style;
@@ -308,7 +334,8 @@ $hulop.indoor = function() {
 		'showFloor' : showFloor,
 		'getCurrentFloor' : getCurrentFloor,
 		'getFloorName' : getFloorName,
-		'isVisible' : isVisible
+		'isVisible' : isVisible,
+		'onLog' : onLog
 	};
 
 }();
