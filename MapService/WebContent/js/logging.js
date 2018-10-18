@@ -91,6 +91,7 @@ $hulop.logging = function() {
 	}
 
 	function onData(data) {
+		$hulop.indoor && $hulop.indoor.onLog(data);
 		if (clientId && intervalId) {
 			data.client = clientId;
 			logData.push(data);

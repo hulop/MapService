@@ -455,14 +455,17 @@ $hulop.editor = function() {
 	}
 
 	function getEventFeature(event) {
-		var ignore;
+		var candidate;
 		return map.forEachFeatureAtPixel(event.pixel, function(feature) {
+			candidate = candidate || null;
 			if (feature.getId()) {
-				// console.log(event.type + ' @ ' + feature.getId());
-				return feature;
+				if (!feature.getGeometry().getArea) {
+					return feature;
+				} else if (!candidate || feature.getGeometry().getArea() < candidate.getGeometry().getArea()) {
+					candidate = feature;
+				}
 			}
-			ignore = null;
-		}) || ignore;
+		}) || candidate;
 	}
 
 	function splitLink(event) {

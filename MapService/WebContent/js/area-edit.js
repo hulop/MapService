@@ -38,6 +38,13 @@ $hulop.area = function() {
 		}),
 		'zIndex' : -9
 	});
+	var buildingStyle = new ol.style.Style({
+		'stroke' : new ol.style.Stroke({
+			'color' : 'rgba(255, 0, 0, 1)',
+			'width' : 1.5
+		}),
+		'zIndex' : -9.5
+	});
 	var selectStyle = new ol.style.Style({
 		'fill' : new ol.style.Fill({
 			'color' : 'rgba(255, 255, 255, 0.5)'
@@ -90,7 +97,7 @@ $hulop.area = function() {
 			return feature[area_id] || feature.get(area_id);
 		},
 		'getStyle' : function(feature) {
-			return style;
+			return feature.get('hulop_area_localization') || feature.get('hulop_area_navigation') ? style : buildingStyle;
 		},
 		'getSelectStyle' : function(feature) {
 			return selectStyle;
