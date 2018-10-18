@@ -299,6 +299,7 @@ public class DatabaseBean {
 		RouteData rd = RouteData.getCache(point, distance);
 		JSONArray features = rd.getFeatures();
 		JSONObject siteMap = new JSONObject();
+		JSONArray areaList = new JSONArray();
 		for (Object feature : features) {
 			try {
 				JSONObject properties = ((JSONObject)feature).getJSONObject("properties");
@@ -315,6 +316,8 @@ public class DatabaseBean {
 					} else {
 						siteMap.put(properties.getString("施設ID"), feature);
 					}
+				} else if (properties.has("hulop_area_id")) {
+					areaList.add(feature);
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -346,6 +349,7 @@ public class DatabaseBean {
 		result.put("exitList", exitList);
 		result.put("nodeMap", nodeMap);
 		result.put("siteMap", siteMap);
+		result.put("areaList", areaList);
 		return result;
 	}
 
