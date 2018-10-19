@@ -96,18 +96,17 @@ $hulop.area = function() {
 		'getId' : function(feature) {
 			return feature[area_id] || feature.get(area_id);
 		},
-		'getStyle' : function(feature) {
-			return feature.get('hulop_area_localization') || feature.get('hulop_area_navigation') ? style : buildingStyle;
+		'getStyle' : function(feature, floor) {
+			var height = feature.get('hulop_area_height');
+			if (height == null || height === '' || floor == 0 || floor == height) {
+				return feature.get('hulop_area_localization') || feature.get('hulop_area_navigation') ? style : buildingStyle;
+			}
 		},
 		'getSelectStyle' : function(feature) {
 			return selectStyle;
 		},
 		'getCategory' : function(feature) {
 			return category;
-		},
-		'getHeights' : function(feature) {
-			var height = Number(feature.get('hulop_area_height'));
-			return height ? [ height ] : [];
 		},
 		'modifyCondition' : function(event, isVertex) {
 			return isVertex || ol.events.condition.altKeyOnly(event);
