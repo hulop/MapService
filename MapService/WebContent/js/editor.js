@@ -1145,9 +1145,11 @@ $hulop.editor = function() {
 	}
 
 	function getStyle(feature) {
-		var style;
-		var heights = getHeights(feature);
 		var floor = getFloor();
+		if ($hulop.area.getId(feature)) {
+			return $hulop.area.getStyle(feature, floor);
+		}
+		var style, heights = getHeights(feature);
 		var odd = heights.length > 0 && Math.round(Math.abs(heights[0])) % 2 == 1;
 		if (heights.length > 0 && heights[0] > 0) {
 			odd = !odd;
@@ -1258,9 +1260,6 @@ $hulop.editor = function() {
 			});
 		} else if (feature.get('施設ID')) {
 			style = styles.marker;
-		} else if ($hulop.area.getId(feature)) {
-			style = $hulop.area.getStyle(feature);
-			heights = $hulop.area.getHeights(feature);
 		} else {
 			console.log(feature);
 		}
