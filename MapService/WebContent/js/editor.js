@@ -1353,7 +1353,7 @@ $hulop.editor = function() {
 		var count = 0;
 	    ignoreChange = true;
 		try {
-		    $hulop.map.getRouteLayer().getSource().getFeatures().forEach(function(feature) {
+		    source.getFeatures().forEach(function(feature) {
 		        feature.getGeometry().translate(deltaX, deltaY);
 		        count++;
 		    });
