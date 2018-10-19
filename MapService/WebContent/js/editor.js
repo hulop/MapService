@@ -1320,7 +1320,27 @@ $hulop.editor = function() {
 		return heights;
 	}
 
+	var ignoreChange = false;
+	window.translateAll = function(deltaX, deltaY) {
+		var count = 0;
+	    ignoreChange = true;
+		try {
+		    $hulop.map.getRouteLayer().getSource().getFeatures().forEach(function(feature) {
+		        feature.getGeometry().translate(deltaX, deltaY);
+		        count++;
+		    });
+		} finally {
+		    ignoreChange = false;
+		}
+		return count;
+	};
+
 	function geometryChanged(feature) {
+		if (ignoreChange) {
+			syncLatlng(feature);
+			setModified(feature);
+			return;
+		}
 		var nodeID = feature.get('ノードID');
 		if (nodeID) {
 			var nodeCoordinate = feature.getGeometry().getCoordinates();
