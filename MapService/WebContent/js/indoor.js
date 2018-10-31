@@ -256,7 +256,6 @@ $hulop.indoor = function() {
 		});
 		var lastFloor = getCurrentFloor();
 		activeFloor = floor;
-		floorButton.text(getFloorName());
 		if (floors.length > 0) {
 			$('.floorToggle').show();
 			enabled = true;
@@ -265,6 +264,7 @@ $hulop.indoor = function() {
 			enabled = false;
 			activeFloor = null;
 		}
+		floorButton.text(getFloorName());
 		if (lastFloor != getCurrentFloor()) {
 			$hulop.map.refresh();
 			showToilets(getCurrentFloor());
