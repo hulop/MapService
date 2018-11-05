@@ -85,6 +85,7 @@
 	"PRESET": "预设:",
 	"HEALTHY": "一般歩行者",
 	"WHEELCHAIR": "轮椅使用者",
+	"STROLLER": "婴儿推车用户",
 	"CUSTOM": "定制",
 	"MIN_WIDTH": "最小宽度:",
 	"MIN_WIDTH_1": "3.0m以上",
