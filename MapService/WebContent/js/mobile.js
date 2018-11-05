@@ -22,6 +22,10 @@
  ******************************************************************************/
 window.$hulop || eval('var $hulop={};');
 
+setTimeout(function() {
+	$hulop.mobile_location = true;
+}, 5 * 1000);
+
 $hulop.mobile_ready = function(bridge) {
 	$hulop.mobile = function() {
 		/**
@@ -120,6 +124,7 @@ $hulop.mobile_ready = function(bridge) {
 				}
 				showDebugInfo(dataList);
 				initBiasButon();
+				$hulop.mobile_location = true;
 				return;
 			}
 			if (dataList.length > 0) {
@@ -247,6 +252,10 @@ $(document).on('pageinit', function(event) {
 			var map = $hulop.map && $hulop.map.getMap();
 			if (!map) {
 				setTimeout(navigate, 1000);
+				return;
+			}
+			if (!$hulop.mobile_location) {
+				setTimeout(navigate, 100);
 				return;
 			}
 			var now = new Date().getTime();
