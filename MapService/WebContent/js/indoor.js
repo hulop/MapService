@@ -239,7 +239,7 @@ $hulop.indoor = function() {
 				floors.indexOf(ov.floor) < 0 && floors.push(ov.floor);
 			}
 		}
-		if (floor && activeMaps.length == 0) {
+		if (floor && activeMaps.length == 0 && floors.length > 0) {
 			return;
 		}
 		activeFloorName = null;
