@@ -1293,6 +1293,9 @@ $hulop.editor = function() {
 			});
 		} else if (feature.get('facil_id')) {
 			style = styles.marker;
+			if (feature == editingFeature) {
+				floor = 0;
+			}
 		} else {
 			console.log(feature);
 		}
@@ -1721,6 +1724,7 @@ $hulop.editor = function() {
 	function showProperty(feature) {
 		// console.log('showProperty ' + (feature && feature.getId()));
 		$('#properties').empty();
+		editingFeature && editingFeature != feature && editingFeature.changed();
 		editingFeature = feature;
 		$hulop.editor.editingFeature = feature; // for debug
 		var selectFeatures = select.getFeatures();
