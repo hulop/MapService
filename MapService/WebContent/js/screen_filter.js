@@ -27,6 +27,9 @@ $hulop.screen_filter = function() {
 	var button, a;
 
 	function onUpdateLocation(crd) {
+		if ($hulop.mobile && $hulop.mobile.getPreference('user_mode') == 'user_blind') {
+			return;
+		}
 		var start_timer = $hulop.config.SCREEN_FILTER_START_TIMER;
 		var walk_speed = $hulop.config.SCREEN_FILTER_SPEED;
 		if (!(start_timer && walk_speed && crd.provider == 'bleloc')) {
