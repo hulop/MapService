@@ -78,6 +78,7 @@
 	"UP":"Go up %1",
 	"DOWN":"Go down %1",
 	"REMAIN_DIST": "About %1m remaining",
+	"DONT_LOOK_WHILE_WALKING": "Looking at your smartphone while walking is dangerous. Please stop at a safe place and then operate the app.",
 	"DIST": "Search Range:",
 	"DIST_250": "250m",
 	"DIST_500": "500m",
