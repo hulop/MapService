@@ -24,7 +24,9 @@ var $names = [ '施設ID', 'floors', 'entrances', 'building', 'major_category', 
 var $numbers = [];
 $names = $names.concat([ '名称', '名称:ja', '名称:ja-Pron', '名称:en', '名称:es', '名称:fr', '名称:ko', '名称:zh-CN' ]);
 $names = $names.concat([ 'long_description', 'long_description:ja', 'long_description:ja-Pron', 'long_description:en',
-		'long_description:es', 'long_description:fr', 'long_description:ko', 'long_description:zh-CN' ]);
+	'long_description:es', 'long_description:fr', 'long_description:ko', 'long_description:zh-CN' ]);
+$names = $names.concat([ 'short_description', 'short_description:ja', 'short_description:ja-Pron', 'short_description:en',
+	'short_description:es', 'short_description:fr', 'short_description:ko', 'short_description:zh-CN' ]);
 var $exit_names = [ '対応ノードID', '高さ', '出入口の名称', '出入口の名称:ja', '出入口の名称:ja-Pron', '出入口の名称:en', '出入口の名称:es', '出入口の名称:fr', '出入口の名称:ko',
 		'出入口の名称:zh-CN' ];
 var $facil_filter = [ '施設ID', '名称:ja', '名称:en' ];
