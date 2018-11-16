@@ -27,6 +27,9 @@ $names = $names.concat([ 'name_ja', 'name_hira', 'name_en', 'name_es', 'name_fr'
 $names = $names.concat([ 'hulop_long_description', 'hulop_long_description_ja', 'hulop_long_description_hira',
 		'hulop_long_description_en', 'hulop_long_description_es', 'hulop_long_description_fr', 'hulop_long_description_ko',
 		'hulop_long_description_zh-CN' ]);
+$names = $names.concat([ 'hulop_short_description', 'hulop_short_description_ja', 'hulop_short_description_hira',
+		'hulop_short_description_en', 'hulop_short_description_es', 'hulop_short_description_fr', 'hulop_short_description_ko',
+		'hulop_short_description_zh-CN' ]);
 var $exit_names = [ 'ent#_node', 'ent#_fl', 'ent#_n', 'ent#_n_ja', 'ent#_n_hira', 'ent#_n_en', 'ent#_n_es', 'ent#_n_fr',
 		'ent#_n_ko', 'ent#_n_zh-CN' ];
 var $facil_filter = [ 'facil_id', 'name_ja', 'name_en' ];

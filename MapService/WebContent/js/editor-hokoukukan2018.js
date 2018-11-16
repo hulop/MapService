@@ -571,6 +571,18 @@ $hulop.editor.importV1 = function(features) {
 			case 'long_description:ja-Pron':
 				set(tp, 'hulop_long_description_hira', kana2hira(value));
 				break;
+			case 'short_description':
+			case 'short_description:ja':
+			case 'short_description:en':
+			case 'short_description:es':
+			case 'short_description:fr':
+			case 'short_description:ko':
+			case 'short_description:zh-CN':
+				set(tp, i18Name(name, 'hulop_short_description'), value);
+				break;
+			case 'short_description:ja-Pron':
+				set(tp, 'hulop_short_description_hira', kana2hira(value));
+				break;
 			case 'heading':
 			case 'angle':
 			case 'height':
