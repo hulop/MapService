@@ -58,7 +58,7 @@ public class RouteData {
 		if (now > gNextCheck) {
 			gNextCheck = now + 60 * 1000;
 			try {
-				JSONObject updated_obj = adapter.find("last_updated");
+				JSONObject updated_obj = getLastUpdated();
 				if (updated_obj != null && !updated_obj.toString().equals(gLastUpdated)) {
 					clearRouteCache();
 				}
@@ -91,7 +91,7 @@ public class RouteData {
 
 	public static void onUpdate() {
 		try {
-			JSONObject obj = adapter.find("last_updated");
+			JSONObject obj = getLastUpdated();
 			if (obj == null) {
 				obj = new JSONObject().put("_id", "last_updated");
 			}
@@ -107,10 +107,14 @@ public class RouteData {
 			gRouteCache.clear();
 		}
 		try {
-			gLastUpdated = adapter.find("last_updated").toString();
+			gLastUpdated = getLastUpdated().toString();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	public static JSONObject getLastUpdated() {
+		return adapter.find("last_updated");
 	}
 
 	public static boolean isCacheValid(RouteData rd) {
@@ -232,6 +236,7 @@ public class RouteData {
 				}
 			} else if (properties.has("施設ID")) {
 				String name = i18.getI18n(properties, "名称");
+				String short_description = i18.getI18n(properties, "short_description");
 				String name_pron = i18.getI18nPron(properties, "名称");
 				String facil_id = properties.getString("施設ID");
 				if (mFacilEntrances.has(facil_id)) {
@@ -245,6 +250,9 @@ public class RouteData {
 						if (n != null) {
 							JSONObject poi = new JSONObject().put("category", category).put("name", name)
 									.put("name_pron", name_pron).put("node", n).put("properties", properties);
+							if (short_description.length() > 0) {
+								poi.put("short_description", short_description);
+							}
 							poi.put("geometry", json.get("geometry"));
 							if (i18.hasI18n(p, "出入口の名称")) {
 								String exit = i18.getI18n(p, "出入口の名称");
