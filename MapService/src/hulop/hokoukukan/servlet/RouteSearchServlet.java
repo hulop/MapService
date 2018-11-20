@@ -98,12 +98,29 @@ public class RouteSearchServlet extends HttpServlet {
 		}
 
 		try {
+			if ("last_updated".equals(action)) {
+				sendJSON(RouteData.getLastUpdated(), request, response);
+				return;
+			}
+			String sLat = request.getParameter("lat");
+			String sLng = request.getParameter("lng");
+			String sDist = request.getParameter("dist");
+			String lang = request.getParameter("lang");
+			double lat = sLat == null ? -1 : Double.parseDouble(sLat);
+			double lng = sLng == null ? -1 : Double.parseDouble(sLng);
+			double dist = sDist == null ? -1 : Double.parseDouble(sDist);
+			if ("landmarks".equals(action) && lang != null) {
+				JSONObject obj = new JSONObject().put("last_updated", RouteData.getLastUpdated());
+				RouteData rd = RouteData.getCache(new double[] { lng, lat }, dist);
+				for (String l : lang.split(",")) {
+					obj.put(l.trim(), rd.getLandmarks(l));
+				}
+				sendJSON(obj, request, response);
+				return;
+			}
 			Object result = null;
 			if ("toilets".equals(action) || "facilities".equals(action)) {
 				DBAdapter.GeometryType type = "toilets".equals(action) ? DBAdapter.GeometryType.TOILETS : DBAdapter.GeometryType.FACILITIES;
-				double lat = Double.parseDouble(request.getParameter("lat"));
-				double lng = Double.parseDouble(request.getParameter("lng"));
-				double dist = Double.parseDouble(request.getParameter("dist"));
 				result = DatabaseBean.getFacilities(new double[] { lng, lat }, dist, type);
 				if (result != null) {
 					sendJSON(result, request, response);
@@ -114,7 +131,6 @@ public class RouteSearchServlet extends HttpServlet {
 			RouteSearchBean bean = null;
 			JSONObject params = null;
 			boolean reStart = false;
-			String lang = request.getParameter("lang");
 			if (lang == null) {
 				System.err.println("No lang parameter on routesearch");
 				lang = "en";
@@ -133,9 +149,9 @@ public class RouteSearchServlet extends HttpServlet {
 				params = startMap.get(user);
 				if ("start".equals(action)) {
 					params = new JSONObject();
-					params.put("lat", Double.parseDouble(request.getParameter("lat")));
-					params.put("lng", Double.parseDouble(request.getParameter("lng")));
-					params.put("dist", Double.parseDouble(request.getParameter("dist")));
+					params.put("lat", lat);
+					params.put("lng", lng);
+					params.put("dist", dist);
 					params.put("cache", !"false".equals(request.getParameter("cache")));
 					startMap.put(user, params);
 					reStart = true;
