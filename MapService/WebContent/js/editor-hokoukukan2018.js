@@ -559,6 +559,15 @@ $hulop.editor.importV1 = function(features) {
 			case 'poi_external_category':
 				set(tp, 'hulop_' + name, value);
 				break;
+			case 'content':
+			case 'content:ja':
+			case 'content:en':
+			case 'content:es':
+			case 'content:fr':
+			case 'content:ko':
+			case 'content:zh-CN':
+				set(tp, i18Name(name, 'hulop_content'), value);
+				break;
 			case 'long_description':
 			case 'long_description:ja':
 			case 'long_description:en':

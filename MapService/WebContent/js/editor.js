@@ -30,7 +30,7 @@ $hulop.editor = function() {
 			result.push('group:I18N_' + lang);
 			properties.forEach(function(p) {
 				result.push(p + '_' + lang);
-				lang == 'ja' && result.push(p + '_hira');
+				p != 'hulop_content' && lang == 'ja' && result.push(p + '_hira');
 			});
 		});
 		return result;
@@ -59,8 +59,8 @@ $hulop.editor = function() {
 		'group:LAYER2',
 		'name_hira', 'fax', 'mail', 'start_time', 'end_time', 'no_serv_d', 'info', 'info_board', 'move_floor',
 		'group:LAYER3',
-		'hulop_building', 'hulop_major_category', 'hulop_sub_category', 'hulop_minor_category', 'hulop_heading', 'hulop_angle', 'hulop_height', 'hulop_long_description', 'hulop_short_description', 'hulop_description', 'hulop_location_description', 'hulop_tags', 'hulop_poi_external_category', 'hulop_show_labels_zoomlevel' ]
-		.concat(i18nMenu([ 'name', 'address', 'med_dept', 'hulop_long_description', 'hulop_short_description', 'hulop_description', 'hulop_location_description' ]));
+		'hulop_building', 'hulop_major_category', 'hulop_sub_category', 'hulop_minor_category', 'hulop_heading', 'hulop_angle', 'hulop_height', 'hulop_long_description', 'hulop_short_description', 'hulop_description', 'hulop_location_description', 'hulop_content', 'hulop_tags', 'hulop_poi_external_category', 'hulop_show_labels_zoomlevel' ]
+		.concat(i18nMenu([ 'name', 'address', 'med_dept', 'hulop_long_description', 'hulop_short_description', 'hulop_description', 'hulop_location_description', 'hulop_content' ]));
 
 	$hulop.area.setPropertyNames(PROPERTY_NAMES);
 	console.log(PROPERTY_NAMES);
@@ -85,7 +85,7 @@ $hulop.editor = function() {
 	var OPTIONAL_KEYS = /^(link\d+_id)$/;
 	var READONLY_KEYS = /^(node_id|lat|lon|link_id|start_id|end_id|distance|facil_id|link\d+_id|ent\d+_lat|ent\d+_lon|ent\d_fl|ent\d_node|geometry)$/;
 	var NOCOPY_KEYS = /^(ent\d+_.*)$/;
-	var STRING_KEYS = /^(link_id|start_id|end_id|start_time|end_time|start_date|end_date|no_serv_d|st_name(_.+)?|node_id|link\d+_id|facil_id|name(_.+)?|address(_.+)?|tel|fax|mail|close_day|med_dept(_.+)?|ent\d+_n(_.+)?|ent\d+_node|hulop_file|hulop_building|hulop_major_category|hulop_sub_category|hulop_minor_category|hulop_elevator_equipments|hulop_long_description(_.+)?|hulop_short_description(_.+)?|hulop_description(_.+)?|hulop_location_description(_.+)?|hulop_tags|hulop_poi_external_category)$/;
+	var STRING_KEYS = /^(link_id|start_id|end_id|start_time|end_time|start_date|end_date|no_serv_d|st_name(_.+)?|node_id|link\d+_id|facil_id|name(_.+)?|address(_.+)?|tel|fax|mail|close_day|med_dept(_.+)?|ent\d+_n(_.+)?|ent\d+_node|hulop_file|hulop_building|hulop_major_category|hulop_sub_category|hulop_minor_category|hulop_elevator_equipments|hulop_long_description(_.+)?|hulop_short_description(_.+)?|hulop_description(_.+)?|hulop_location_description(_.+)?|hulop_content(_.+)?|hulop_tags|hulop_poi_external_category)$/;
 	var MAX_INDEX = 99;
 	var downKey, keyState = {}, ADD_KEY = 65, DO_POI_KEY = 68, SPLIT_KEY = 83, COPY_KEY = 67, PASTE_KEY = 86;
 	var lastData, map, source, select, modify, callback, start_feature, poi_lines, editingFeature, editingProperty, clipboardFeature;
