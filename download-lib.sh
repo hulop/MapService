@@ -1,10 +1,10 @@
 pwd=`pwd`
 
 cd ./MapService/WebContent
-curl -L -O https://github.com/openlayers/openlayers/releases/download/v4.6.4/v4.6.4-dist.zip
-unzip -o v4.6.4-dist.zip && rm v4.6.4-dist.zip
-rm -rf openlayers/v4.6.4
-mv v4.6.4-dist openlayers/v4.6.4
+curl -L -O https://github.com/openlayers/openlayers/releases/download/v4.6.5/v4.6.5-dist.zip
+unzip -o v4.6.5-dist.zip && rm v4.6.5-dist.zip
+rm -rf openlayers/v4.6.5
+mv v4.6.5-dist openlayers/v4.6.5
 
 cd jquery
 curl -L -O https://code.jquery.com/jquery-1.11.3.min.js
