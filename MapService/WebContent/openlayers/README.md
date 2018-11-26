@@ -25,4 +25,4 @@ SOFTWARE.
 
 The following files/directories should be placed here.
 
-- v4.6.4/ directory
+- v4.6.5/ directory
