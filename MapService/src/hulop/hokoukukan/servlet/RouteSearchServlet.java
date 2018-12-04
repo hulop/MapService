@@ -27,6 +27,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Pattern;
 import java.util.zip.GZIPOutputStream;
 
 import javax.servlet.ServletException;
@@ -273,5 +274,17 @@ public class RouteSearchServlet extends HttpServlet {
 			e.printStackTrace();
 		}
 		return defaultValue;
+	}
+
+	private static final Pattern patTW = Pattern.compile("^zh-(Hant|HK|TW|MO)", Pattern.CASE_INSENSITIVE);
+	private static String langFilter(String lang) {
+		if (lang != null) {
+			if (patTW.matcher(lang).find()) {
+				lang = "zh-TW";
+			} else if ("zh".equals(lang = lang.substring(0, 2))) {
+				lang = "zh-CN";
+			}
+		}
+		return lang;
 	}
 }

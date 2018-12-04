@@ -25,12 +25,10 @@ window.$hulop || eval('var $hulop={};');
 $hulop.messages = function() {
 	var messages = {};
 	var defaultLang = ((navigator.languages && navigator.languages[0]) || navigator.browserLanguage || navigator.language || navigator.userLanguage || 'en');
-	if (/^zh-(Hans|SG|CN)/.test(defaultLang)) {
-		defaultLang = 'zh-CN';
-	} else if (/^zh-(Hant|HK|TW|MO)/.test(defaultLang)) {
+	if (/^zh-(Hant|HK|TW|MO)/i.test(defaultLang)) {
 		defaultLang = 'zh-TW';
-	} else {
-		defaultLang = defaultLang.substr(0, 2);
+	} else if ('zh' == (defaultLang = defaultLang.substr(0, 2))) {
+		defaultLang = 'zh-CN';
 	}
 
 	function loadMessages(language) {
