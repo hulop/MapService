@@ -97,6 +97,7 @@ public class RouteSearchServlet extends HttpServlet {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid user or action");
 			return;
 		}
+		System.out.println("routesearch action=" + action + " user=" + user);
 
 		try {
 			if ("last_updated".equals(action)) {
@@ -111,6 +112,12 @@ public class RouteSearchServlet extends HttpServlet {
 			double lng = sLng == null ? -1 : Double.parseDouble(sLng);
 			double dist = sDist == null ? -1 : Double.parseDouble(sDist);
 			if ("landmarks".equals(action) && lang != null) {
+				JSONObject params = new JSONObject();
+				params.put("lat", lat);
+				params.put("lng", lng);
+				params.put("dist", dist);
+				params.put("cache", !"false".equals(request.getParameter("cache")));
+				startMap.put(user, params);
 				JSONObject obj = new JSONObject().put("last_updated", RouteData.getLastUpdated());
 				RouteData rd = RouteData.getCache(new double[] { lng, lat }, dist);
 				for (String l : lang.split(",")) {
