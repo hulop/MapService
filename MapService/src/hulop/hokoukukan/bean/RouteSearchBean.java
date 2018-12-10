@@ -155,11 +155,13 @@ public class RouteSearchBean {
 		private JSONArray result = new JSONArray();
 		private String from, to;
 		private Map<String, String> conditions;
+		private final double elevator_weight;
 
 		public DirectionHandler(String from, String to, Map<String, String> conditions) {
 			this.from = from;
 			this.to = to;
 			this.conditions = conditions;
+			this.elevator_weight = ELEVATOR_WEIGHT * ("8".equals(conditions.get("elv")) ? 10 : 1);
 		}
 
 		public void add(Object feature) throws JSONException {
@@ -174,7 +176,7 @@ public class RouteSearchBean {
 					}
 				} catch (Exception e) {
 				}
-				weight = adjustAccWeight(properties, conditions, weight);
+				weight = adjustAccWeight(properties, weight);
 				if (weight == WEIGHT_IGNORE) {
 					return;
 				}
@@ -211,12 +213,12 @@ public class RouteSearchBean {
 					break;
 				}
 				if (startEnd != null) {
-					double add = !mElevatorNodes.contains(start) && mElevatorNodes.contains(end) ? ELEVATOR_WEIGHT : 0;
+					double add = !mElevatorNodes.contains(start) && mElevatorNodes.contains(end) ? elevator_weight : 0;
 					g.setEdgeWeight(startEnd, weight + add);
 					linkMap.put(startEnd, json);
 				}
 				if (endStart != null) {
-					double add = mElevatorNodes.contains(start) && !mElevatorNodes.contains(end) ? ELEVATOR_WEIGHT : 0;
+					double add = mElevatorNodes.contains(start) && !mElevatorNodes.contains(end) ? elevator_weight : 0;
 					g.setEdgeWeight(endStart, weight + add);
 					linkMap.put(endStart, json);
 				}
@@ -297,7 +299,7 @@ public class RouteSearchBean {
 			return result;
 		}
 
-		private double adjustAccWeight(JSONObject properties, Map<String, String> conditions, double weight)
+		private double adjustAccWeight(JSONObject properties, double weight)
 				throws JSONException {
 
 			int route_type = getCode(properties, "route_type", 100);
@@ -447,13 +449,10 @@ public class RouteSearchBean {
 					if (elevator == 2 || elevator == 3 || elevator == 4 || elevator == 5) {
 						return WEIGHT_IGNORE;
 					}
+					break;
 				case "2": // Wheel chair supported
 					if (elevator == 2 || elevator == 4) {
 						return WEIGHT_IGNORE;
-					}
-				case "8": // Avoid
-					if (elevator == 2 || elevator == 3 || elevator == 4 || elevator == 5) {
-						weight += penarty;
 					}
 					break;
 				}
@@ -466,6 +465,7 @@ public class RouteSearchBean {
 					if (route_type == 5) {
 						return WEIGHT_IGNORE;
 					}
+					break;
 				case "8": // Avoid
 					if (route_type == 5) {
 						weight += penarty;
@@ -481,6 +481,7 @@ public class RouteSearchBean {
 					if (route_type == 2) {
 						return WEIGHT_IGNORE;
 					}
+					break;
 				case "8": // Avoid
 					if (route_type == 2) {
 						weight += penarty;
