@@ -460,6 +460,18 @@
 				"name": "Node ID of entrance #",
 				"desc": "Node ID of entrance"
 			}
+		},
+		"area":
+		{
+			"hulop_area_name": {
+				"desc": "specify area name (building name, area name, etc.)"
+			},
+			"hulop_area_localization": {
+				"desc": "0/empty: (do nothing), 1: not supported, 2: supported"
+			},
+			"hulop_area_navigation": {
+				"desc": "0/empty: (do nothing), 1: not supported, 2: supported"
+			}
 		}
 	}
 }
