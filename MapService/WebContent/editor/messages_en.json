@@ -288,6 +288,13 @@
 			"診療科目": "1: internal medicine, 2: pediatrics, 3: surgery, 4: obstetrics and gynecology, 8: others",
 			"休診日": "closing days (1: Monday to 7: Sunday) if exists. Collection if several.",
 			"多目的トイレ": "0: no, 1: yes (no colostomy support), 2: yes (support for colostomy)"
+		},
+
+		"area":
+		{
+			"hulop_area_name": "specify area name (building name, area name, etc.)",
+			"hulop_area_localization": "0/empty: (do nothing), 1: not supported, 2: supported",
+			"hulop_area_navigation": "0/empty: (do nothing), 1: not supported, 2: supported"
 		}
 	}
 }

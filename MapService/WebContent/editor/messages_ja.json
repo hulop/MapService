@@ -288,6 +288,13 @@
 			"診療科目": "1：内科、2：小児科、3：外科、4：産婦人科、8：その他\n複数科の場合は数字の小さい順に続けて表記",
 			"休診日": "休診日のある場合、休診する曜日を数字に変換(1：月曜日～7：日曜日)し、複数曜日ある場合は数字の小さい順に続けて表記（診療科目ごとに休診日が異なる場合は別施設とする）",
 			"多目的トイレ": "0：なし、1：あり（オストメイト対応なし）、2：あり（オストメイト対応あり）"
+		},
+
+		"area":
+		{
+			"hulop_area_name": "specify area name (building name, area name, etc.)",
+			"hulop_area_localization": "0/empty: (do nothing), 1: not supported, 2: supported",
+			"hulop_area_navigation": "0/empty: (do nothing), 1: not supported, 2: supported"
 		}
 	}
 }
