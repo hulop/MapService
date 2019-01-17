@@ -82,8 +82,27 @@ $hulop.area = function() {
 		$hulop.editor.newFeaturteCreated(feature);
 	}
 
+	function clone(feature) {
+		if (feature && $hulop.area.getId(feature)) {
+			feature = feature.clone();
+			var id = 'EDITOR_' + category + '_' + new Date().getTime();
+			feature.setId(id);
+			feature.set(area_id, id);
+			var height = $hulop.indoor.getCurrentFloor() || 0;
+			if ($hulop.editor.version == 'h22') {
+				height = '' + height;
+			}
+			feature.set('hulop_area_height', height);
+			$hulop.map.getRouteLayer().getSource().addFeature(feature);
+			$hulop.editor.newFeaturteCreated(feature);
+		} else {
+			alert('Please select a source area to clone.');
+		}
+	}
+
 	return {
 		'addInteraction' : addInteraction,
+		'clone' : clone,
 		'setPropertyNames' : function(propertyNames) {
 			return propertyNames[category] = keys;
 		},

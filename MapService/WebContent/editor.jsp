@@ -87,6 +87,8 @@
 				<legend>More tools</legend>
 				Click <button onclick="$hulop.area.addInteraction()">add area</button> then draw polygon on the map. See <strong>(i18n_VERTEX)</strong> to edit vertex.
 				<hr>
+				Click <button onclick="$hulop.area.clone($hulop.editor.editingFeature)">clone area</button> to clone selected area to current floor.
+				<hr>
 				Use <button onclick="window.open('facil_name_editor.html','facil_name_editor','width=1600,height=900,resizable=yes,scrollbars=yes');">facility name editor</button> for translation.
 				<hr>
 				Create a node, then click <button onclick="$hulop.editor.ext.createElevator($hulop.editor.editingFeature)">create elevator</button> to create elevator links.
