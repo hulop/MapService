@@ -293,8 +293,8 @@
 		"area":
 		{
 			"hulop_area_name": "specify area name (building name, area name, etc.)",
-			"hulop_area_localization": "0/empty: (do nothing), 1: not supported, 2: supported",
-			"hulop_area_navigation": "0/empty: (do nothing), 1: not supported, 2: supported"
+			"hulop_area_localization": "1: not supported, 2: supported",
+			"hulop_area_navigation": "1: not supported, 2: supported"
 		}
 	}
 }
