@@ -262,6 +262,7 @@ public class RouteSearchBean {
 						for (DefaultWeightedEdge edge : path) {
 							JSONObject link = linkMap.get(edge);
 							try {
+								link = new JSONObject(link.toString()); // deep clone
 								JSONObject properties = link.getJSONObject("properties");
 								String edgeSource = g.getEdgeSource(edge);
 								String edgeTarget = g.getEdgeTarget(edge);
