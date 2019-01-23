@@ -200,7 +200,19 @@ public class RouteData {
 				e.printStackTrace();
 			}
 		}
-		return landMarks;
+		JSONArray result = new JSONArray();
+		for (JSONObject obj : (List<JSONObject>)landMarks) {
+			try {
+				if (!Hokoukukan.available(obj.getJSONObject("properties"))) {
+					(obj = (JSONObject)obj.clone()).put("disable", true);
+//					System.out.println("disable " + obj.opt("node"));
+				}
+				result.put(obj);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
+		return result;
 	}
 
 	public boolean includes(double[] center, double range) {
