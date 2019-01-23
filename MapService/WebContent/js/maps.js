@@ -1320,6 +1320,10 @@ $hulop.map = function() {
 		for (var i = 0; i < e.options.length; i++) {
 			var o = e.options[i];
 			options[i] = new Option(o.text, o.value, o.defaultSelected, o.selected);
+			var node = targetNodes[o.value];
+			if (node && node.disable) {
+				 options[i].disabled = true;
+			}
 		}
 		options.sort(function(a, b) {
 			var na = targetNodes[a.value], nb = targetNodes[b.value];
