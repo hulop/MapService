@@ -34,6 +34,7 @@ import org.apache.wink.json4j.JSONException;
 import org.apache.wink.json4j.JSONObject;
 
 import hulop.hokoukukan.utils.DBAdapter;
+import hulop.hokoukukan.utils.Hokoukukan;
 
 public class RouteData {
 
@@ -212,7 +213,19 @@ public class RouteData {
 				e.printStackTrace();
 			}
 		}
-		return landMarks;
+		JSONArray result = new JSONArray();
+		for (JSONObject obj : (List<JSONObject>)landMarks) {
+			try {
+				if (!Hokoukukan.available(obj.getJSONObject("properties"))) {
+					(obj = (JSONObject)obj.clone()).put("disable", true);
+//					System.out.println("disable " + obj.opt("node"));
+				}
+				result.put(obj);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
+		return result;
 	}
 
 	public boolean includes(double[] center, double range) {
