@@ -24,6 +24,7 @@ package hulop.hokoukukan.utils;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -33,7 +34,8 @@ import org.apache.wink.json4j.JSONObject;
 
 public class Hokoukukan {
 
-	private static final String no_serv_d = "no_serv_d", start_time = "start_time", end_time = "end_time";
+	private static final String no_serv_d = "no_serv_d", start_time = "start_time", end_time = "end_time",
+			start_date = "start_date", end_date = "end_date", business_hours = "business_hours";
 	private static final Pattern ENT_NODE = Pattern.compile("^(ent\\d+_)node$");
 
 	public static List<String> listEntrances(JSONObject properties) {
@@ -55,42 +57,62 @@ public class Hokoukukan {
 		} catch (Exception e) {
 		}
 	}
-	private static final Pattern PAT_TIME = Pattern.compile("^(\\d\\d)-?(\\d\\d)$");
-	private static final Pattern PAT_DATE = Pattern.compile("^(\\d+)$");
+	private static final Pattern PAT_TIME = Pattern.compile("^(\\d{2})-?(\\d{2})$");
+	private static final Pattern PAT_DAYS = Pattern.compile("^(\\d+)$");
+	private static final Pattern PAT_DATE = Pattern.compile("^(\\d{4})[ -](\\d{2})[ -](\\d{2})$");
 
 	public static boolean available(JSONObject properties) {
 		if (SERVICE_TIME_DIFF < Integer.MAX_VALUE) {
 			OffsetDateTime dt = OffsetDateTime.now(ZoneOffset.ofTotalSeconds(SERVICE_TIME_DIFF * 60));
-			int date = dt.getDayOfWeek().getValue();
-			int hour = dt.getHour();
-			int min = dt.getMinute();
 			try {
-				if (properties.has(no_serv_d)) {
-					Matcher m = PAT_DATE.matcher(properties.getString(no_serv_d));
+				Calendar today = Calendar.getInstance();
+				today.set(dt.getYear(), dt.getMonthValue(), dt.getDayOfMonth());
+				if (properties.has(start_date)) {
+					Matcher m = PAT_DATE.matcher(properties.getString(start_date));
 					if (m.matches()) {
-						for (char ch : m.group(1).toCharArray()) {
-							if (date == Character.getNumericValue(ch)) {
-								return false;
-							}
+						Calendar start = Calendar.getInstance();
+						start.set(Integer.parseInt(m.group(1)), Integer.parseInt(m.group(2)), Integer.parseInt(m.group(3)));
+						if (today.compareTo(start) < 0) {
+							return false;
 						}
 					}
 				}
-				if (properties.has(start_time)) {
-					Matcher m = PAT_TIME.matcher(properties.getString(start_time));
+				if (properties.has(end_date)) {
+					Matcher m = PAT_DATE.matcher(properties.getString(end_date));
 					if (m.matches()) {
-						int hh = Integer.parseInt(m.group(1));
-						if (hour < hh || (hour == hh && min < Integer.parseInt(m.group(2)))) {
+						Calendar end = Calendar.getInstance();
+						end.set(Integer.parseInt(m.group(1)), Integer.parseInt(m.group(2)), Integer.parseInt(m.group(3)));
+						if (today.compareTo(end) > 0) {
 							return false;
 						}
+					}
+				}
+				for (int i = 0; i < daySuffix.length; i++) {
+					String name = business_hours + daySuffix[i];
+					if (properties.has(name)) {
+						Boolean result = checkBusinessHour(dt, i, properties.getString(name));
+						if (result != null) {
+							return result;
+						}
+					}
+				}
+				if (properties.has(no_serv_d)) {
+					Matcher m = PAT_DAYS.matcher(properties.getString(no_serv_d));
+					if (m.matches() && m.group(1).indexOf('0' + dt.getDayOfWeek().getValue()) >= 0) {
+						return false;
+					}
+				}
+				int now = dt.getHour() * 60 + dt.getMinute();
+				if (properties.has(start_time)) {
+					Matcher m = PAT_TIME.matcher(properties.getString(start_time));
+					if (m.matches() && now < Integer.parseInt(m.group(1)) * 60 + Integer.parseInt(m.group(2))) {
+						return false;
 					}
 				}
 				if (properties.has(end_time)) {
 					Matcher m = PAT_TIME.matcher(properties.getString(end_time));
-					if (m.matches()) {
-						int hh = Integer.parseInt(m.group(1));
-						if (hour > hh || (hour == hh && min >= Integer.parseInt(m.group(2)))) {
-							return false;
-						}
+					if (m.matches() && now >= Integer.parseInt(m.group(1)) * 60 + Integer.parseInt(m.group(2))) {
+						return false;
 					}
 				}
 			} catch (Exception e) {
@@ -116,5 +138,50 @@ public class Hokoukukan {
 			}
 		}
 		return false;
+	}
+
+	private static final String daySuffix[] = new String[] { "", "_Mon", "_Tue", "_Wed", "_Thu", "_Fri", "_Sat", "_Sun" };
+	private static final Pattern PAT_DATES = Pattern.compile("^(\\d{4})/(\\d{2})/(\\d{2})_(\\d{2}):(\\d{2})-(\\d{2}):(\\d{2})$");
+	private static final Pattern PAT_TIMES = Pattern.compile("^(\\d{2}):(\\d{2})-(\\d{2}):(\\d{2})$");
+
+	private static Boolean checkBusinessHour(OffsetDateTime dt, int dayOfWeek, String items) {
+		int now = dt.getHour() * 60 + dt.getMinute();
+		Boolean result = null;
+		for (String item : items.split(",")) {
+			item = item.trim();
+			try {
+				if (dayOfWeek == 0) {
+					Matcher m = PAT_DATES.matcher(item);
+					if (m.matches() && dt.getYear() == Integer.parseInt(m.group(1))
+							&& dt.getMonthValue() == Integer.parseInt(m.group(2))
+							&& dt.getDayOfMonth() == Integer.parseInt(m.group(3))) {
+						result = now >= Integer.parseInt(m.group(4)) * 60 + Integer.parseInt(m.group(5))
+								&& now < Integer.parseInt(m.group(6)) * 60 + Integer.parseInt(m.group(7));
+					}
+				} else if (dayOfWeek == dt.getDayOfWeek().getValue()) {
+					Matcher m = PAT_TIMES.matcher(item);
+					if (m.matches()) {
+						result = now >= Integer.parseInt(m.group(1)) * 60 + Integer.parseInt(m.group(2))
+								&& now < Integer.parseInt(m.group(3)) * 60 + Integer.parseInt(m.group(4));
+					}
+				}
+				if (Boolean.TRUE.equals(result)) {
+					return result;
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return result;
+	}
+
+	public static void main(String[] args) throws Exception {
+		if (args.length > 0) {
+			SERVICE_TIME_DIFF = 540;
+			for (Object feature : new JSONObject(new java.io.FileInputStream(args[0])).getJSONArray("features")) {
+				JSONObject properties = ((JSONObject)feature).getJSONObject("properties");
+				System.out.println(available(properties) + " " + properties);
+			}
+		}
 	}
 }

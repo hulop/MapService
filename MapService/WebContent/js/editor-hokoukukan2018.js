@@ -353,6 +353,14 @@ $hulop.editor.importV1 = function(features) {
 				break;
 			case 'elevator_equipments':
 			case 'file':
+			case 'business_hours':
+			case 'business_hours_Mon':
+			case 'business_hours_Tue':
+			case 'business_hours_Wed':
+			case 'business_hours_Thu':
+			case 'business_hours_Fri':
+			case 'business_hours_Sat':
+			case 'business_hours_Sun':
 				set(tp, 'hulop_' + name, value);
 				break;
 			case 'category':
@@ -557,6 +565,14 @@ $hulop.editor.importV1 = function(features) {
 			case 'location_description':
 			case 'tags':
 			case 'poi_external_category':
+			case 'business_hours':
+			case 'business_hours_Mon':
+			case 'business_hours_Tue':
+			case 'business_hours_Wed':
+			case 'business_hours_Thu':
+			case 'business_hours_Fri':
+			case 'business_hours_Sat':
+			case 'business_hours_Sun':
 				set(tp, 'hulop_' + name, value);
 				break;
 			case 'content':
