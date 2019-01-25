@@ -204,7 +204,7 @@ public class RouteData {
 		return mDoors;
 	}
 
-	public JSONArray getLandmarks(String lang) {
+	private JSONArray rawLandmarks(String lang) {
 		JSONArray landMarks = mLandMarks.get(lang);
 		if (landMarks == null) {
 			try {
@@ -213,14 +213,35 @@ public class RouteData {
 				e.printStackTrace();
 			}
 		}
+		return landMarks;
+	}
+
+	public JSONArray getLandmarks(String lang) {
 		JSONArray result = new JSONArray();
-		for (JSONObject obj : (List<JSONObject>)landMarks) {
+		for (JSONObject obj : (List<JSONObject>)rawLandmarks(lang)) {
 			try {
 				if (!Hokoukukan.available(obj.getJSONObject("properties"))) {
 					(obj = (JSONObject)obj.clone()).put("disable", true);
 //					System.out.println("disable " + obj.opt("node"));
 				}
 				result.put(obj);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
+		return result;
+	}
+
+	public JSONArray getDisabledNode(String lang) {
+		JSONArray result = new JSONArray();
+		for (JSONObject obj : (List<JSONObject>)rawLandmarks(lang)) {
+			try {
+				if (!Hokoukukan.available(obj.getJSONObject("properties"))) {
+					String node = obj.getString("node");
+					if (!result.contains(node)) {
+						result.put(node);
+					}
+				}
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
