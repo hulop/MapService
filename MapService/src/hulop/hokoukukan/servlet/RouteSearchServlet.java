@@ -126,6 +126,11 @@ public class RouteSearchServlet extends HttpServlet {
 				sendJSON(obj, request, response);
 				return;
 			}
+			if ("disabled_nodes".equals(action) && lang != null) {
+				RouteData rd = RouteData.getCache(new double[] { lng, lat }, dist);
+				sendJSON(rd.getDisabledNode(lang), request, response);
+				return;
+			}
 			Object result = null;
 			if ("toilets".equals(action) || "facilities".equals(action)) {
 				DBAdapter.GeometryType type = "toilets".equals(action) ? DBAdapter.GeometryType.TOILETS : DBAdapter.GeometryType.FACILITIES;
