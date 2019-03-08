@@ -48,7 +48,8 @@ $hulop.editor = function() {
 		'facility', 'facil_lat', 'facil_lon', 'elev_lat', 'elev_lon', 'door_type', 'tfc_s_lat', 'tfc_s_lon', 'day_trfc', 'main_user', 'st_name',
 		'group:LAYER3',
 		'hulop_road_low_priority', 'hulop_elevator_equipments',
-		'hulop_business_hours', 'hulop_business_hours_Mon', 'hulop_business_hours_Tue', 'hulop_business_hours_Wed', 'hulop_business_hours_Thu', 'hulop_business_hours_Fri', 'hulop_business_hours_Sat','hulop_business_hours_Sun' ]
+		'hulop_business_hours', 'hulop_business_hours_PreHoliday', 'hulop_business_hours_Holiday',
+		'hulop_business_hours_Mon', 'hulop_business_hours_Tue', 'hulop_business_hours_Wed', 'hulop_business_hours_Thu', 'hulop_business_hours_Fri', 'hulop_business_hours_Sat','hulop_business_hours_Sun' ]
 		.concat(i18nMenu([ 'st_name' ]));
 
 	PROPERTY_NAMES['facility'] = [ 'group:LAYER1',
@@ -61,7 +62,8 @@ $hulop.editor = function() {
 		'name_hira', 'fax', 'mail', 'start_time', 'end_time', 'no_serv_d', 'info', 'info_board', 'move_floor',
 		'group:LAYER3',
 		'hulop_building', 'hulop_major_category', 'hulop_sub_category', 'hulop_minor_category', 'hulop_heading', 'hulop_angle', 'hulop_height', 'hulop_long_description', 'hulop_short_description', 'hulop_description', 'hulop_location_description', 'hulop_content', 'hulop_tags', 'hulop_poi_external_category',
-		'hulop_business_hours', 'hulop_business_hours_Mon', 'hulop_business_hours_Tue', 'hulop_business_hours_Wed', 'hulop_business_hours_Thu', 'hulop_business_hours_Fri', 'hulop_business_hours_Sat','hulop_business_hours_Sun',
+		'hulop_business_hours', 'hulop_business_hours_PreHoliday', 'hulop_business_hours_Holiday',
+		'hulop_business_hours_Mon', 'hulop_business_hours_Tue', 'hulop_business_hours_Wed', 'hulop_business_hours_Thu', 'hulop_business_hours_Fri', 'hulop_business_hours_Sat','hulop_business_hours_Sun',
 		'hulop_show_labels_zoomlevel' ]
 		.concat(i18nMenu([ 'name', 'address', 'med_dept', 'hulop_long_description', 'hulop_short_description', 'hulop_description', 'hulop_location_description', 'hulop_content' ]));
 

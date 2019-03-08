@@ -21,21 +21,26 @@
  *******************************************************************************/
 package hulop.hokoukukan.utils;
 
+import java.text.SimpleDateFormat;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.wink.json4j.JSONArray;
+import org.apache.wink.json4j.JSONException;
 import org.apache.wink.json4j.JSONObject;
 
 public class Hokoukukan {
 
 	private static final String no_serv_d = "no_serv_d", start_time = "start_time", end_time = "end_time",
-			start_date = "start_date", end_date = "end_date", business_hours = "business_hours";
+			start_date = "start_date", end_date = "end_date", business_hours = "hulop_business_hours";
 	private static final Pattern ENT_NODE = Pattern.compile("^(ent\\d+_)node$");
 
 	public static List<String> listEntrances(JSONObject properties) {
@@ -59,7 +64,7 @@ public class Hokoukukan {
 	}
 	private static final Pattern PAT_TIME = Pattern.compile("^(\\d{2})-?(\\d{2})$");
 	private static final Pattern PAT_DAYS = Pattern.compile("^(\\d+)$");
-	private static final Pattern PAT_DATE = Pattern.compile("^(\\d{4})[ -](\\d{2})[ -](\\d{2})$");
+	private static final Pattern PAT_DATE = Pattern.compile("^(\\d{4})[ -](\\d{1,2})[ -](\\d{1,2})$");
 
 	public static boolean available(JSONObject properties) {
 		if (SERVICE_TIME_DIFF < Integer.MAX_VALUE) {
@@ -87,7 +92,29 @@ public class Hokoukukan {
 						}
 					}
 				}
-				for (int i = 0; i < daySuffix.length; i++) {
+				for (int i = 0; i < holidaySuffix.length; i++) {
+					String name = business_hours + holidaySuffix[i];
+					if (properties.has(name)) {
+						String date_times = properties.getString(name).trim();
+						if (i > 0) {
+							String[] times = date_times.split(",");
+							date_times = "";
+							for (String date : i == 1 ? before_holidays : holidays) {
+								for (String time : times) {
+									if (date_times.length() > 0) {
+										date_times += ",";
+									}
+									date_times += date + "_" + time.trim();
+								}
+							}
+						}
+						Boolean result = checkBusinessHour(dt, 0, date_times);
+						if (result != null) {
+							return result;
+						}
+					}
+				}
+				for (int i = 1; i < daySuffix.length; i++) {
 					String name = business_hours + daySuffix[i];
 					if (properties.has(name)) {
 						Boolean result = checkBusinessHour(dt, i, properties.getString(name));
@@ -141,8 +168,8 @@ public class Hokoukukan {
 	}
 
 	private static final String daySuffix[] = new String[] { "", "_Mon", "_Tue", "_Wed", "_Thu", "_Fri", "_Sat", "_Sun" };
-	private static final Pattern PAT_DATES = Pattern.compile("^(\\d{4})/(\\d{2})/(\\d{2})_(\\d{2}):(\\d{2})-(\\d{2}):(\\d{2})$");
-	private static final Pattern PAT_TIMES = Pattern.compile("^(\\d{2}):(\\d{2})-(\\d{2}):(\\d{2})$");
+	private static final Pattern PAT_DATES = Pattern.compile("^(\\d{4})/(\\d{1,2})/(\\d{1,2})_(\\d{1,2}):(\\d{1,2})-(\\d{1,2}):(\\d{1,2})$");
+	private static final Pattern PAT_TIMES = Pattern.compile("^(\\d{1,2}):(\\d{1,2})-(\\d{1,2}):(\\d{1,2})$");
 
 	private static Boolean checkBusinessHour(OffsetDateTime dt, int dayOfWeek, String items) {
 		int now = dt.getHour() * 60 + dt.getMinute();
@@ -173,6 +200,36 @@ public class Hokoukukan {
 			}
 		}
 		return result;
+	}
+
+	// Holidays
+	private static final SimpleDateFormat DF = new SimpleDateFormat("yyyy/MM/dd");
+	private static final String holidaySuffix[] = { "", "_PreHoliday", "_Holiday" };
+	private static final String[] holidays = getHolidays();
+	private static final String[] before_holidays = adjustDays(holidays, -24 * 60 * 60 * 1000);
+
+	private static String[] adjustDays(String[] from, long val) {
+		String[] to = new String[from.length];
+		for (int i = 0; i < from.length; i++) {
+			try {
+				to[i] = DF.format(new Date(DF.parse(to[i] = from[i]).getTime() + val));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			System.out.println(to[i] + " < " + from[i]);
+		}
+		return to;
+	}
+
+	private static String[] getHolidays() {
+		try {
+			Object[] objArray = new JSONArray(System.getenv("HULOP_HOLIDAYS")).toArray();
+			return Arrays.asList(objArray).toArray(new String[objArray.length]);
+		} catch(JSONException e) {
+			e.printStackTrace();
+		} catch(Exception e) {
+		}
+		return new String[] {};
 	}
 
 	public static void main(String[] args) throws Exception {

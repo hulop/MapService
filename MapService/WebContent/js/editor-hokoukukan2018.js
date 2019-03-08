@@ -361,6 +361,8 @@ $hulop.editor.importV1 = function(features) {
 			case 'business_hours_Fri':
 			case 'business_hours_Sat':
 			case 'business_hours_Sun':
+			case 'business_hours_PreHoliday':
+			case 'business_hours_Holiday':
 				set(tp, 'hulop_' + name, value);
 				break;
 			case 'category':
@@ -573,6 +575,8 @@ $hulop.editor.importV1 = function(features) {
 			case 'business_hours_Fri':
 			case 'business_hours_Sat':
 			case 'business_hours_Sun':
+			case 'business_hours_PreHoliday':
+			case 'business_hours_Holiday':
 				set(tp, 'hulop_' + name, value);
 				break;
 			case 'content':
