@@ -37,7 +37,7 @@ Before you get started, make sure you have the following dependencies installed 
 The server can use one of the follwing database system
 
 1. [IBM Cloudant](https://console.bluemix.net/catalog/services/cloudant)
-2. MongoDB at localhost or [Compose for MongoDB](https://console.bluemix.net/docs/services/ComposeForMongoDB/index.html#about-compose-for-mongodb)
+2. MongoDB at localhost
 
 ## Deploy MapService Server
 
