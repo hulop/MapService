@@ -1,5 +1,6 @@
 <jsp:useBean id="agreeBean" scope="request" class="hulop.hokoukukan.bean.AgreementBean" />
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%! private static long T = System.currentTimeMillis(); %>
 <%
 String id = request.getParameter("id");
 if (id == null || (agreeBean.isAgreementSupported() && !agreeBean.getAgreed(id))) {
@@ -21,18 +22,18 @@ if (id == null || (agreeBean.isAgreementSupported() && !agreeBean.getAgreed(id))
 <script src="jquery/jquery-1.11.3.min.js"></script>
 <script src="jquery/jquery.mobile-1.4.5.min.js"></script>
 <script src="jquery/jquery.mobile.nestedlists.js"></script>
-<script type="text/javascript" src="js/messages.js"></script>
+<script type="text/javascript" src="js/messages.js?<%=T%>"></script>
 <script src="openlayers/v4.6.5/ol.js"></script>
-<script type="text/javascript" src="js/mobile.js"></script>
-<script type="text/javascript" src="js/location.js"></script>
-<script type="text/javascript" src="js/hokoukukan.js"></script>
-<script type="text/javascript" src="js/util.js"></script>
-<script type="text/javascript" src="js/maps.js"></script>
-<script type="text/javascript" src="js/FloorPlanOverlay.js"></script>
-<script type="text/javascript" src="js/indoor.js"></script>
-<script type="text/javascript" src="js/logging.js"></script>
-<script type="text/javascript" src="js/screen_filter.js"></script>
-<script type="text/javascript" src="mobile_ext.js"></script>
+<script type="text/javascript" src="js/mobile.js?<%=T%>"></script>
+<script type="text/javascript" src="js/location.js?<%=T%>"></script>
+<script type="text/javascript" src="js/hokoukukan.js?<%=T%>"></script>
+<script type="text/javascript" src="js/util.js?<%=T%>"></script>
+<script type="text/javascript" src="js/maps.js?<%=T%>"></script>
+<script type="text/javascript" src="js/FloorPlanOverlay.js?<%=T%>"></script>
+<script type="text/javascript" src="js/indoor.js?<%=T%>"></script>
+<script type="text/javascript" src="js/logging.js?<%=T%>"></script>
+<script type="text/javascript" src="js/screen_filter.js?<%=T%>"></script>
+<script type="text/javascript" src="mobile_ext.js?<%=T%>"></script>
 <script type="text/javascript">
 	$(document).ready(function(){
 		$hulop.map.init();
