@@ -40,6 +40,12 @@ if (id == null || (agreeBean.isAgreementSupported() && !agreeBean.getAgreed(id))
 	});
 	console.log("mobile.html started");
 </script>
+<style type="text/css">
+.ui-header .ui-title,
+.ui-footer .ui-title {
+	margin: 0 25%;
+}
+</style>
 </head>
 <body>
 	<div data-role="popup" data-dismissible="false" id="popupDialog" data-theme="a">
