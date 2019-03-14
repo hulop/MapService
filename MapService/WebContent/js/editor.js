@@ -60,7 +60,9 @@ $hulop.editor = function() {
 			.concat(i18nMenu([ '名称', '所在地', 'long_description', 'short_description', 'description', 'location_description', 'content']));
 
 	PROPERTY_NAMES['公共用トイレの情報'] = [ '施設ID', '緯度経度桁数コード', '緯度', '経度', '階層', '男女別', '有料無料の別', '多目的トイレ', 'ベビーベッド', '供用開始時間', '供用終了時間', '供用制限曜日', 'group:EXT',
-			'building' ];
+			'building',
+			'business_hours', 'business_hours_PreHoliday', 'business_hours_Holiday',
+			'business_hours_Mon', 'business_hours_Tue', 'business_hours_Wed', 'business_hours_Thu', 'business_hours_Fri', 'business_hours_Sat','business_hours_Sun' ];
 
 	PROPERTY_NAMES['指定避難所の情報'] = [ '施設ID', '緯度経度桁数コード', '緯度', '経度', '施設種別', '地区名', '名称', '所在地', '電話番号', '階層', '風水害対応', '多目的トイレ' ].concat(i18nMenu([ '地区名',
 			'名称', '所在地' ]));
