@@ -235,7 +235,7 @@ $hulop.map = function() {
 				if (dist != currentDist || !currentLatLng || $hulop.util.computeDistanceBetween(center, currentLatLng) > dist * 0.9) {
 					initFeatures(center);
 				} else {
-					sortLandmarks();
+					setDisable();
 				}
 			}
 
@@ -1247,6 +1247,35 @@ $hulop.map = function() {
 		}
 		addLandmarks(landmarks);
 		landmarks.length == 0 && showAlert($m('NO_TARGET'));
+		lastSetDisable = new Date().getTime();
+	}
+
+	var lastSetDisable = 0;
+	function setDisable() {
+		var minElapsed = (new Date().getTime() - lastSetDisable) / (60 * 1000);
+		console.log(minElapsed + ' minutes elapsed')
+		if (minElapsed > ($hulop.config.REFRESH_INTERVAL || 60)) {
+			$hulop.route.callService({
+				'action' : 'disabled_nodes',
+				'lat' : currentLatLng[1],
+				'lng' : currentLatLng[0],
+				'dist' : currentDist
+			}, function(data) {
+				console.log(data);
+				for (var id in targetNodes) {
+					var node = targetNodes[id];
+					if (data.indexOf(id) < 0) {
+						delete node.disable;
+					} else {
+						node.disable = true;
+					}
+				}
+				sortLandmarks();
+				lastSetDisable = new Date().getTime();
+			});
+		} else {
+			sortLandmarks();
+		}
 	}
 
 	$(document).ready(function() {
