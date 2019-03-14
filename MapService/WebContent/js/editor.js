@@ -1267,8 +1267,10 @@ $hulop.editor = function() {
 			var heading = feature.get('hulop_heading') || 0;
 			var angle = feature.get('hulop_angle');
 			isNaN(angle) && (angle = 180);
+			var fill = "#00CC00", stroke = "#006600";
 			if (heading < -180 || heading > 180 || angle < 0 || angle > 180) {
-				return null;
+				fill = "#CC00CC";
+				stroke = "#660066";
 			}
 			var path = 'M 20 21.6 L 20 20 ';
 			var size = Math.min(20, 12 * Math.sqrt(180 / angle));
@@ -1282,7 +1284,7 @@ $hulop.editor = function() {
 			path += 'L 20 20 z';
 
 			var src = 'data:image/svg+xml,' + escape('<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" width="40px" height="40px">'
-					+ '<path stroke="#006600" stroke-width="2" stroke-opacity="0.75" fill="#00CC00" fill-opacity="0.75" d="' + path + '"/></svg>');
+					+ '<path stroke="' + stroke + '" stroke-width="2" stroke-opacity="0.75" fill="' + fill + '" fill-opacity="0.75" d="' + path + '"/></svg>');
 
 			style = new ol.style.Style({
 				'image' : new ol.style.Icon({
