@@ -1201,6 +1201,9 @@ $hulop.editor = function() {
 					b = '#0000A0';
 					r = '#A00000';
 				}
+				if (feature.get('視覚障害者誘導用ブロック') == '1') {
+					b = r = '#00A000';
+				}
 				if (align_features.indexOf(feature) != -1) {
 					b = r = '#00B4B4';
 				}
