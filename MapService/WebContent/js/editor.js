@@ -1213,9 +1213,12 @@ $hulop.editor = function() {
 				});
 			} else {
 				var b = '#0000ff', r = '#ff0000';
-				if (feature.get('hulop_road_low_priority') == '1') {
+				if (feature.get('hulop_road_low_priority') == 1) {
 					b = '#0000A0';
 					r = '#A00000';
+				}
+				if (feature.get('brail_tile') == 2) {
+					b = r = '#00A000';
 				}
 				if (align_features.indexOf(feature) != -1) {
 					b = r = '#00B4B4';
