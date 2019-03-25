@@ -318,6 +318,10 @@ public class RouteSearchBean {
 				weight = STAIR_WEIGHT;
 				break;
 			}
+			try {
+				weight = Double.parseDouble(properties.getString("distance_overwrite"));
+			} catch (Exception e) {
+			}
 			double penarty = Math.max(weight, 10.0f) * 9;
 
 			String width = properties.has("有効幅員") ? properties.getString("有効幅員") : "";
