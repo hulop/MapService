@@ -47,7 +47,7 @@ $hulop.editor = function() {
 		'hSlope_max', 'hSlope_lat', 'hSlope_lon', 'condition', 'levDif_max', 'levDif_lat', 'levDif_lon', 'stair', 'handrail', 'waterway', 'bus_stop', 'bus_s_lat', 'bus_s_lon',
 		'facility', 'facil_lat', 'facil_lon', 'elev_lat', 'elev_lon', 'door_type', 'tfc_s_lat', 'tfc_s_lon', 'day_trfc', 'main_user', 'st_name',
 		'group:LAYER3',
-		'hulop_road_low_priority', 'hulop_elevator_equipments',
+		'hulop_road_low_priority', 'hulop_distance_overwrite', 'hulop_elevator_equipments',
 		'hulop_business_hours', 'hulop_business_hours_PreHoliday', 'hulop_business_hours_Holiday',
 		'hulop_business_hours_Mon', 'hulop_business_hours_Tue', 'hulop_business_hours_Wed', 'hulop_business_hours_Thu', 'hulop_business_hours_Fri', 'hulop_business_hours_Sat','hulop_business_hours_Sun' ]
 		.concat(i18nMenu([ 'st_name' ]));

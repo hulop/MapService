@@ -318,6 +318,10 @@ public class RouteSearchBean {
 				weight = STAIR_WEIGHT;
 				break;
 			}
+			try {
+				weight = properties.getDouble("hulop_distance_overwrite");
+			} catch (Exception e) {
+			}
 			double penarty = Math.max(weight, 10.0f) * 9;
 
 			int width = getCode(properties, "width", 100);

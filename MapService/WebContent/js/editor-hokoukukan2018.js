@@ -349,6 +349,7 @@ $hulop.editor.importV1 = function(features) {
 				set(tp, 'st_name_hira', kana2hira(value));
 				break;
 			case 'road_low_priority':
+			case 'distance_overwrite':
 				set(tp, 'hulop_' + name, Number(value));
 				break;
 			case 'elevator_equipments':
