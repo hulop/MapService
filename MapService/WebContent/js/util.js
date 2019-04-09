@@ -351,7 +351,7 @@ $hulop.util = function() {
 		console.log('getScript: ' + url);
 	}
 
-	var wgs84Sphere = new ol.Sphere(6378137);
+	var wgs84Sphere = ol.Sphere && new ol.Sphere(6378137);
 
 	function degToRad(deg) {
 		return (deg * Math.PI / 180.0)
@@ -366,7 +366,10 @@ $hulop.util = function() {
 	}
 
 	function computeDistanceBetween(from, to) {
-		return wgs84Sphere.haversineDistance(from, to);
+		if (wgs84Sphere) {
+			return wgs84Sphere.haversineDistance(from, to);
+		}
+		return ol.sphere.getDistance(from, to);
 	}
 
 	function computeHeading(from, to) {

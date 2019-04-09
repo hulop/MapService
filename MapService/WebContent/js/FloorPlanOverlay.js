@@ -39,13 +39,19 @@ function FloorPlanOverlay(options) {
 			console.log(overlay);
 		}
 		var map = $hulop.map.getMap();
+		var canvas;
 		overlay.canvasLayer = new ol.layer.Image({
 			'opacity' : 1.0,
 			'visible' : overlay.visible,
 			'source' : new ol.source.ImageCanvas({
 				// 'canvasFunction' : overlay.canvasFunction,
 				'canvasFunction' : function(extent, resolution, pixelRatio, size, projection) {
-					return overlay.canvasFunction(extent, resolution, pixelRatio, size, projection);
+					// Set the last canvas size to 0 because ImageCanvas caches last canvas only
+					// https://github.com/openlayers/openlayers/blob/master/src/ol/source/ImageCanvas.js
+					canvas && (canvas.width = canvas.height = 0);
+					canvas = overlay.canvasFunction(extent, resolution, pixelRatio, size, projection);
+					canvas || console.error('canvasFunction error');
+					return canvas;
 				},
 				'projection' : 'EPSG:3857'
 			}),
@@ -84,9 +90,12 @@ FloorPlanOverlay.prototype.canvasFunction = function(extent, resolution, pixelRa
 	// console.log(arguments);
 
 	var canvas = document.createElement('canvas');
+	canvas.width = size[0];
+	canvas.height = size[1];
 	var context = canvas.getContext('2d');
-	canvas.setAttribute('width', size[0]);
-	canvas.setAttribute('height', size[1]);
+	if (!context) {
+		return;
+	}
 
 	function getTranslate(xy) {
 		return [ size[0] * (xy[0] - extent[0]) / (extent[2] - extent[0]), size[1] * (extent[3] - xy[1]) / (extent[3] - extent[1]) ];
