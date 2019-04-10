@@ -227,7 +227,7 @@ $hulop.indoor = function() {
 			var ov = overlayMap[id];
 			var diag = ov.coverage || (Math.sqrt(Math.pow(ov.width / ov.ppm_x, 2) + Math.pow(ov.height / ov.ppm_y, 2)));
 			var dist = Math.max(diag + 100, ($hulop.config.MAX_RADIUS || 500) / 2);
-			if (zoom >= 16 && $hulop.util.computeDistanceBetween(center, $hulop.util.newLatLng(ov.lat, ov.lng)) < dist) {
+			if (zoom >= 16 && $hulop.util.computeDistanceBetween(center, ov.center || $hulop.util.newLatLng(ov.lat, ov.lng)) < dist) {
 				ov.floor == floor && activeMaps.push(id);
 				floors.indexOf(ov.floor) < 0 && floors.push(ov.floor);
 			}
