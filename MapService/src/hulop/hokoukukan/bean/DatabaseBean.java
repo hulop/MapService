@@ -50,6 +50,22 @@ public class DatabaseBean {
 	public static final DBAdapter adapter = new hulop.hokoukukan.utils.COSAdapter(getDBAdapter());
 
 	private static DBAdapter getDBAdapter() {
+		JSONObject credentials = CloudUtils.getCredential(new String[] { "databases-for-mongodb" });
+		if (credentials != null) {
+			try {
+				JSONObject mongodb = credentials.getJSONObject("connection").getJSONObject("mongodb");
+				String url = mongodb.getJSONArray("composed").getString(0);
+				String cert  = mongodb.getJSONObject("certificate").getString("certificate_base64");
+				String dbName = System.getenv("HULOP_NAVI_DB");
+				if (dbName == null) {
+					dbName = "navi_db";
+				}
+				return new MongoAdapter(url, dbName, cert);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
 		String url = CloudUtils.getCredentialURL(new String[] { "cloudantNoSQLDB" }, null);
 		if (url != null) {
 			System.out.println(url);
