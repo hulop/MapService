@@ -75,6 +75,22 @@ FloorPlanOverlay.prototype.setOption = function(options) {
 		this.origin_y = (this.origin_y != undefined) ? this.origin_y : this.height / 2;
 		// end backward compatibility
 	}
+	try {
+		if (this.width != 1000 || this.height != 1000) {
+			var x = (this.width / 2 - this.origin_x) / this.ppm_x;
+			var y = (this.height / 2 - this.origin_y) / this.ppm_y;
+			var ref = ol.proj.transform([ this.lng, this.lat ], 'EPSG:4326', 'EPSG:3857');
+			var r = ol.proj.getPointResolution("EPSG:3857", 1, ref);
+			var rad = -this.rotate / 180 * Math.PI;
+			var c = Math.cos(rad);
+			var s = Math.sin(rad);
+			var dx = (x * c - y * s) / r;
+			var dy = (x * s + y * c) / r;
+			this.center = ol.proj.transform([ ref[0] + dx, ref[1] + dy ], 'EPSG:3857', 'EPSG:4326');
+		}
+	} catch(e) {
+		console.error(e);
+	}
 }
 
 FloorPlanOverlay.prototype.show = function(show) {
