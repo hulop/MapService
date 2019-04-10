@@ -50,4 +50,25 @@ public class CloudUtils {
 		}
 		return defaultValue;
 	}
+
+	public static JSONObject getCredential(String[] keys) {
+		try {
+			String vcap = System.getenv("HULOP_VCAP_SERVICES");
+			if (vcap == null) {
+				vcap = System.getenv("VCAP_SERVICES");
+			}
+			if (vcap != null) {
+				JSONObject json = (JSONObject) JSON.parse(vcap);
+				for (String key : keys) {
+					if (json.has(key)) {
+						System.out.println(json.toString(4));
+						return json.getJSONArray(key).getJSONObject(0).getJSONObject("credentials");
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 }
