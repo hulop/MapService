@@ -22,6 +22,7 @@
  ******************************************************************************/
 
 function FloorPlanOverlay(options) {
+	(FloorPlanOverlay.instances = FloorPlanOverlay.instances || []).push(this);
 	var overlay = this;
 	this.setOption(options);
 	(this.img = new Image()).onload = function() {
@@ -38,23 +39,38 @@ function FloorPlanOverlay(options) {
 			}
 			console.log(overlay);
 		}
-		var map = $hulop.map.getMap();
-		var canvas;
+		var map = $hulop.map.getMap()
+		overlay.source = new ol.source.ImageCanvas({
+			// 'canvasFunction' : overlay.canvasFunction,
+			'canvasFunction' : function(extent, resolution, pixelRatio, size, projection) {
+				// Set the last canvas size to 0 because ImageCanvas caches last canvas only
+				// https://github.com/openlayers/openlayers/blob/master/src/ol/source/ImageCanvas.js
+				overlay.canvas && (overlay.canvas.width = overlay.canvas.height = 0);
+				var canvas = overlay.canvasFunction(extent, resolution, pixelRatio, size, projection);
+				if (canvas) {
+					return overlay.canvas = canvas;
+				}
+				console.error('canvasFunction error');
+				$hulop.logging && $hulop.logging.onData({
+					"event" : "error",
+					"message" : "canvasFunction error",
+					"timestamp" : new Date().getTime()
+				});
+				FloorPlanOverlay.instances.forEach(function(ov) {
+					ov.canvas && (ov.canvas.width = ov.canvas.height = 1);
+				});
+				setTimeout(function() {
+					FloorPlanOverlay.instances.forEach(function(ov) {
+						ov.source && ov.source.changed();
+					});
+				});
+			},
+			'projection' : 'EPSG:3857'
+		});
 		overlay.canvasLayer = new ol.layer.Image({
 			'opacity' : 1.0,
 			'visible' : overlay.visible,
-			'source' : new ol.source.ImageCanvas({
-				// 'canvasFunction' : overlay.canvasFunction,
-				'canvasFunction' : function(extent, resolution, pixelRatio, size, projection) {
-					// Set the last canvas size to 0 because ImageCanvas caches last canvas only
-					// https://github.com/openlayers/openlayers/blob/master/src/ol/source/ImageCanvas.js
-					canvas && (canvas.width = canvas.height = 0);
-					canvas = overlay.canvasFunction(extent, resolution, pixelRatio, size, projection);
-					canvas || console.error('canvasFunction error');
-					return canvas;
-				},
-				'projection' : 'EPSG:3857'
-			}),
+			'source' : overlay.source,
 			'zIndex' : overlay.zIndex
 		});
 		map.addLayer(overlay.canvasLayer);
