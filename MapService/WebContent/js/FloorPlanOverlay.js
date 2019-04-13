@@ -51,10 +51,15 @@ function FloorPlanOverlay(options) {
 					return overlay.canvas = canvas;
 				}
 				console.error('canvasFunction error');
+				var now = new Date().getTime();
+				if (FloorPlanOverlay.lastRetry > now - 1000) {
+					return;
+				}
+				FloorPlanOverlay.lastRetry = now;
 				$hulop.logging && $hulop.logging.onData({
 					"event" : "error",
 					"message" : "canvasFunction error",
-					"timestamp" : new Date().getTime()
+					"timestamp" : now
 				});
 				FloorPlanOverlay.instances.forEach(function(ov) {
 					ov.canvas && (ov.canvas.width = ov.canvas.height = 1);
