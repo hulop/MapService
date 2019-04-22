@@ -72,6 +72,7 @@ public class LoggingServlet extends HttpServlet {
 		}
 		String data = request.getParameter("data");
 		if ("insert".equals(action) && data != null) {
+			boolean success = false;
 			try {
 				JSONArray array = new JSONArray(data);
 				if (array.size() > 0) {
@@ -83,9 +84,15 @@ public class LoggingServlet extends HttpServlet {
 							break;
 						}
 					}
+					success = true;
 				}
 			} catch (JSONException e) {
 				e.printStackTrace();
+			}
+			if (success) {
+				response.getWriter().append("SUCCESS");
+			} else {
+				response.sendError(HttpServletResponse.SC_BAD_REQUEST, "FAIL");
 			}
 			return;
 		} else if ("stats".equals(action)) {
