@@ -451,6 +451,7 @@ $hulop.map = function() {
 						"timestamp" : new Date().getTime()
 					});
 					naviCondition.end = new Date().getTime();
+					naviCondition.demo = !$hulop.location.getCurrentLatlng();
 					$hulop.util.logText('navigationFinished,' + JSON.stringify(naviCondition));
 					var longDesc = getDestinationLong(true);
 					longDesc && $hulop.util.speak(longDesc, false);

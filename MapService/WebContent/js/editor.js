@@ -284,21 +284,22 @@ $hulop.editor = function() {
 			}
 			var latLng = ol.proj.transform(event.coordinate, 'EPSG:3857', 'EPSG:4326');
 			editingFeature && !feature && showProperty();
+			var offset = !feature || feature.getGeometry().getType() != 'Point';
 			switch (downKey) {
 			case ADD_KEY:
-				createNode(latLng);
+				offset && createNode(latLng);
 				break;
 			case DO_POI_KEY:
-				createFacility(latLng);
+				offset && createFacility(latLng);
 				break;
 			case 70: // F
-				createFacility(latLng, EXTRA_HOSPITAL);
+				offset && createFacility(latLng, EXTRA_HOSPITAL);
 				break;
 			case 71: // G
-				createFacility(latLng, EXTRA_TOILET);
+				offset && createFacility(latLng, EXTRA_TOILET);
 				break;
 			case 72: // H
-				createFacility(latLng, EXTRA_EVACUATION);
+				offset && createFacility(latLng, EXTRA_EVACUATION);
 				break;
 			case PASTE_KEY:
 				clipboardFeature && clipboardFeature.get('facil_id') && createFacility(latLng, clipboardFeature.getProperties());
@@ -336,7 +337,7 @@ $hulop.editor = function() {
 							return;
 						}
 					}
-					var newLink = downKey == SPLIT_KEY && feature.get('link_id') && source.getFeatureById(feature.get('start_id'))
+					var newLink = offset && downKey == SPLIT_KEY && feature.get('link_id') && source.getFeatureById(feature.get('start_id'))
 							&& source.getFeatureById(feature.get('end_id')) && splitLink(event);
 					newLink && (feature = newLink);
 					showProperty(feature);
@@ -516,10 +517,15 @@ $hulop.editor = function() {
 					var latLng = ol.proj.transform(event.coordinate, 'EPSG:3857', 'EPSG:4326');
 					var newNode = createNode(latLng);
 					reconnectLink(feature, nodes[1], newNode);
+					var newLink = createLink(newNode, nodes[1], feature.getProperties());
 					setModified(nodes[0]);
 					setModified(nodes[1]);
 					setModified(feature);
-					return createLink(newNode, nodes[1], feature.getProperties());
+					align_edge = nodes;
+					align_nodes = [newNode];
+					align_features = [feature, newLink];
+					doAlign();
+					return newLink;
 				}
 			}
 		}
