@@ -269,21 +269,22 @@ $hulop.editor = function() {
 			}
 			var latLng = ol.proj.transform(event.coordinate, 'EPSG:3857', 'EPSG:4326');
 			editingFeature && !feature && showProperty();
+			var offset = !feature || feature.getGeometry().getType() != 'Point';
 			switch (downKey) {
 			case ADD_KEY:
-				createNode(latLng);
+				offset && createNode(latLng);
 				break;
 			case DO_POI_KEY:
-				createFacility(latLng, '公共施設の情報');
+				offset && createFacility(latLng, '公共施設の情報');
 				break;
 			case 70: // F
-				createFacility(latLng, '病院の情報');
+				offset && createFacility(latLng, '病院の情報');
 				break;
 			case 71: // G
-				createFacility(latLng, '公共用トイレの情報');
+				offset && createFacility(latLng, '公共用トイレの情報');
 				break;
 			case 72: // H
-				createFacility(latLng, '指定避難所の情報');
+				offset && createFacility(latLng, '指定避難所の情報');
 				break;
 			case PASTE_KEY:
 				var category = clipboardFeature && clipboardFeature.get('施設ID') && clipboardFeature.get('category');
@@ -322,7 +323,7 @@ $hulop.editor = function() {
 							return;
 						}
 					}
-					var newLink = downKey == SPLIT_KEY && feature.get('リンクID') && source.getFeatureById(feature.get('起点ノードID'))
+					var newLink = offset && downKey == SPLIT_KEY && feature.get('リンクID') && source.getFeatureById(feature.get('起点ノードID'))
 							&& source.getFeatureById(feature.get('終点ノードID')) && splitLink(event);
 					newLink && (feature = newLink);
 					showProperty(feature);
@@ -493,6 +494,10 @@ $hulop.editor = function() {
 					setModified(nodes[0]);
 					setModified(nodes[1]);
 					setModified(feature);
+					align_edge = nodes;
+					align_nodes = [newNode];
+					align_features = [feature, newLink];
+					doAlign();
 					return newLink;
 				}
 			}
