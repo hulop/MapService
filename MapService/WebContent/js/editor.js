@@ -514,6 +514,7 @@ $hulop.editor = function() {
 					return nodeID && source.getFeatureById(nodeID);
 				});
 				if (nodes[0] && nodes[1]) {
+					event.coordinate = new ol.geom.LineString(coordinates).getClosestPoint(event.coordinate);
 					var latLng = ol.proj.transform(event.coordinate, 'EPSG:3857', 'EPSG:4326');
 					var newNode = createNode(latLng);
 					reconnectLink(feature, nodes[1], newNode);
@@ -521,10 +522,6 @@ $hulop.editor = function() {
 					setModified(nodes[0]);
 					setModified(nodes[1]);
 					setModified(feature);
-					align_edge = nodes;
-					align_nodes = [newNode];
-					align_features = [feature, newLink];
-					doAlign();
 					return newLink;
 				}
 			}
