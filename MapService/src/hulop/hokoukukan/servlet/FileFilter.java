@@ -46,7 +46,7 @@ import hulop.hokoukukan.bean.DatabaseBean;
 /**
  * Servlet Filter implementation class FileFilter
  */
-@WebFilter(dispatcherTypes = { DispatcherType.REQUEST }, urlPatterns = { "/*" })
+@WebFilter(filterName = "FileFilter", dispatcherTypes = { DispatcherType.REQUEST, DispatcherType.FORWARD }, urlPatterns = { "/*" })
 public class FileFilter implements Filter {
 
 	private static int contextLength;
@@ -89,12 +89,12 @@ public class FileFilter implements Filter {
 		onAttachmentChanged();
 	}
 
-	public static void onAttachmentChanged() {
+	synchronized public static void onAttachmentChanged() {
 		attachmentList = null;
 		attachmentDate = new Date().getTime() / 1000 * 1000;
 	}
 
-	synchronized private boolean hasAttachment(String url) {
+	synchronized public static boolean hasAttachment(String url) {
 		if (attachmentList == null) {
 			attachmentList = DatabaseBean.listAttachment();
 			System.out.println(attachmentList);
