@@ -52,7 +52,7 @@ public class EnqueteServlet extends HttpServlet {
 		String answers = request.getParameter("answers");
 		if (answers != null) {
 			try {
-				bean.setEntry((JSONObject) JSON.parse(answers));
+				bean.setEntry((JSONObject) JSON.parse(answers), request);
 				return;
 			} catch (Exception e) {
 				e.printStackTrace();

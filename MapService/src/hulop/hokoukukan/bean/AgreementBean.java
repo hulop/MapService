@@ -21,6 +21,8 @@
  *******************************************************************************/
 package hulop.hokoukukan.bean;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.wink.json4j.JSONException;
 import org.apache.wink.json4j.JSONObject;
 
@@ -34,26 +36,26 @@ public class AgreementBean {
 		return "true".equals(System.getenv("SUPPORT_QUESTION"));
 	}
 
-	public void setAgreed(String id, boolean agreed) {
+	public void setAgreed(String id, boolean agreed, HttpServletRequest request) {
 		try {
-			setEntry(id, getEntry(id).put("agreed", agreed));
+			setEntry(id, getEntry(id).put("agreed", agreed), request);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 	}
 
-	public void setAnswers(String id, Object answers) {
+	public void setAnswers(String id, Object answers, HttpServletRequest request) {
 		try {
-			setEntry(id, getEntry(id).put("answers", answers));
+			setEntry(id, getEntry(id).put("answers", answers), request);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 	}
 
-	public void setEntry(JSONObject entry) {
+	public void setEntry(JSONObject entry, HttpServletRequest request) {
 		try {
 			System.out.println(entry.toString(4));
-			DatabaseBean.setEntry(entry);
+			DatabaseBean.setEntry(entry, request);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -89,8 +91,8 @@ public class AgreementBean {
 		return entry != null ? entry : new JSONObject();
 	}
 
-	private void setEntry(String id, JSONObject entry) throws JSONException {
+	private void setEntry(String id, JSONObject entry, HttpServletRequest request) throws JSONException {
 		entry.put("_id", id);
-		setEntry(entry);
+		setEntry(entry, request);
 	}
 }

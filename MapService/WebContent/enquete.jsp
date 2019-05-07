@@ -47,7 +47,7 @@
 				}
 			}
 			obj.put("type", "user");
-			agreeBean.setAnswers(id, obj);
+			agreeBean.setAnswers(id, obj, request);
 		}
 		response.sendRedirect("finish_agreement.jsp?id=" + id);
 		return;

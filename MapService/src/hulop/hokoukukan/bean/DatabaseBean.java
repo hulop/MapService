@@ -34,6 +34,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.wink.json4j.JSON;
@@ -384,7 +385,17 @@ public class DatabaseBean {
 		}
 	};
 
-	public static void insertLogs(JSONArray array) {
+	public static void insertLogs(JSONArray array, HttpServletRequest request) {
+		String user_agent = request.getHeader("User-Agent");
+		if (user_agent != null) {
+			for (Object obj : array) {
+				try {
+					((JSONObject) obj).put("user_agent", user_agent);
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 		try {
 			for (int i = 0; i < array.length(); i++) {
 				adapter.insertLog(array.getString(i));
@@ -422,7 +433,15 @@ public class DatabaseBean {
 		return adapter.getEntry(id);
 	}
 
-	public static void setEntry(JSONObject entry) {
+	public static void setEntry(JSONObject entry, HttpServletRequest request) {
+		String user_agent = request.getHeader("User-Agent");
+		if (user_agent != null) {
+			try {
+				entry.put("user_agent", user_agent);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
 		adapter.setEntry(entry);
 	}
 
