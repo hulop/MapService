@@ -182,6 +182,9 @@ HULOP\_NAVI\_DB=name (default: navi_db)
 HULOP\_INITIAL\_LOCATION={ "lat": latitude, "lng": longitude, "floor":floor } (default: COREDO Muromachi, no floor)
 - initial map location
 
+HULOP\_INITIAL\_ZOOM=zoom (default: 19.5)
+- initial map zoom
+
 HULOP\_MAX\_RADIUS=radius (default: 500)
 - max radius for loading route data
 

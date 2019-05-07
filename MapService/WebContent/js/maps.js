@@ -117,6 +117,7 @@ $hulop.map = function() {
 				initTile();
 				initRotationMode();
 				map.on('moveend', saveCenter);
+				$hulop.config.INITIAL_ZOOM && map.getView().setZoom($hulop.config.INITIAL_ZOOM)
 			},
 			'error' : function(XMLHttpRequest, textStatus, errorThrown) {
 				console.error(textStatus + ' (' + XMLHttpRequest.status + '): ' + errorThrown);
