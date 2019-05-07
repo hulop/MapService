@@ -33,7 +33,7 @@
 		return;
 	} else if (agree != null) {
 		boolean agreed = "true".equals(agree);
-		agreeBean.setAgreed(id, agreed);
+		agreeBean.setAgreed(id, agreed, request);
 		String target = agreed && enquete ? "enquete.jsp" : "finish_agreement.jsp";
 		response.sendRedirect(target + "?id=" + id);
 		return;

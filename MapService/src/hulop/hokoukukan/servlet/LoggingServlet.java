@@ -76,7 +76,7 @@ public class LoggingServlet extends HttpServlet {
 			try {
 				JSONArray array = new JSONArray(data);
 				if (array.size() > 0) {
-					DatabaseBean.insertLogs(array);
+					DatabaseBean.insertLogs(array, request);
 					for (int i = array.size() - 1; i >= 0; i--) {
 						JSONObject last = array.getJSONObject(i);
 						if (last.has("event") && "location".equals(last.getString("event")) && last.has("client")) {

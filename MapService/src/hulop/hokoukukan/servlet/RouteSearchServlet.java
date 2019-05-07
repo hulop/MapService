@@ -209,7 +209,7 @@ public class RouteSearchServlet extends HttpServlet {
 				JSONArray array = new JSONArray();
 				array.add(data);
 				// System.out.println("route_search user=" + user);
-				DatabaseBean.insertLogs(array);
+				DatabaseBean.insertLogs(array, request);
 			} else if ("features".equals(action)) {
 				result = bean.getFeatures();
 			} else if ("nodemap".equals(action)) {
