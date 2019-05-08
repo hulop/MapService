@@ -25,6 +25,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -37,7 +39,9 @@ import org.apache.wink.json4j.JSONObject;
 import com.cloudant.client.api.ClientBuilder;
 import com.cloudant.client.api.CloudantClient;
 import com.cloudant.client.api.Database;
+import com.cloudant.client.api.model.Document;
 import com.cloudant.client.api.model.Response;
+import com.cloudant.client.api.views.AllDocsResponse;
 import com.cloudant.client.api.views.Key;
 import com.cloudant.client.api.views.Key.ComplexKey;
 import com.cloudant.client.api.views.UnpaginatedRequestBuilder;
@@ -435,10 +439,10 @@ public class CloudantAdapter implements DBAdapter {
 	}
 
 	@Override
-	public JSONArray getLogStats() {
+	public JSONArray getLogStats(String event) {
 		JSONArray result = new JSONArray();
 		try {
-			ViewResponse<String, Object> response = log_db.getViewRequestBuilder("log", "stats")
+			ViewResponse<String, Object> response = log_db.getViewRequestBuilder("log", event == null ? "stats" : "stats_event_" + event)
 					.newRequest(Key.Type.STRING, Object.class).reduce(true).group(true).build().getResponse();
 			for (Row<String, Object> row : response.getRows()) {
 				String clientId = row.getKey();
@@ -618,4 +622,46 @@ public class CloudantAdapter implements DBAdapter {
 		return answers;
 	}
 
+	@Override
+	public void dumpLogs(OutputStream os) {
+		dump(log_db, os, 10000);
+	}
+
+	@Override
+	public void dumpEntries(OutputStream os) {
+		dump(entry_db, os, 1000);
+	}
+
+	synchronized private void dump(Database db, OutputStream os, int limit) {
+		try (PrintWriter out = new PrintWriter(os)) {
+			int skip = 0;
+			AllDocsResponse response;
+			List<Document> docList;
+			out.print("[");
+			boolean first = true;
+			do {
+				response = db.getAllDocsRequestBuilder().skip(skip).limit(limit).includeDocs(true).build().getResponse();
+				List<JsonObject> jsonList = response.getDocsAs(JsonObject.class);
+				docList = response.getDocs();
+				for (int i = 0; i < docList.size(); i++) {
+					Document doc = docList.get(i);
+					String id = doc.getId();
+					if (!id.startsWith("_design/")) {
+						if (first) {
+							first = false;
+						} else {
+							out.print(",");
+						}
+						jsonList.get(i).remove("_rev");
+						out.print(jsonList.get(i).toString());
+					}
+				}
+				skip += docList.size();
+				System.out.println(skip);
+			} while (docList.size() >= limit);
+			out.print("]");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 }

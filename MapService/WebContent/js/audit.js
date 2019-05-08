@@ -74,6 +74,7 @@ var $hulop_audit = function() {
 				}
 			}
 		});
+		showExtra($('#banner'));
 	});
 
 	function showDeviceList(deviceList, parent, action) {
@@ -258,6 +259,48 @@ var $hulop_audit = function() {
 	}
 	function plot(clientId) {
 		window.open('locationlog.jsp?plot=' + clientId, "plot");
+	}
+
+	function showExtra(parent) {
+		parent.append(' | ');
+		parent.append($('<button>', {
+			'text' : 'dump entries',
+			'on' : {
+				'click' : function() {
+					location.href = 'api/log?' + $.param({
+						'action' : 'dump',
+						'db' : 'entries',
+						'fileName' : 'entries_db.json'
+					});
+				}
+			}
+		}));
+		parent.append(' ');
+		parent.append($('<button>', {
+			'text' : 'dump logs',
+			'on' : {
+				'click' : function() {
+					location.href = 'api/log?' + $.param({
+						'action' : 'dump',
+						'db' : 'logs',
+						'fileName' : 'logs_db.json'
+					});
+				}
+			}
+		}));
+		parent.append(' ');
+		parent.append($('<button>', {
+			'text' : 'stats location logs',
+			'on' : {
+				'click' : function() {
+					location.href = 'api/log?' + $.param({
+						'action' : 'stats',
+						'event' : 'location',
+						'fileName' : 'location_stats.json'
+					});
+				}
+			}
+		}));
 	}
 	return {};
 }();

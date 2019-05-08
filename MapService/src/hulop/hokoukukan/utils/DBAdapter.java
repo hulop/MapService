@@ -23,6 +23,7 @@ package hulop.hokoukukan.utils;
 
 import java.io.File;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
 
 import org.apache.wink.json4j.JSONArray;
@@ -74,7 +75,7 @@ public interface DBAdapter {
 
 	void insertLog(String json);
 
-	JSONArray getLogStats();
+	JSONArray getLogStats(String event);
 
 	JSONArray getLogs(String clientId, String start, String end, String skip, String limit, String event);
 
@@ -93,4 +94,8 @@ public interface DBAdapter {
 	JSONArray getAgreements();
 
 	JSONArray getAnswers(String deviceId);
+
+	void dumpLogs(OutputStream os);
+
+	void dumpEntries(OutputStream os);
 }

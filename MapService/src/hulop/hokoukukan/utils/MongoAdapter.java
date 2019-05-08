@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.security.KeyStore;
 import java.security.SecureRandom;
 import java.security.cert.CertificateFactory;
@@ -282,8 +283,11 @@ public class MongoAdapter implements DBAdapter {
 	}
 
 	@Override
-	public JSONArray getLogStats() {
+	public JSONArray getLogStats(String event) {
 		List<DBObject> pipeline = new ArrayList<DBObject>();
+		if (event != null) {
+			pipeline.add(new BasicDBObject("$match", new BasicDBObject("event", event)));
+		}
 		pipeline.add(new BasicDBObject("$project", new BasicDBObject("client", 1).append("timestamp", "$timestamp")));
 		pipeline.add(new BasicDBObject("$group",
 				new BasicDBObject().append("_id", new BasicDBObject("client", "$client"))
@@ -463,5 +467,34 @@ public class MongoAdapter implements DBAdapter {
 		SSLContext sc = SSLContext.getInstance("TLSv1.2");
 		sc.init(null, tmf.getTrustManagers(), new SecureRandom());
 		return MongoClientOptions.builder().socketFactory(sc.getSocketFactory());
+	}
+
+	@Override
+	public void dumpLogs(OutputStream os) {
+		dump(logCol, os);
+	}
+
+	@Override
+	public void dumpEntries(OutputStream os) {
+		dump(entryCol, os);
+	}
+
+	private void dump(DBCollection col, OutputStream os) {
+		try (PrintWriter out = new PrintWriter(os)) {
+			DBCursor cursor = col.find();
+			out.print("[");
+			boolean first = true;
+			while (cursor.hasNext()) {
+				if (first) {
+					first = false;
+				} else {
+					out.print(",");
+				}
+				out.print(new JSONObject(cursor.next().toString()));
+			}
+			out.print("]");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
 	}
 }
