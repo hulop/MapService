@@ -22,6 +22,8 @@
 package hulop.hokoukukan.servlet;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.util.zip.GZIPOutputStream;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -95,8 +97,13 @@ public class LoggingServlet extends HttpServlet {
 				response.sendError(HttpServletResponse.SC_BAD_REQUEST, "FAIL");
 			}
 			return;
-		} else if ("stats".equals(action)) {
-			RouteSearchServlet.sendJSON(DatabaseBean.getLogStats(), request, response);
+		}
+		String fileName = request.getParameter("fileName");
+		if (fileName != null) {
+			response.setHeader("Content-Disposition", String.format("attachment; filename=\"%s\"", fileName));
+		}
+		if ("stats".equals(action)) {
+			RouteSearchServlet.sendJSON(DatabaseBean.getLogStats(request.getParameter("event")), request, response);
 			return;
 		} else if ("get".equals(action)) {
 			String clientId = request.getParameter("clientId");
@@ -109,10 +116,6 @@ public class LoggingServlet extends HttpServlet {
 				start = Long.toString(System.currentTimeMillis() - 24 * 60 * 60 * 1000);
 				end = Long.toString(System.currentTimeMillis());
 				limit = "1000";
-			}
-			String fileName = request.getParameter("fileName");
-			if (fileName != null) {
-				response.setHeader("Content-Disposition", String.format("attachment; filename=\"%s\"", fileName));
 			}
 			RouteSearchServlet.sendJSON(DatabaseBean.getLogs(clientId, start, end, skip, limit, event), request, response);
 			return;
@@ -140,11 +143,34 @@ public class LoggingServlet extends HttpServlet {
 		} else if ("get_answers".equals(action)) {
 			String clientId = request.getParameter("clientId");
 			if (clientId != null) {
-				String fileName = request.getParameter("fileName");
-				if (fileName != null) {
-					response.setHeader("Content-Disposition", String.format("attachment; filename=\"%s\"", fileName));
-				}
 				RouteSearchServlet.sendJSON(DatabaseBean.getAnswers(clientId), request, response);
+				return;
+			}
+		} else if("dump".equals(action)) {
+			String dbName = request.getParameter("db");
+			if ("logs".equals(dbName) || "entries".equals(dbName)) {
+				try (OutputStream os = response.getOutputStream()) {
+					String acceptedEncodings = request.getHeader("accept-encoding");
+					boolean gzip = acceptedEncodings != null && acceptedEncodings.indexOf("gzip") != -1;
+					if (gzip) {
+						response.setHeader("Content-Encoding", "gzip");
+						try (GZIPOutputStream gzos = new GZIPOutputStream(os)) {
+							if ("logs".equals(dbName)) {
+								DatabaseBean.dumpLogs(gzos);
+							} else {
+								DatabaseBean.dumpEntries(gzos);
+							}
+							gzos.finish();
+						}
+					} else {
+						if ("logs".equals(dbName)) {
+							DatabaseBean.dumpLogs(os);
+						} else {
+							DatabaseBean.dumpEntries(os);
+						}
+					}
+
+				}
 				return;
 			}
 		}

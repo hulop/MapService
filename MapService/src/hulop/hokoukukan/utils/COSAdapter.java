@@ -24,6 +24,7 @@ package hulop.hokoukukan.utils;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -273,8 +274,8 @@ public class COSAdapter implements DBAdapter {
 	}
 
 	@Override
-	public JSONArray getLogStats() {
-		return db.getLogStats();
+	public JSONArray getLogStats(String event) {
+		return db.getLogStats(event);
 	}
 
 	@Override
@@ -300,5 +301,15 @@ public class COSAdapter implements DBAdapter {
 	@Override
 	public JSONArray getAnswers(String deviceId) {
 		return db.getAnswers(deviceId);
+	}
+
+	@Override
+	public void dumpLogs(OutputStream os) {
+		db.dumpLogs(os);
+	}
+
+	@Override
+	public void dumpEntries(OutputStream os) {
+		db.dumpEntries(os);
 	}
 }

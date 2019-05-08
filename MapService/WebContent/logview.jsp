@@ -26,7 +26,7 @@
 <title>Log viewer</title>
 </head>
 <body>
-	<%=user%> <a href="logview.jsp?logout=true">Log out</a> | <a href="edit_password.jsp?redirect_url=logview.jsp">Change password</a>
+	<div id="banner"><%=user%> <a href="logview.jsp?logout=true">Log out</a> | <a href="edit_password.jsp?redirect_url=logview.jsp">Change password</a></div>
 
 	<fieldset>
 		<legend>Recent Locations</legend>

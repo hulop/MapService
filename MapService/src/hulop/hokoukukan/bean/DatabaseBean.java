@@ -27,6 +27,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.Reader;
 import java.nio.charset.Charset;
 import java.util.List;
@@ -409,8 +410,8 @@ public class DatabaseBean {
 		}
 	}
 
-	public static JSONArray getLogStats() {
-		return adapter.getLogStats();
+	public static JSONArray getLogStats(String event) {
+		return adapter.getLogStats(event);
 	}
 
 	public static JSONArray getLogs(String clientId, String start, String end, String skip, String limit,
@@ -473,6 +474,14 @@ public class DatabaseBean {
 		} finally {
 			zos.close();
 		}
+	}
+
+	public static void dumpLogs(OutputStream os) {
+		adapter.dumpLogs(os);
+	}
+
+	public static void dumpEntries(OutputStream os) {
+		adapter.dumpEntries(os);
 	}
 
 	public static void main(String[] args) {

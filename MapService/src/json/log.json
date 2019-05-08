@@ -9,6 +9,12 @@
 			"reduce": "_stats"
 		},
 
+		"stats_event_location": 
+		{
+			"map": "function (doc) { doc.client && doc.timestamp && doc.event==\"location\" && emit(doc.client, doc.timestamp); }",
+			"reduce": "_stats"
+		},
+
 		"timestamp": 
 		{
 			"map": "function (doc) { doc.client && doc.timestamp && emit(doc.timestamp, 1); }"
