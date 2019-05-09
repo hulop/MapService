@@ -261,6 +261,113 @@ var $hulop_audit = function() {
 		window.open('locationlog.jsp?plot=' + clientId, "plot");
 	}
 
+	// Extra menus
+	var analyze_date, users, surveys;
+
+	function downloadFile(data, filename) {
+		var type, blob;
+		if (filename.endsWith('.json')) {
+			type = 'json';
+			blob = new Blob([ data ], {
+				'type' : 'text/json;charset=utf-8;'
+			});
+		} else if (filename.endsWith('.csv')) {
+			type = 'csv';
+			blob = new Blob([ new Uint8Array([ 0xEF, 0xBB, 0xBF ]), data ], {
+				'type' : 'text/csv;charset=utf-8;'
+			});
+		} else {
+			return;
+		}
+		if (navigator.msSaveBlob) {
+			navigator.msSaveBlob(blob, filename);
+		} else {
+			var link = document.createElement('a');
+			if (link.download !== undefined) {
+				var url = URL.createObjectURL(blob);
+				link.setAttribute('href', url);
+				link.setAttribute('download', filename);
+			} else {
+				link.href = 'data:attachment/' + type + ',' + data;
+			}
+			link.style = 'visibility:hidden';
+			document.body.appendChild(link);
+			link.click();
+			document.body.removeChild(link);
+		}
+	}
+
+	function load(callback) {
+		$.ajax({
+			'type' : 'get',
+			'url' : 'api/log',
+			'dataType' : 'json',
+			'data' : {
+				'action' : 'dump',
+				'db' : 'entries'
+			},
+			'success' : function(data) {
+				var entries = data;
+				$.ajax({
+					'type' : 'get',
+					'url' : 'api/log',
+					'dataType' : 'json',
+					'data' : {
+						'action' : 'stats',
+						'event' : 'location'
+					},
+					'success' : function(data) {
+						analyze(entries, data);
+						callback && callback();
+					},
+					'error' : function(XMLHttpRequest, textStatus, errorThrown) {
+						console.error(textStatus + ' (' + XMLHttpRequest.status + '): ' + errorThrown);
+					}
+				});
+			},
+			'error' : function(XMLHttpRequest, textStatus, errorThrown) {
+				console.error(textStatus + ' (' + XMLHttpRequest.status + '): ' + errorThrown);
+			}
+		});
+	}
+
+	function analyze(entries, location_stats) {
+		console.log([ entries, location_stats ])
+		analyze_date = new Date().toLocaleString().replace(/ +/g, '_').replace(/[^0-9_]+/g, '-');
+		var locations = {};
+		location_stats.forEach(function(location) {
+			locations[location.clientId] = {
+				'location_count' : location.stats.count,
+				'location_min' : new Date(location.stats.min).toLocaleString(),
+				'location_max' : new Date(location.stats.max).toLocaleString()
+			}
+		});
+		users = [];
+		surveys = [];
+		entries.forEach(function(entry) {
+			if (entry.agreed) {
+				var user = {
+					'id' : entry._id,
+					'agreed' : entry.agreed,
+					'user_agent' : entry.user_agent
+				};
+				if (entry.answers) {
+					Object.assign(user, entry.answers);
+					user.timestamp = new Date(Number(user.timestamp)).toLocaleString();
+				}
+				if (locations[user.id]) {
+					Object.assign(user, locations[user.id]);
+				}
+				users.push(user);
+			} else if (entry.device_id && entry.total) {
+				var survey = Object.assign({}, entry);
+				survey.start = new Date(survey.start).toLocaleString();
+				survey.end = new Date(survey.end).toLocaleString();
+				surveys.push(survey);
+			}
+		});
+	}
+
 	function showExtra(parent) {
 		parent.append(' | ');
 		parent.append($('<button>', {
@@ -290,17 +397,56 @@ var $hulop_audit = function() {
 		}));
 		parent.append(' ');
 		parent.append($('<button>', {
-			'text' : 'stats location logs',
+			'text' : 'stats locations',
 			'on' : {
 				'click' : function() {
 					location.href = 'api/log?' + $.param({
 						'action' : 'stats',
 						'event' : 'location',
-						'fileName' : 'location_stats.json'
+						'fileName' : 'locations_stats.json'
 					});
 				}
 			}
 		}));
+		parent.append(' | ');
+		parent.append($('<button>', {
+			'text' : 'analyze',
+			'on' : {
+				'click' : function() {
+					$(".analyze_button").attr("disabled", true);
+					load(function() {
+						$(".analyze_button").attr("disabled", false);
+					});
+				}
+			}
+		}));
+		parent.append(' - ');
+		parent.append($('<button>', {
+			'text' : 'export entries.json',
+			'class' : 'analyze_button',
+			'disabled' : true,
+			'on' : {
+				'click' : function() {
+					var json_text = JSON.stringify({
+						'users' : users,
+						'surveys' : surveys
+					});
+					downloadFile(json_text, 'entries_' + analyze_date + '.json');
+				}
+			}
+		}));
+
+		$.getScript('audit_ext.js');
 	}
-	return {};
+
+	return {
+		'extension' : function() {
+			return {
+				'analyze_date' : analyze_date,
+				'users' : users,
+				'surveys' : surveys,
+				'downloadFile' : downloadFile
+			};
+		}
+	};
 }();
