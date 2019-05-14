@@ -457,7 +457,11 @@ public class MongoAdapter implements DBAdapter {
 		CertificateFactory cf = CertificateFactory.getInstance("X.509");
 		BufferedInputStream bis = new BufferedInputStream(new ByteArrayInputStream(cert.getBytes()));
 		for (int i = 0; bis.available() > 0; i++) {
-			keystore.setCertificateEntry("alias" + i, cf.generateCertificate(bis));
+			try {
+				keystore.setCertificateEntry("alias" + i, cf.generateCertificate(bis));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		bis.close();
 
