@@ -107,7 +107,7 @@ $hulop.editor = function() {
 					}
 					var point = ol.proj.transform(lastPoint, 'EPSG:4326', 'EPSG:3857');
 					var feature = new ol.Feature(new ol.geom.Point(point));
-					var floor = d.floor;
+					var floor = Math.round(d.floor);
 					floor >= 0 && floor++;
 					feature.set('floor', floor);
 					var index = device_index.indexOf(d.client);
