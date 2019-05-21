@@ -32,10 +32,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.wink.json4j.JSON;
 import org.apache.wink.json4j.JSONException;
 import org.apache.wink.json4j.JSONObject;
 
-import com.mongodb.util.JSON;
 
 /**
  * Servlet implementation class ConfigServlet
