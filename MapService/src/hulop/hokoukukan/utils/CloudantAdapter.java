@@ -164,32 +164,26 @@ public class CloudantAdapter implements DBAdapter {
 	public void flush() {
 		synchronized (insertList) {
 			if (insertList.size() > 0) {
-				for (Response resp : navi_db.bulk(insertList)) {
-					try {
-						resultList.add(new JSONObject().put("_id", resp.getId()).put("_rev", resp.getRev()));
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-				insertCount += insertList.size();
-				insertList.clear();
-			}
-		}
-		List<JsonElement> flushList = null;
-		synchronized (insertLogList) {
-			if (insertLogList.size() > 0) {
-				flushList = new ArrayList<JsonElement>(insertLogList);
-				insertCount += insertLogList.size();
-				insertLogList.clear();
-			}
-		}
-		if (flushList != null) {
-			for (Response resp : log_db.bulk(flushList)) {
 				try {
-					new JSONObject().put("_id", resp.getId()).put("_rev", resp.getRev());
+					for (Response resp : navi_db.bulk(insertList)) {
+						resultList.add(new JSONObject().put("_id", resp.getId()).put("_rev", resp.getRev()));
+					}
+					insertCount += insertList.size();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+				insertList.clear();
+			}
+		}
+		synchronized (insertLogList) {
+			if (insertLogList.size() > 0) {
+				try {
+					log_db.bulk(insertLogList);
+					insertCount += insertLogList.size();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				insertLogList.clear();
 			}
 		}
 	}

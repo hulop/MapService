@@ -33,7 +33,6 @@ import java.security.SecureRandom;
 import java.security.cert.CertificateFactory;
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.net.ssl.SSLContext;
@@ -43,7 +42,9 @@ import org.apache.wink.json4j.JSONArray;
 import org.apache.wink.json4j.JSONException;
 import org.apache.wink.json4j.JSONObject;
 
+import com.mongodb.AggregationOptions;
 import com.mongodb.BasicDBObject;
+import com.mongodb.Cursor;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
@@ -95,7 +96,7 @@ public class MongoAdapter implements DBAdapter {
 	@Override
 	public void insert(String json) {
 		synchronized (insertList) {
-			insertList.add((DBObject) com.mongodb.util.JSON.parse(json));
+			insertList.add(BasicDBObject.parse(json));
 		}
 		if (insertList.size() >= 1000) {
 			flush();
@@ -104,12 +105,12 @@ public class MongoAdapter implements DBAdapter {
 
 	@Override
 	public void update(String json) {
-		mapCol.save((DBObject) com.mongodb.util.JSON.parse(json));
+		mapCol.save(BasicDBObject.parse(json));
 	}
 
 	@Override
 	public void setOBJ(JSONObject obj) {
-		mapCol.save((DBObject) com.mongodb.util.JSON.parse(obj.toString()));
+		mapCol.save(BasicDBObject.parse(obj.toString()));
 	}
 
 	@Override
@@ -132,24 +133,24 @@ public class MongoAdapter implements DBAdapter {
 	public void flush() {
 		synchronized (insertList) {
 			if (insertList.size() > 0) {
-				mapCol.insert(insertList);
-				insertCount += insertList.size();
+				try {
+					mapCol.insert(insertList);
+					insertCount += insertList.size();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 				insertList.clear();
 			}
 		}
-		List<DBObject> flushList = null;
 		synchronized (insertLogList) {
 			if (insertLogList.size() > 0) {
-				flushList = new ArrayList<DBObject>(insertLogList);
-				insertCount += insertLogList.size();
+				try {
+					logCol.insert(insertLogList);
+					insertCount += insertLogList.size();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 				insertLogList.clear();
-			}
-		}
-		if (flushList != null) {
-			try {
-				logCol.insert(flushList);
-			} catch (Exception e) {
-				throw e;
 			}
 		}
 	}
@@ -258,7 +259,7 @@ public class MongoAdapter implements DBAdapter {
 
 	@Override
 	public void updateUser(String json) {
-		userCol.save((DBObject) com.mongodb.util.JSON.parse(json));
+		userCol.save(BasicDBObject.parse(json));
 	}
 
 	@Override
@@ -275,7 +276,7 @@ public class MongoAdapter implements DBAdapter {
 	@Override
 	public void insertLog(String json) {
 		synchronized (insertLogList) {
-			insertLogList.add((DBObject) com.mongodb.util.JSON.parse(json));
+			insertLogList.add(BasicDBObject.parse(json));
 		}
 		if (insertLogList.size() >= 1000) {
 			flush();
@@ -294,7 +295,8 @@ public class MongoAdapter implements DBAdapter {
 						.append("count", new BasicDBObject("$sum", 1))
 						.append("min", new BasicDBObject("$min", "$timestamp"))
 						.append("max", new BasicDBObject("$max", "$timestamp"))));
-		Iterator<DBObject> it = logCol.aggregate(pipeline).results().iterator();
+//		Iterator<DBObject> it = logCol.aggregate(pipeline).results().iterator();
+		Cursor it = logCol.aggregate(pipeline, AggregationOptions.builder().build());
 		JSONArray result = new JSONArray();
 		while (it.hasNext()) {
 			try {
@@ -416,7 +418,7 @@ public class MongoAdapter implements DBAdapter {
 
 	@Override
 	public void setEntry(JSONObject entry) {
-		entryCol.save((DBObject) com.mongodb.util.JSON.parse(entry.toString()));
+		entryCol.save(BasicDBObject.parse(entry.toString()));
 	}
 
 	@Override
@@ -471,6 +473,7 @@ public class MongoAdapter implements DBAdapter {
 		SSLContext sc = SSLContext.getInstance("TLSv1.2");
 		sc.init(null, tmf.getTrustManagers(), new SecureRandom());
 		return MongoClientOptions.builder().socketFactory(sc.getSocketFactory());
+//		return MongoClientOptions.builder().sslEnabled(true).sslContext(sc);
 	}
 
 	@Override
