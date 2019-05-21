@@ -175,15 +175,19 @@ public class CloudantAdapter implements DBAdapter {
 				insertList.clear();
 			}
 		}
+		List<JsonElement> flushList = null;
 		synchronized (insertLogList) {
 			if (insertLogList.size() > 0) {
-				try {
-					log_db.bulk(insertLogList);
-					insertCount += insertLogList.size();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+				flushList = new ArrayList<JsonElement>(insertLogList);
 				insertLogList.clear();
+			}
+		}
+		if (flushList != null) {
+			try {
+				log_db.bulk(flushList);
+				insertCount += flushList.size();
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
 	}
