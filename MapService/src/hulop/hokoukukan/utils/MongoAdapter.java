@@ -64,6 +64,7 @@ public class MongoAdapter implements DBAdapter {
 	private final DBCollection mapCol, userCol, logCol, fileCol, entryCol;
 	private final List<DBObject> insertList = new ArrayList<DBObject>();
 	private final List<DBObject> insertLogList = new ArrayList<DBObject>();
+	private JSONArray resultList = new JSONArray();
 	private int insertCount = 0;
 
 	public MongoAdapter(String url) throws Exception {
@@ -90,6 +91,7 @@ public class MongoAdapter implements DBAdapter {
 		if (file != null) {
 			mapCol.remove(new BasicDBObject("properties.file", file.getPath()));
 		}
+		resultList = new JSONArray();
 		insertCount = 0;
 	}
 
@@ -138,6 +140,15 @@ public class MongoAdapter implements DBAdapter {
 					insertCount += insertList.size();
 				} catch (Exception e) {
 					e.printStackTrace();
+					String error = e.getMessage();
+					for (Object obj : insertList) {
+						String id = ((DBObject)obj).get("_id").toString();
+						try {
+							resultList.add(new JSONObject().put("_id", id).put("error", error));
+						} catch (JSONException e1) {
+							e1.printStackTrace();
+						}
+					}
 				}
 				insertList.clear();
 			}
@@ -166,7 +177,7 @@ public class MongoAdapter implements DBAdapter {
 
 	@Override
 	public JSONArray getResult() {
-		return new JSONArray();
+		return resultList;
 	}
 
 	@Override
