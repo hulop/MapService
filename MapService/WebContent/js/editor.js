@@ -673,20 +673,23 @@ $hulop.editor = function() {
 		$hulop.route.sendData('post', 'api/editor', data, function(result) {
 			console.log(result);
 			var errors = 0;
+			var msg = '';
 			result.insert && result.insert.forEach(function(obj) {
 				!obj._rev && errors++;
 				checkDbResult(obj);
+				msg = msg || obj.error;
 			});
 			result.update && result.update.forEach(function(obj) {
 				!obj._rev && errors++;
 				checkDbResult(obj);
+				msg = msg || obj.error;
 			});
 			org_remove.forEach(function(obj) {
 				checkDbResult({
 					'_id' : obj._id
 				});
 			});
-			errors > 0 && alert(errors + ' errors while saving changes. Please reload data.');
+			errors > 0 && alert(errors + ' errors while saving changes. Please reload data.\n\n' + msg);
 		});
 	}
 

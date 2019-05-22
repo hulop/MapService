@@ -166,7 +166,12 @@ public class CloudantAdapter implements DBAdapter {
 			if (insertList.size() > 0) {
 				try {
 					for (Response resp : navi_db.bulk(insertList)) {
-						resultList.add(new JSONObject().put("_id", resp.getId()).put("_rev", resp.getRev()));
+						try {
+							resultList.add(new JSONObject().put("_id", resp.getId()).put("_rev", resp.getRev())
+									.put("error", resp.getReason()));
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
 					}
 					insertCount += insertList.size();
 				} catch (Exception e) {
