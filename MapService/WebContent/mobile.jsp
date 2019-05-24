@@ -197,6 +197,7 @@ if (id == null || (agreeBean.isAgreementSupported() && !agreeBean.getAgreed(id))
 					<option value="1" i18n>ROAD_CONDITION_1</option>
 					<option value="8" i18n>ROAD_CONDITION_8</option>
 					<option value="9" i18n selected>ROAD_CONDITION_9</option>
+					<optgroup label=""></optgroup>
 			</select>
 
 			<label for="deff_LV" i18n>DEFF_LV</label>
