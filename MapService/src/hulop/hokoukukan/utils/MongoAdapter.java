@@ -487,7 +487,7 @@ public class MongoAdapter implements DBAdapter {
 		tmf.init(keystore);
 		SSLContext sc = SSLContext.getInstance("TLSv1.2");
 		sc.init(null, tmf.getTrustManagers(), new SecureRandom());
-		return MongoClientOptions.builder().socketFactory(sc.getSocketFactory());
+		return MongoClientOptions.builder().socketFactory(sc.getSocketFactory()).socketKeepAlive(true);
 //		return MongoClientOptions.builder().sslEnabled(true).sslContext(sc);
 	}
 
