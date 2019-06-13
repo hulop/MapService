@@ -83,6 +83,13 @@
 	padding-left: 2.0em !important;
 }
 
+#rotate-up-button {
+	margin: 0px;
+	width: 44px;
+	height: 44px;
+	padding: 0.5625em;
+}
+
 #rotate-up-button.ui-icon-north-up:after,
 #rotate-up-button.ui-icon-route-up:after,
 #rotate-up-button.ui-icon-head-up:after,
