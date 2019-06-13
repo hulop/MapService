@@ -210,12 +210,6 @@ $hulop.map = function() {
 				'href' : '#',
 				'id' : 'rotate-up-button',
 				'class' : 'ui-btn ui-mini ui-shadow ui-corner-all ui-btn-icon-top ui-icon-head-up',
-				'css' : {
-					'margin' : '0px',
-					'width' : '44px',
-					'height' : '44px',
-					'padding' : '0.5625em'
-				},
 				'on' : {
 					'click' : function(e) {
 						e.preventDefault();
@@ -251,6 +245,7 @@ $hulop.map = function() {
 			});
 			$('#end_navi').on('click', function(event) {
 				event.preventDefault();
+				$hulop.util.speak("", true);
 				$hulop.util.logText("endNavigation");
 				$hulop.logging && $hulop.logging.onData({
 					"event" : "navigation",

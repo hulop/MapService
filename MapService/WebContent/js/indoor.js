@@ -98,6 +98,11 @@ $hulop.indoor = function() {
 		showFloor(activeFloor);
 	}
 
+	function toggleFloor() {
+		var index = floors.indexOf(activeFloor) + 1;
+		showFloor(index < floors.length ? floors[index] : null);
+	}
+
 	function loadOverlays() {
 		map = $hulop.map.getMap();
 		$.ajax({
@@ -137,8 +142,7 @@ $hulop.indoor = function() {
 				'click' : function(e) {
 					e.preventDefault();
 					e.target.blur();
-					var index = floors.indexOf(activeFloor) + 1;
-					showFloor(index < floors.length ? floors[index] : null);
+					toggleFloor();
 				}
 			}
 		}));
@@ -337,6 +341,7 @@ $hulop.indoor = function() {
 		},
 		'getOverlay' : getOverlay,
 		'refresh' : refresh,
+		'toggleFloor' : toggleFloor,
 		'loadOverlays' : loadOverlays,
 		'showFloor' : showFloor,
 		'getCurrentFloor' : getCurrentFloor,
