@@ -44,6 +44,13 @@ $hulop.logging = function() {
 					intervalId = setInterval(function() {
 						flush();
 					}, 1 * 60 * 1000);
+					var user_mode = $hulop.mobile && $hulop.mobile.getPreference('user_mode');
+					user_mode && onData({
+						'event' : 'start',
+						'user_mode' : user_mode,
+						'lang' : $hulop.messages.defaultLang,
+						'timestamp' : new Date().getTime()
+					});
 				}
 			}
 		});
