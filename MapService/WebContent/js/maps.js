@@ -899,6 +899,7 @@ $hulop.map = function() {
 		} else {
 			if (!noNavigation) {
 				startNavigation();
+				$("#map-page").trigger("resize");
 			}
 		}
 		rerouting = false;
