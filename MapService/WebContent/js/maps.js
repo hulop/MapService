@@ -1589,6 +1589,7 @@ $hulop.map = function() {
 		}
 	}
 
+	noheader = false; // Show remaining distance on the map
 	function showRemainDist(distance) {
 		var text = $m('REMAIN_DIST', Math.floor(distance));
 		if (noheader) {
