@@ -59,6 +59,12 @@
 		<label class="device" style="display:none;"><input type="checkbox" id="plot_all" checked />plot all</label>
 		<label><input type="checkbox" id="heatmap" />heat map</label>
 		<label class="plot" style="display:none;"><input type="checkbox" id="show_info" />information</label>
+		<span id="filter" style="display:none;">
+			|
+			days: <input id="filter_days" type="text" placeholder="Sun,Mon,Tue,Wed,Thu,Fri,Sat" size="25" />
+			hours: <input id="filter_hours" type="text" placeholder="hh:mm-hh:mm,hh:mm-hh:mm" size="25" />
+			<button id="filter_button">filter</button>
+		</span>
 	</div>
 	<% if (answers instanceof JSONObject) { %>
 	<div id="answers" style="display: none;">
