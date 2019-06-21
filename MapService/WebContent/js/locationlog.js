@@ -79,7 +79,9 @@ $hulop.editor = function() {
 							messages += q + '\n';
 						}
 						messages += '[System ' + log.time + ']: '
-						messages += log.output.text.join('\n');
+						if (log.output) {
+							messages += log.output.text.join('\n');
+						}
 						if (log.context.navi && log.context.dest_info) {
 							messages += '\n[' + log.context.dest_info.name + ': ' + log.context.dest_info.nodes + ']';
 							dest_name = log.context.dest_info.name;
@@ -167,8 +169,40 @@ $hulop.editor = function() {
 
 	function showFeatures() {
 		var floor = $hulop.indoor && $hulop.indoor.getCurrentFloor() || 0;
+		var days = $("#filter_days").val().trim().split(/\s*,\s*/);
+		var hours = $("#filter_hours").val().trim().split(/\s*,\s*/);
+		if (days.length > 0 && days[0] != '') {
+			days = days.map(function(day) {
+				return ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'].indexOf(day.toLowerCase());
+			});
+		} else {
+			days = null;
+		}
+		if (hours.length > 0 && hours[0] != '') {
+			hours = hours.map(function(range) {
+				return range.split('-').map(function(hhmm) {
+					var hh_mm = hhmm.split(':');
+					return parseInt(hh_mm[0]) * 60 + parseInt(hh_mm[1]);
+				});
+			});
+		} else {
+			hours = null;
+		}
 		var features = lastFeatures.filter(function(feature) {
-			return floor == feature.get('floor');
+			if (floor != feature.get('floor')) {
+				return false;
+			}
+			var date = new Date(feature.get('timestamp'));
+			var day = date.getDay(), minutes = date.getHours() * 60 + date.getMinutes();
+			if (days && days.indexOf(day) == -1) {
+				return false;
+			}
+			if (hours && hours.filter(function(range) {
+					return minutes >= range[0] && minutes < range[1];
+				}).length == 0) {
+				return false;
+			}
+			return true;
 		});
 		var rate = 7500 / features.length;
 		if (rate < 1) {
@@ -216,6 +250,7 @@ $hulop.editor = function() {
 		map = $hulop.map.getMap();
 		map.addControl(new ol.control.Zoom());
 		$('.ui-icon-home').on('click', showFeatures);
+		$('#filter_button').on('click', showFeatures);
 		$('#load').on('click', load);
 		$('#date').on('keydown', function(event) {
 			event.keyCode == 13 && load();
@@ -361,6 +396,7 @@ $hulop.editor = function() {
 				feature && feature.get('messages') && alert(feature.get('messages'));
 			});
 		} else {
+			$('#filter').show();
 			map.on('click', function(event) {
 				var feature = map.forEachFeatureAtPixel(event.pixel, function(feature) {
 					if (feature.get('client')) {
