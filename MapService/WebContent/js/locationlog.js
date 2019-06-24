@@ -188,23 +188,25 @@ $hulop.editor = function() {
 		} else {
 			hours = null;
 		}
+		var countMap = {}, maxCount = 0;
 		var features = lastFeatures.filter(function(feature) {
-			if (floor != feature.get('floor')) {
-				return false;
-			}
 			var date = new Date(feature.get('timestamp'));
 			var day = date.getDay(), minutes = date.getHours() * 60 + date.getMinutes();
 			if (days && days.indexOf(day) == -1) {
 				return false;
 			}
 			if (hours && hours.filter(function(range) {
-					return minutes >= range[0] && minutes < range[1];
-				}).length == 0) {
+				return minutes >= range[0] && minutes < range[1];
+			}).length == 0) {
 				return false;
 			}
-			return true;
+			var f = feature.get('floor');
+			var count = (countMap[f] || 0) + 1;
+			maxCount = Math.max(maxCount, count);
+			countMap[f] = count;
+			return floor == f;
 		});
-		var rate = 7500 / features.length;
+		var rate = 7500 / maxCount;
 		if (rate < 1) {
 			var lastIndex = -1;
 			features = features.filter(function(feature, index) {
@@ -217,7 +219,7 @@ $hulop.editor = function() {
 		}
 		source.clear();
 		source.addFeatures(features);
-		$('#message').text(features.length ? features.length + ' locations shown' : '');
+		$('#message').text(features.length ? features.length + ' of ' + countMap[floor] + ' locations shown' : '');
 	}
 
 	function showBackground() {
@@ -416,6 +418,9 @@ $hulop.editor = function() {
 	}
 
 	return {
+		'heatmap' : function() {
+			return heatmap
+		},
 		'init' : init,
 		'load' : load
 	};
