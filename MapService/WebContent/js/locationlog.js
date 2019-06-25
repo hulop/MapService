@@ -206,7 +206,7 @@ $hulop.editor = function() {
 			countMap[f] = count;
 			return floor == f;
 		});
-		var rate = 7500 / maxCount;
+		var rate = Math.min((Number($("#filter_thinning").val()) || 100) / 100, 7500 / maxCount);
 		if (rate < 1) {
 			var lastIndex = -1;
 			features = features.filter(function(feature, index) {
@@ -219,7 +219,7 @@ $hulop.editor = function() {
 		}
 		source.clear();
 		source.addFeatures(features);
-		$('#message').text(features.length ? features.length + ' of ' + countMap[floor] + ' locations shown' : '');
+		$('#message').text(features.length ? Math.floor(rate * 10000) / 100 + '% (' + features.length + '/' + countMap[floor] + ') locations' : '');
 	}
 
 	function showBackground() {
