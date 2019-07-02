@@ -436,9 +436,10 @@ public class RouteSearchBean {
 			} catch (Exception e) {
 			}
 			// number of steps along a stairway
-			// if (linkType.equals("12") && steps == 0) {
+			if (linkType.equals("12") && steps == 0) {
 			// System.out.println("Error: steps should > 0");
-			// }
+				steps = 1;
+			}
 			String rail = properties.has("手すり") ? properties.getString("手すり") : "";
 			// 0: no, 1: on the right, 2: on the left, 3: both sides, 9: unknown
 			// (link direction - start node to end node)
