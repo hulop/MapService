@@ -190,6 +190,9 @@ $hulop.editor = function() {
 		}
 		var countMap = {}, maxCount = 0;
 		var features = lastFeatures.filter(function(feature) {
+			if (device_filter && device_filter.indexOf(feature.get('client')) == -1) {
+				return false;
+			}
 			var date = new Date(feature.get('timestamp'));
 			var day = date.getDay(), minutes = date.getHours() * 60 + date.getMinutes();
 			if (days && days.indexOf(day) == -1) {
@@ -247,6 +250,11 @@ $hulop.editor = function() {
 		back_source.addFeatures(features);
 	}
 
+	var device_filter, fr = new FileReader();
+	fr.addEventListener('load', function () {
+		device_filter = this.result.trim().split(/\s*,\s*/);
+	});
+
 	function init(cb) {
 		console.log('Location log init');
 		map = $hulop.map.getMap();
@@ -256,6 +264,10 @@ $hulop.editor = function() {
 		$('#load').on('click', load);
 		$('#date').on('keydown', function(event) {
 			event.keyCode == 13 && load();
+		});
+		$('#filter_csv').on('change', function() {
+			device_filter = null;
+			this.files[0] && fr.readAsText(this.files[0]);
 		});
 		$('#heatmap').change(function() {
 			var showHeatmap = $(this).is(':checked');

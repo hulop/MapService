@@ -63,6 +63,7 @@
 			|
 			days: <input id="filter_days" type="text" placeholder="Sun,Mon,Tue,Wed,Thu,Fri,Sat" size="20" />
 			hours: <input id="filter_hours" type="text" placeholder="hh:mm-hh:mm,hh:mm-hh:mm" size="20" />
+			devices: <input id="filter_csv" type="file" accept=".csv">
 			<input id="filter_thinning" type="text" size="1" value="100" />%
 			<button id="filter_button">filter</button>
 		</span>
