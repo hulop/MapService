@@ -269,6 +269,9 @@ $hulop.editor = function() {
 			device_filter = null;
 			this.files[0] && fr.readAsText(this.files[0]);
 		});
+		$('#filter_csv_cancel').on('click', function() {
+			$('#filter_csv').val(device_filter = null);
+		});
 		$('#heatmap').change(function() {
 			var showHeatmap = $(this).is(':checked');
 			vector.setVisible(!showHeatmap);
