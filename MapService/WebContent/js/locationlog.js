@@ -189,7 +189,11 @@ $hulop.editor = function() {
 			hours = null;
 		}
 		var countMap = {}, maxCount = 0;
+		window.$setHide && $setHide(lastFeatures);
 		var features = lastFeatures.filter(function(feature) {
+			if (feature.get('$hide')) {
+				return false;
+			}
 			if (device_filter && device_filter.indexOf(feature.get('client')) == -1) {
 				return false;
 			}
