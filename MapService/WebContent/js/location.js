@@ -76,6 +76,12 @@ $hulop.location = function() {
 				'width' : 2,
 				'color' : 'gray'
 			})
+		}),
+		'MultiPolygon' : new ol.style.Style({
+			'stroke' : new ol.style.Stroke({
+				'width' : 1,
+				'color' : 'blue'
+			})
 		})
 	};
 
@@ -224,9 +230,9 @@ $hulop.location = function() {
 		}
 	}
 
-	var nextLayer, stepLine, nextCircle;
+	var nextLayer, stepLine = new ol.Feature(), nextCircle = new ol.Feature(), nextPolygon = new ol.Feature();
 
-	function showNextFeature(lineProperties, circleProperties) {
+	function showNextFeature(lineGeometry, circleGeometry, polygonGeometry) {
 		var map = $hulop.map.getMap();
 		if (!map) {
 			return;
@@ -234,7 +240,7 @@ $hulop.location = function() {
 		if (!nextLayer) {
 			nextLayer = new ol.layer.Vector({
 				'source' : new ol.source.Vector({
-					'features' : [ stepLine = new ol.Feature(lineProperties), nextCircle = new ol.Feature(circleProperties) ]
+					'features' : [ stepLine, nextCircle, nextPolygon]
 				}),
 				'style' : function(feature) {
 					return nextStyle[feature.getGeometry().getType()];
@@ -242,10 +248,10 @@ $hulop.location = function() {
 				'zIndex' : 102
 			});
 			map.addLayer(nextLayer);
-		} else {
-			lineProperties && stepLine.setProperties(lineProperties);
-			circleProperties && nextCircle.setProperties(circleProperties);
 		}
+		lineGeometry && stepLine.setGeometry(lineGeometry);
+		circleGeometry && nextCircle.setGeometry(circleGeometry);
+		polygonGeometry && nextPolygon.setGeometry(polygonGeometry);
 	}
 
 	function showNext(step, nextStep) {
@@ -262,11 +268,8 @@ $hulop.location = function() {
 				}
 			}
 		}
-		var lineProperties = {
-			'geometry' : new ol.geom.LineString(path)
-		}
-		var style = nextStyle.LineString[1];
 		if (path.length > 1) {
+			var style = nextStyle.LineString[1];
 			// console.log(style);
 			var end = path[path.length - 1];
 			style.setGeometry(new ol.geom.Point(end));
@@ -283,15 +286,28 @@ $hulop.location = function() {
 			// Math.atan2(dy, dx));
 			style.getImage().setRotation(-Math.atan2(dy, dx));
 		}
-		showNextFeature(lineProperties);
+		showNextFeature(new ol.geom.LineString(path));
 		showNextCircle();
+		showNextPolygon();
 	}
 
 	function showNextCircle(latlng, radius) {
 		var center = latlng && radius && ol.proj.transform(latlng, 'EPSG:4326', 'EPSG:3857')
-		showNextFeature(null, {
-			'geometry' : center ? new ol.geom.Circle(center, radius) : new ol.geom.Point([ 0, 0 ])
-		});
+		var fix = latlng && radius && ol.proj.getPointResolution('EPSG:3857', 1, center);
+		showNextFeature(null, center ? new ol.geom.Circle(center, radius / fix) : new ol.geom.Point([ 0, 0 ]));
+	}
+
+	function showNextPolygon(latlng, radius, prevInfo, nextInfo) {
+		var coords = [];
+		if (latlng && prevInfo && prevInfo.road_width >= radius * 2) {
+			coords.push($hulop.util.computeRect(latlng, prevInfo.lastDir.heading, prevInfo.road_width / 2, prevInfo.road_width / 2));
+		}
+		if (latlng && nextInfo && nextInfo.road_width >= radius * 2) {
+			coords.push($hulop.util.computeRect(latlng, nextInfo.firstDir.heading, nextInfo.road_width / 2, nextInfo.road_width / 2));
+		}
+		var polygonGeom = new ol.geom.MultiPolygon(coords)
+		showNextFeature(null, null, polygonGeom);
+		return polygonGeom;
 	}
 
 	return {
@@ -302,6 +318,7 @@ $hulop.location = function() {
 		'updateOrientation' : updateOrientation,
 		'showNext' : showNext,
 		'showNextCircle' : showNextCircle,
+		'showNextPolygon' : showNextPolygon,
 		'enableOrientation' : enableOrientation,
 		'getCurrentLocation' : function() {
 			return lastLocation;

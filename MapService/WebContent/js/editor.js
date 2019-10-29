@@ -44,7 +44,7 @@ $hulop.editor = function() {
 	PROPERTY_NAMES['リンクの情報'] = [ 'リンクID', '起点ノードID', '終点ノードID', 'リンク延長', '経路の種類', '方向性', '通行制限', '手すり', '屋根の有無', '蓋のない溝や水路の有無', '日交通量', '主な利用者', '通り名称または交差点名称' ]
 			.concat(i18nMenu([ '通り名称または交差点名称' ])).concat(
 					[ 'group:ROAD', '有効幅員', '有効幅員緯度', '有効幅員経度', '縦断勾配1', '縦断勾配1緯度', '縦断勾配1経度', '縦断勾配2', '横断勾配', '横断勾配緯度', '横断勾配経度', '路面状況', '段差', '段差緯度',
-							'段差経度', 'road_low_priority', 'distance_overwrite', 'group:STAIR', '最小階段段数', '最大階段段数', 'group:ELEVATOR', 'エレベーター種別', 'elevator_equipments', 'エレベーターの緯度', 'エレベーターの経度',
+							'段差経度', 'road_low_priority', 'road_width', 'distance_overwrite', 'group:STAIR', '最小階段段数', '最大階段段数', 'group:ELEVATOR', 'エレベーター種別', 'elevator_equipments', 'エレベーターの緯度', 'エレベーターの経度',
 							'group:A11Y', '視覚障害者誘導用ブロック', '補助施設の設置状況', '補助施設の緯度', '補助施設の経度', 'エスコートゾーン', 'group:TRAFFIC', 'バス停の有無', 'バス停の緯度', 'バス停の経度',
 							'信号の有無', '信号の緯度', '信号の経度', '信号種別', 'group:SERVICE', '供用開始時間', '供用終了時間', '供用開始日', '供用終了日', '供用制限曜日',
 							'business_hours', 'business_hours_PreHoliday', 'business_hours_Holiday',

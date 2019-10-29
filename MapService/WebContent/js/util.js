@@ -392,6 +392,18 @@ $hulop.util = function() {
 		return newLatLng(radToDeg(lat2), radToDeg(lng2));
 	}
 
+	function computeRect(center, heading, x, y) {
+		var up = computeOffset(center, y, heading);
+		var up_left = computeOffset(up, x, heading - 90);
+		var up_right = computeOffset(up, x, heading + 90);
+		var down = computeOffset(center, y, heading + 180);
+		var down_left = computeOffset(down, x, heading - 90);
+		var down_right = computeOffset(down, x, heading + 90);
+		return [ [ up_left, up_right, down_right, down_left, up_left ].map(function(coord) {
+			return ol.proj.transform(coord, 'EPSG:4326', 'EPSG:3857');
+		}) ];
+	}
+
 	function computeLength(path) {
 //		if (path.array != null)
 //			path = path.array;
@@ -442,6 +454,7 @@ $hulop.util = function() {
 		'computeHeading' : computeHeading,
 		'computeRouteHeading' : computeRouteHeading,
 		'computeOffset' : computeOffset,
+		'computeRect' : computeRect,
 		'onPrefChange' : onPrefChange,
 		'computeLength' : computeLength
 	};

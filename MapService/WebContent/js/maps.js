@@ -116,6 +116,7 @@ $hulop.map = function() {
 				initCenter();
 				initTile();
 				initRotationMode();
+				initScale()
 				map.on('moveend', saveCenter);
 				$hulop.config.INITIAL_ZOOM && map.getView().setZoom($hulop.config.INITIAL_ZOOM)
 			},
@@ -324,6 +325,20 @@ $hulop.map = function() {
 		}
 	}
 
+	function initScale() {
+		var scale = $hulop.config.SCALE;
+		if (scale) {
+			ARRIVE_DIST = ARRIVE_DIST * scale;
+			REROUTE_DIST = REROUTE_DIST * scale;
+			SNAP_DIST = SNAP_DIST.map(function(val) {
+				return val * scale;
+			});
+		}
+		ARRIVE_DIST = $hulop.config.ARRIVE_DIST || ARRIVE_DIST;
+		REROUTE_DIST = $hulop.config.REROUTE_DIST || REROUTE_DIST;
+		SNAP_DIST = $hulop.config.SNAP_DIST || SNAP_DIST;
+	}
+
 	var iconClasses = 'ui-icon-navigation ui-icon-head-up ui-icon-route-up';
 	var iconLabels = 'N H R';
 	function setRotationMode(mode) {
@@ -434,8 +449,13 @@ $hulop.map = function() {
 				'route' : route,
 				'distance' : distance
 			};
+			var arrived = distance < arriveDist;
 			$hulop.location && $hulop.location.showNextCircle(nextLatlng, arriveDist);
-			if (distance < arriveDist) {
+			var polygonGeom = $hulop.location && $hulop.location.showNextPolygon(nextLatlng, arriveDist, route.lastLinkInfo, route.links[0] && route.links[0].info);
+			if (!arrived && polygonGeom && polygonGeom.intersectsCoordinate(ol.proj.transform(pos, 'EPSG:4326', 'EPSG:3857'))) {
+				arrived = true;
+			}
+			if (arrived) {
 				route.next_dist_span && route.next_dist_span.empty();
 				showStep(index, false);
 				if (index == naviRoutes.length - 1) {

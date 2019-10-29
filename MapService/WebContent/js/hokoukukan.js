@@ -131,6 +131,7 @@ $hulop.route = function() {
 				'poi_link' : poi_link,
 				'poi_start' : poi_start,
 				'poi_end' : poi_end,
+				'road_width' : Number(properties['road_width']),
 				'backward' : properties.sourceNode == obj.properties['終点ノードID']
 			};
 		}
