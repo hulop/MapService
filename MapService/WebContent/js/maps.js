@@ -1478,7 +1478,7 @@ $hulop.map = function() {
 	function distAndTitle(distance, route, soon, round) {
 		round = round || 1;
 		var title = route.title;
-		if (soon && distance < ARRIVE_DIST) {
+		if (soon) {
 			var afterPrefix = getLastLinkInfo(route, 'afterPrefix');
 			if (afterPrefix) {
 				return $m(afterPrefix, title);
