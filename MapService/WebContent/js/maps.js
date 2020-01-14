@@ -34,7 +34,7 @@ $hulop.map = function() {
 	 * Map related functions TODO need further categorization
 	 * 
 	 */
-	var APPROACH_DIST = [ 200, 100, 50, 30, 14 ], ARRIVE_DIST = 6, SNAP_DIST = [ 8, 3, 2, 1 ], REROUTE_DIST = 12;
+	var APPROACH_DIST = [ 200, 100, 50, 30, 14 ], ARRIVE_DIST, SNAP_DIST, REROUTE_DIST;
 	var SNAP_RATIO = 0, SNAP_BACK = 5 / 2;
 	var POI_ANNOUNCE_DIST = 10, NEXT_ANNOUNCE_DIST = 10, NEXT_DETAIL_DIST = 10, NEXT_ELEVATOR_DIST = 25, NO_SOON_DIST = 10;
 	var map, currentLatLng, currentDist, currentStep, suppressAnnounce = 0, supressError = 0, lastErrorPos, rerouting, lastAdjust, lastTo;
@@ -326,7 +326,14 @@ $hulop.map = function() {
 	}
 
 	function initScale() {
-		var scale = $hulop.config.SCALE;
+		ARRIVE_DIST = 6;
+		SNAP_DIST = [ 8, 3, 2, 1 ];
+		REROUTE_DIST = 12
+		setScale($hulop.config)
+	}
+
+	function setScale(config) {
+		var scale = config.SCALE;
 		if (scale) {
 			ARRIVE_DIST = ARRIVE_DIST * scale;
 			REROUTE_DIST = REROUTE_DIST * scale;
@@ -334,9 +341,10 @@ $hulop.map = function() {
 				return val * scale;
 			});
 		}
-		ARRIVE_DIST = $hulop.config.ARRIVE_DIST || ARRIVE_DIST;
-		REROUTE_DIST = $hulop.config.REROUTE_DIST || REROUTE_DIST;
-		SNAP_DIST = $hulop.config.SNAP_DIST || SNAP_DIST;
+		ARRIVE_DIST = config.ARRIVE_DIST || ARRIVE_DIST;
+		REROUTE_DIST = config.REROUTE_DIST || REROUTE_DIST;
+		SNAP_DIST = config.SNAP_DIST || SNAP_DIST;
+		console.log([config, ARRIVE_DIST, REROUTE_DIST, SNAP_DIST]);
 	}
 
 	var iconClasses = 'ui-icon-navigation ui-icon-head-up ui-icon-route-up';
@@ -1645,6 +1653,8 @@ $hulop.map = function() {
 		'getState' : getState,
 		'resetState' : resetState,
 		'init' : init,
+		'initScale' : initScale,
+		'setScale' : setScale,
 		'setTarget' : setTarget,
 		'initTarget' : initTarget,
 		'showRoute' : showRoute,

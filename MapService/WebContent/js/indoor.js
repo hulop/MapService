@@ -331,6 +331,14 @@ $hulop.indoor = function() {
 			if (lastBuilding != data.building) {
 				lastBuilding = data.building;
 				$hulop.util.logText('buildingChanged,' + JSON.stringify(data));
+				if ($hulop.config.AREA_EXT) {
+					$hulop.map.initScale()
+					$hulop.config.AREA_EXT.forEach(function(area) {
+						if (area.area_name == lastBuilding) {
+							$hulop.map.setScale(area)
+						}
+					});
+				}
 			}
 		}
 	}
