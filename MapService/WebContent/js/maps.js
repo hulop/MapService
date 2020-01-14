@@ -344,7 +344,8 @@ $hulop.map = function() {
 		ARRIVE_DIST = config.ARRIVE_DIST || ARRIVE_DIST;
 		REROUTE_DIST = config.REROUTE_DIST || REROUTE_DIST;
 		SNAP_DIST = config.SNAP_DIST || SNAP_DIST;
-		console.log([config, ARRIVE_DIST, REROUTE_DIST, SNAP_DIST]);
+		NEXT_DETAIL_DIST = ARRIVE_DIST < 10 ? 10 : 20
+		console.log([config, ARRIVE_DIST, REROUTE_DIST, SNAP_DIST, NEXT_DETAIL_DIST]);
 	}
 
 	var iconClasses = 'ui-icon-navigation ui-icon-head-up ui-icon-route-up';
@@ -1477,7 +1478,7 @@ $hulop.map = function() {
 	function distAndTitle(distance, route, soon, round) {
 		round = round || 1;
 		var title = route.title;
-		if (soon && distance < 6) {
+		if (soon && distance < ARRIVE_DIST) {
 			var afterPrefix = getLastLinkInfo(route, 'afterPrefix');
 			if (afterPrefix) {
 				return $m(afterPrefix, title);
