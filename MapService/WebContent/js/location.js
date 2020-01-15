@@ -311,9 +311,11 @@ $hulop.location = function() {
 		var polygonGeom = new ol.geom.MultiPolygon(coords)
 		if ($hulop.map.devMode()) {
 			showNextFeature(null, null, polygonGeom);
-		} else if (max_radius > radius) {
-			showNextFeature(null, null, new ol.geom.MultiPolygon());
-			showNextCircle(latlng, max_radius)
+		} else {
+			showNextFeature(null, null, new ol.geom.MultiPolygon([]));
+			if (max_radius > radius) {
+				showNextCircle(latlng, max_radius)
+			}
 		}
 		return polygonGeom;
 	}
