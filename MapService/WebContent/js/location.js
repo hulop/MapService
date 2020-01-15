@@ -77,6 +77,13 @@ $hulop.location = function() {
 				'color' : 'gray'
 			})
 		}),
+		'DashedCircle' : new ol.style.Style({
+			'stroke' : new ol.style.Stroke({
+				'width' : 2,
+				'lineDash': [1, 4],
+				'color' : 'gray'
+			})
+		}),
 		'MultiPolygon' : new ol.style.Style({
 			'stroke' : new ol.style.Stroke({
 				'width' : 1,
@@ -243,7 +250,7 @@ $hulop.location = function() {
 					'features' : [ stepLine, nextCircle, nextPolygon]
 				}),
 				'style' : function(feature) {
-					return nextStyle[feature.getGeometry().getType()];
+					return nextStyle[feature.get('drawType') || feature.getGeometry().getType()];
 				},
 				'zIndex' : 102
 			});
@@ -309,14 +316,17 @@ $hulop.location = function() {
 			max_radius = Math.max(max_radius, nextInfo.road_width / 2)
 		}
 		var polygonGeom = new ol.geom.MultiPolygon(coords)
+		nextCircle.unset('drawType');
 		if ($hulop.map.devMode()) {
 			showNextFeature(null, null, polygonGeom);
 		} else {
 			showNextFeature(null, null, new ol.geom.MultiPolygon([]));
 			if (max_radius > radius) {
-				showNextCircle(latlng, max_radius)
+				showNextCircle(latlng, max_radius);
+				nextCircle.set('drawType', 'DashedCircle');
 			}
 		}
+
 		return polygonGeom;
 	}
 
