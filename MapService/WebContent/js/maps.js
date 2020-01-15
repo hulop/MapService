@@ -1662,6 +1662,7 @@ $hulop.map = function() {
 		'showResult' : showResult,
 		'showStep' : showStep,
 		'setSync' : setSync,
+		'devMode' : devMode,
 		'getMap' : function() {
 			return map;
 		},
