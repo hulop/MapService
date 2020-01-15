@@ -309,7 +309,7 @@ $hulop.location = function() {
 			max_radius = Math.max(max_radius, nextInfo.road_width / 2)
 		}
 		var polygonGeom = new ol.geom.MultiPolygon(coords)
-		if ($hulop.map.devMode()) {
+		if ($hulop.map.getMap().devMode()) {
 			showNextFeature(null, null, polygonGeom);
 		} else if (max_radius > radius) {
 			showNextCircle(latlng, max_radius)
