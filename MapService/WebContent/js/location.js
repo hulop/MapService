@@ -299,14 +299,21 @@ $hulop.location = function() {
 
 	function showNextPolygon(latlng, radius, prevInfo, nextInfo) {
 		var coords = [];
+		var max_radius = radius;
 		if (latlng && prevInfo && prevInfo.road_width >= radius * 2) {
 			coords.push($hulop.util.computeRect(latlng, prevInfo.lastDir.heading, prevInfo.road_width / 2, prevInfo.road_width / 2));
+			max_radius = Math.max(max_radius, prevInfo.road_width / 2)
 		}
 		if (latlng && nextInfo && nextInfo.road_width >= radius * 2) {
 			coords.push($hulop.util.computeRect(latlng, nextInfo.firstDir.heading, nextInfo.road_width / 2, nextInfo.road_width / 2));
+			max_radius = Math.max(max_radius, nextInfo.road_width / 2)
 		}
 		var polygonGeom = new ol.geom.MultiPolygon(coords)
-		showNextFeature(null, null, polygonGeom);
+		if ($hulop.map.devMode()) {
+			showNextFeature(null, null, polygonGeom);
+		} else if (max_radius > radius) {
+			showNextCircle(latlng, max_radius)
+		}
 		return polygonGeom;
 	}
 
