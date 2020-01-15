@@ -308,10 +308,10 @@ $hulop.location = function() {
 			coords.push($hulop.util.computeRect(latlng, nextInfo.firstDir.heading, nextInfo.road_width / 2, nextInfo.road_width / 2));
 			max_radius = Math.max(max_radius, nextInfo.road_width / 2)
 		}
-		var polygonGeom = new ol.geom.MultiPolygon(coords)
 		if ($hulop.map.devMode()) {
-			showNextFeature(null, null, polygonGeom);
+			showNextFeature(null, null, new ol.geom.MultiPolygon(coords));
 		} else if (max_radius > radius) {
+			showNextFeature(null, null, new ol.geom.MultiPolygon());
 			showNextCircle(latlng, max_radius)
 		}
 		return polygonGeom;
