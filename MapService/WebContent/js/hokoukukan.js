@@ -238,6 +238,12 @@ $hulop.route = function() {
 				'color' : '#00B4B4',
 				'width' : 10
 			})
+		}),
+		'wideLink' : new ol.style.Style({
+			'stroke' : new ol.style.Stroke({
+				'color' : '#00B4B4',
+				'width' : 20
+			})
 		})
 	};
 
@@ -250,7 +256,8 @@ $hulop.route = function() {
 					return null;
 				}
 			}
-			return properties['route_type'] == 4 ? styles.elevator : styles.link;
+//			return properties['route_type'] == 4 ? styles.elevator : styles.link;
+			return properties['route_type'] == 4 ? styles.elevator : properties['hulop_road_width'] ? styles.wideLink : styles.link;
 		} else if (properties.node_id) {
 			if (floor) {
 				var height = properties['floor'];
