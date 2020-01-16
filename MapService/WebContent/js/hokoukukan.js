@@ -232,6 +232,12 @@ $hulop.route = function() {
 				'color' : '#00B4B4',
 				'width' : 10
 			})
+		}),
+		'wideLink' : new ol.style.Style({
+			'stroke' : new ol.style.Stroke({
+				'color' : '#00B4B4',
+				'width' : 20
+			})
 		})
 	};
 
@@ -245,7 +251,8 @@ $hulop.route = function() {
 					return null;
 				}
 			}
-			return properties['エレベーター種別'] ? styles.elevator : styles.link;
+//			return properties['エレベーター種別'] ? styles.elevator : styles.link;
+			return properties['エレベーター種別'] ? styles.elevator : properties['road_width'] ? styles.wideLink : styles.link;
 			break;
 		case 'ノード情報':
 			if (floor) {

@@ -1215,7 +1215,7 @@ $hulop.editor = function() {
 				style = [new ol.style.Style({
 					'stroke' : new ol.style.Stroke({
 						'color' : heights.length == 1 ? odd ? b : r : '#7f007f',
-						'width' : 6
+						'width' : feature.get('road_width') ? 12 : 6
 					})
 				})];
 				var dir = feature.get('方向性');
