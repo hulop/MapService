@@ -311,7 +311,7 @@ public class MongoAdapter implements DBAdapter {
 						.append("min", new BasicDBObject("$min", "$timestamp"))
 						.append("max", new BasicDBObject("$max", "$timestamp"))));
 //		Iterator<DBObject> it = logCol.aggregate(pipeline).results().iterator();
-		Cursor it = logCol.aggregate(pipeline, AggregationOptions.builder().build());
+		Cursor it = logCol.aggregate(pipeline, AggregationOptions.builder().outputMode(AggregationOptions.OutputMode.CURSOR).build());
 		JSONArray result = new JSONArray();
 		while (it.hasNext()) {
 			try {
