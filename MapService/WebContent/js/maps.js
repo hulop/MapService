@@ -116,7 +116,7 @@ $hulop.map = function() {
 				initCenter();
 				initTile();
 				initRotationMode();
-				initScale()
+				setScale($hulop.config);
 				map.on('moveend', saveCenter);
 				$hulop.config.INITIAL_ZOOM && map.getView().setZoom($hulop.config.INITIAL_ZOOM)
 			},
@@ -325,14 +325,10 @@ $hulop.map = function() {
 		}
 	}
 
-	function initScale() {
+	function setScale(config) {
 		ARRIVE_DIST = 6;
 		SNAP_DIST = [ 8, 3, 2, 1 ];
 		REROUTE_DIST = 12
-		setScale($hulop.config)
-	}
-
-	function setScale(config) {
 		var scale = config.SCALE;
 		if (scale) {
 			ARRIVE_DIST = ARRIVE_DIST * scale;
@@ -1654,7 +1650,6 @@ $hulop.map = function() {
 		'getState' : getState,
 		'resetState' : resetState,
 		'init' : init,
-		'initScale' : initScale,
 		'setScale' : setScale,
 		'setTarget' : setTarget,
 		'initTarget' : initTarget,
