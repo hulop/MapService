@@ -332,12 +332,13 @@ $hulop.indoor = function() {
 				lastBuilding = data.building;
 				$hulop.util.logText('buildingChanged,' + JSON.stringify(data));
 				if ($hulop.config.AREA_EXT) {
-					$hulop.map.initScale()
+					var config = $hulop.config;
 					$hulop.config.AREA_EXT.forEach(function(area) {
 						if (area.area_name == lastBuilding) {
-							$hulop.map.setScale(area)
+							config = area;
 						}
 					});
+					$hulop.map.setScale(config);
 				}
 			}
 		}
