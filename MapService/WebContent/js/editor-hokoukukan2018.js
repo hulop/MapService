@@ -685,7 +685,7 @@ $hulop.editor.importV1 = function(features) {
 				set(fp, i18Name(name, 'ent' + index + '_n'), value);
 				break;
 			case '出入口の名称:ja-Pron':
-				set(fp, i18Name(name, 'ent' + index + '_n'), kana2hira(value));
+				set(fp, 'ent' + index + '_n_hira', kana2hira(value));
 				break;
 			case '出入口の有効幅員':
 				switch (value = Code0(value)) {
