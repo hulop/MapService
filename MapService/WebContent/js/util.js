@@ -345,6 +345,9 @@ $hulop.util = function() {
 	}
 
 	function getScript(url) {
+		if (url.indexOf('?') == -1) {
+			url += '?' + new Date().getTime();
+		}
 		var s = document.createElement('script');
 		s.src = url;
 		document.head.appendChild(s);
