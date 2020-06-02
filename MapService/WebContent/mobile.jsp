@@ -33,7 +33,7 @@ if (id == null || (agreeBean.isAgreementSupported() && !agreeBean.getAgreed(id))
 <script type="text/javascript" src="js/indoor.js?<%=T%>"></script>
 <script type="text/javascript" src="js/logging.js?<%=T%>"></script>
 <script type="text/javascript" src="js/screen_filter.js?<%=T%>"></script>
-<script type="text/javascript" src="mobile_ext.js?<%=T%>"></script>
+<script type="text/javascript" src="mobile_ext.js?<%=System.currentTimeMillis()%>"></script>
 <script type="text/javascript">
 	$(document).ready(function(){
 		$hulop.map.init();
