@@ -113,10 +113,10 @@ public class GZIPFilter {
 					cache.put("Last-Modified", cache.get("Date"));
 					cache.remove("Date");
 				}
-				if ("gzip".equals(res.getHeader("Content-Encoding"))) {
+				cache.put("Content-Encoding", "gzip");
+				if (b[0] == 31 && b[1] == -117 && b[2] == 8) {
 					cache.put("$data", b);
 				} else {
-					cache.put("Content-Encoding", "gzip");
 					ByteArrayOutputStream os = new ByteArrayOutputStream();
 					GZIPOutputStream gzos = new GZIPOutputStream(os);
 					gzos.write(b);
