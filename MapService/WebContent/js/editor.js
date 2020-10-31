@@ -1997,6 +1997,21 @@ $hulop.editor = function() {
 		});
 	}
 
+	function removeSelection(features) {
+		var pending = [];
+		features.forEach(function(feature) {
+			findExit(feature).forEach(function(exit) {
+				var id = exit.getId();
+				removeFeature(exit) && getFeatureRow(id).remove();
+			});
+			var id = feature.getId();
+			removeFeature(feature) ? getFeatureRow(id).remove() : pending.push(feature);
+		});
+		if (pending.length > 0 && features.length > pending.length) {
+			removeSelection(pending);
+		}
+	}
+
 	return {
 		'version' : 'h22',
 		'findExit' : findExit,
@@ -2007,6 +2022,7 @@ $hulop.editor = function() {
 		'newFeaturteCreated' : newFeaturteCreated,
 		'toFeatureCollection': toFeatureCollection,
 		'downloadFile' : downloadFile,
+		'removeSelection': removeSelection,
 		'init' : init
 	};
 
