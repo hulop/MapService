@@ -33,6 +33,7 @@
 <script type="text/javascript" src="js/FloorPlanOverlay.js"></script>
 <script type="text/javascript" src="js/indoor.js"></script>
 <script type="text/javascript" src="js/area-edit.js"></script>
+<script type="text/javascript" src="js/rect-edit.js"></script>
 <script type="text/javascript" src="js/editor.js"></script>
 <script type="text/javascript" src="js/editor-hokoukukan2018.js"></script>
 <script type="text/javascript" src="js/login-monitor.js"></script>
@@ -96,6 +97,8 @@
 				<hr>
 				Select an elevator link, then click <button onclick="$hulop.editor.ext.changeElevator($hulop.editor.editingFeature,0)">change elevator type</button> or 
 				<button onclick="$hulop.editor.ext.changeElevator($hulop.editor.editingFeature,1)">change elevator equipments</button> to replace all elevator properties.
+				<hr>
+				Click <button onclick="$hulop.rect.addInteraction()">select features</button> then draw rectangle to delete multiple features.
 			</fieldset>
 			<fieldset class="modified" style="display:none">
 				<legend>(i18n_SAVE_MAP)</legend>
