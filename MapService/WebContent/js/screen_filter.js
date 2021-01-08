@@ -25,10 +25,11 @@ window.$hulop || eval('var $hulop={};');
 $hulop.screen_filter = function() {
 	var history = [], last;
 	var button, a;
+	var popup, exitLog;
 
 	function onUpdateLocation(crd) {
 		if ($hulop.mobile && $hulop.mobile.getPreference('user_mode') == 'user_blind') {
-			return;
+			// return;
 		}
 		var start_timer = $hulop.config.SCREEN_FILTER_START_TIMER;
 		var walk_speed = $hulop.config.SCREEN_FILTER_SPEED;
@@ -38,9 +39,23 @@ $hulop.screen_filter = function() {
 		if (isPopupOpen()) {
 			return;
 		}
-		$hulop.config.SCREEN_FILTER_NO_BUTTON == 'true' || button || showButton();
-		if (!use_filter()) {
-			filter();
+		if ($hulop.config.SCREEN_FILTER_NO_BUTTON == 'true') {
+			if (!popup) {
+				showPopup($m('DONT_LOOK_WHILE_WALKING'), 10 * 1000);
+				popup = true;
+				if ($hulop.mobile && $hulop.mobile.getPreference('user_mode') == 'user_blind') {
+					$hulop.util.speak($m('DONT_LOOK_WHILE_WALKING'), true);
+				}
+				return;
+			}
+		} else {
+			button || showButton();
+			if (!use_filter()) {
+				filter();
+				return;
+			}
+		}
+		if (!checkArea([ crd.longitude, crd.latitude ])) {
 			return;
 		}
 		var stop_timer = $hulop.config.SCREEN_FILTER_STOP_TIMER || (start_timer / 2);
@@ -63,10 +78,13 @@ $hulop.screen_filter = function() {
 		});
 		var show = distance > walk_speed * timer;
 		if (show != visible) {
-			filter(show ? {} : null)
+			filter(show ? {
+				'enterLog' : 'startPreventWalking',
+				'exitLog' : 'endPreventWalking'
+			} : null)
 		}
 	}
-	
+
 	function showButton() {
 		var map = $hulop.map.getMap();
 		button = $('<div>', {
@@ -116,11 +134,35 @@ $hulop.screen_filter = function() {
 	}
 
 	function isPopupOpen() {
-		$('#popupDialog').parent().hasClass("ui-popup-active");
+		return $('#popupDialog').parent().hasClass("ui-popup-active");
+	}
+
+	function checkArea(loc) {
+		let areaList = $hulop.indoor.areaList || [];
+		var prevent = false;
+		for (i in areaList) {
+			let area = areaList[i];
+			if (area.properties.hulop_area_height == $hulop.indoor.getCurrentFloor()) {
+				let poly = new ol.geom.Polygon(area.geometry.coordinates);
+				if (poly.intersectsCoordinate(loc)) {
+					if (Number(area.properties.hulop_area_navigation) == 3) {
+						filter({
+							'enterLog' : 'enterRestrictedArea',
+							'exitLog' : 'exitRestrictedArea'
+						});
+						return false;
+					} else if (Number(area.properties.hulop_area_prevent_while_walking) == 2) {
+						prevent = true;
+					}
+				}
+			}
+		}
+		prevent || filter();
+		return prevent;
 	}
 
 	function filter(options) {
-		console.log([ 'filter', options ]);
+		// console.log([ 'filter', options ]);
 		if (options) {
 			var color = options.color || 'black';
 			var opacity = isNaN(options.opacity) ? 0.75 : options.opacity;
@@ -142,15 +184,22 @@ $hulop.screen_filter = function() {
 					'on' : {
 						'click' : function(event) {
 							console.log([ 'click', event ])
-							filter();
+							// filter();
 						}
 					}
 				}).appendTo($('body'));
+				$hulop.util.logText(options.enterLog);
+				exitLog = options.exitLog;
 			}
 			$('#screen_filter').css(css);
+			$('a[href="#control"]').attr('href', '#control_nop')
 		} else {
-			$('#screen_filter').remove();
+			if ($('#screen_filter').size() > 0) {
+				$('#screen_filter').remove();
+				$hulop.util.logText(exitLog);
+			}
 			history = [];
+			$('a[href="#control_nop"]').attr('href', '#control')
 		}
 	}
 

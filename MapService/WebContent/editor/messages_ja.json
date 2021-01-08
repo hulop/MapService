@@ -294,7 +294,8 @@
 		{
 			"hulop_area_name": "specify area name (building name, area name, etc.)",
 			"hulop_area_localization": "1: not supported, 2: supported",
-			"hulop_area_navigation": "1: not supported, 2: supported"
+			"hulop_area_navigation": "1: not supported, 2: supported, 3: restricted",
+			"hulop_area_prevent_while_walking": "1: disabled, 2: enabled"
 		}
 	}
 }

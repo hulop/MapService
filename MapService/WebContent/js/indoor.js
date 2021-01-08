@@ -211,8 +211,8 @@ $hulop.indoor = function() {
 				}
 				console.log(toiletMarkers.length + ' accessible toilets');
 				showToilets(getCurrentFloor());
-				buildings = (data.areaList || []).filter(function(feature) {
-					return !(feature.properties.hulop_area_localization || feature.properties.hulop_area_navigation);
+				buildings = ($hulop.indoor.areaList = data.areaList || []).filter(function(feature) {
+					return !(feature.properties.hulop_area_localization || feature.properties.hulop_area_navigation || feature.properties.hulop_area_prevent_while_walking);
 				}).map(function(feature) {
 					return {
 						'polygon' : new ol.geom.Polygon(feature.geometry.coordinates),
