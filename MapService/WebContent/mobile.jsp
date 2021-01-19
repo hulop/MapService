@@ -142,7 +142,7 @@ if (id == null || (agreeBean.isAgreementSupported() && !agreeBean.getAgreed(id))
 	</div>
 	<div data-role="page" id="confirm_floor" data-theme="a">
 		<div data-role="header" data-position="fixed">
-			<a href="#map-page" id="confirm_no" data-rel="close" data-icon="delete" class="ui-btn-right" i18n>CLOSE</a>
+			<a href="#map-page" data-rel="close" data-icon="delete" class="ui-btn-right" i18n>CLOSE</a>
 			<h1 i18n>CONFIRM_ROUTE</h1>
 		</div>
 		<div role="main" class="ui-content">
