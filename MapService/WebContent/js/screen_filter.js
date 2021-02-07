@@ -165,7 +165,7 @@ $hulop.screen_filter = function() {
 		// console.log([ 'filter', options ]);
 		if (options) {
 			var color = options.color || 'black';
-			var opacity = isNaN(options.opacity) ? 0.75 : options.opacity;
+			var opacity = isNaN(options.opacity) ? 1.0 : options.opacity;
 			var css = {
 				'position' : 'fixed',
 				'top' : '0px',
@@ -192,14 +192,14 @@ $hulop.screen_filter = function() {
 				exitLog = options.exitLog;
 			}
 			$('#screen_filter').css(css);
-			$('a[href="#control"]').attr('href', '#control_nop')
+			// $('a[href="#control"]').attr('href', '#control_nop')
 		} else {
 			if ($('#screen_filter').size() > 0) {
 				$('#screen_filter').remove();
 				$hulop.util.logText(exitLog);
 			}
 			history = [];
-			$('a[href="#control_nop"]').attr('href', '#control')
+			// $('a[href="#control_nop"]').attr('href', '#control')
 		}
 	}
 
