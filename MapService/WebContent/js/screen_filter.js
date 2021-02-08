@@ -79,6 +79,7 @@ $hulop.screen_filter = function() {
 		var show = distance > walk_speed * timer;
 		if (show != visible) {
 			filter(show ? {
+				'message' : $m('DONT_LOOK_WHILE_WALKING'),
 				'enterLog' : 'startPreventWalking',
 				'exitLog' : 'endPreventWalking'
 			} : null)
@@ -146,7 +147,9 @@ $hulop.screen_filter = function() {
 				let poly = new ol.geom.Polygon(area.geometry.coordinates);
 				if (poly.intersectsCoordinate(loc)) {
 					if (Number(area.properties.hulop_area_navigation) == 3) {
+						var message = '改札外に移動してからご利用ください'; // TODO
 						filter({
+							'message' : message,
 							'enterLog' : 'enterRestrictedArea',
 							'exitLog' : 'exitRestrictedArea'
 						});
@@ -190,6 +193,21 @@ $hulop.screen_filter = function() {
 				}).appendTo($('body'));
 				$hulop.util.logText(options.enterLog);
 				exitLog = options.exitLog;
+				if (options.message) {
+					$('<div>', {
+						'text': options.message,
+						'id': 'filter_message',
+						'css': {
+							'color': '#fff',
+							'text-align': 'center',
+							'position': 'relative',
+							'padding': '1em',
+							'top': '50%',
+							'left': '50%',
+							'transform': 'translate(-50%, -50%)'
+						}
+					}).appendTo($('#screen_filter'));
+				}
 			}
 			$('#screen_filter').css(css);
 			// $('a[href="#control"]').attr('href', '#control_nop')
@@ -203,8 +221,13 @@ $hulop.screen_filter = function() {
 		}
 	}
 
+	function isRestricted() {
+		return $('#screen_filter').size() > 0 && exitLog == 'exitRestrictedArea';
+	}
+
 	return {
 		'filter' : filter,
+		'isRestricted' : isRestricted,
 		'onUpdateLocation' : onUpdateLocation
 	}
 }();
