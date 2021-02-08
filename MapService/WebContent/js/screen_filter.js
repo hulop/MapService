@@ -149,7 +149,7 @@ $hulop.screen_filter = function() {
 					if (Number(area.properties.hulop_area_navigation) == 3) {
 						var message = area.properties['hulop_area_alert_message:' + $hulop.messages.defaultLang] || area.properties.hulop_area_alert_message;
 						filter({
-							'message' : message || 'Error: No hulop_area_alert_message',
+							'message' : message || $m('ALERT_RESTRICTED_AREA'),
 							'enterLog' : 'enterRestrictedArea',
 							'exitLog' : 'exitRestrictedArea'
 						});
