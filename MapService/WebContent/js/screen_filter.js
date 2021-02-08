@@ -147,9 +147,9 @@ $hulop.screen_filter = function() {
 				let poly = new ol.geom.Polygon(area.geometry.coordinates);
 				if (poly.intersectsCoordinate(loc)) {
 					if (Number(area.properties.hulop_area_navigation) == 3) {
-						var message = '改札外に移動してからご利用ください'; // TODO
+						var message = area.properties['hulop_area_alert_message:' + $hulop.messages.defaultLang] || area.properties.hulop_area_alert_message;
 						filter({
-							'message' : message,
+							'message' : message || 'Error: No hulop_area_alert_message',
 							'enterLog' : 'enterRestrictedArea',
 							'exitLog' : 'exitRestrictedArea'
 						});
