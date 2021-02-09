@@ -79,6 +79,7 @@
 	"DOWN":"Go down %1",
 	"REMAIN_DIST": "About %1m remaining",
 	"DONT_LOOK_WHILE_WALKING": "Looking at your smartphone while walking is dangerous. Please stop at a safe place and then operate the app.",
+	"ALERT_RESTRICTED_AREA": "Navigation is prohibited in this area. Please move to the service supported area and use the application.",
 	"DIST": "Search Range:",
 	"DIST_250": "250m",
 	"DIST_500": "500m",
