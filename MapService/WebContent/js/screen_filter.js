@@ -191,7 +191,7 @@ $hulop.screen_filter = function() {
 						}
 					}
 				}).appendTo($('body'));
-				$hulop.util.logText(options.enterLog);
+				$hulop.util.logText(options.enterLog + ': ' + (options.message || ''));
 				exitLog = options.exitLog;
 				if (options.message) {
 					$('<div>', {
