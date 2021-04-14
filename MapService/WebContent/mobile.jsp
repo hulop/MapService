@@ -164,9 +164,9 @@ if (id == null || (agreeBean.isAgreementSupported() && !agreeBean.getAgreed(id))
 			<label for="dist" i18n>DIST</label>
 			<select data-mini="true" id="dist" name='dist'>
 					<option value="250" i18n>DIST_250</option>
-					<option value="500" i18n selected>DIST_500</option>
+					<option value="500" i18n>DIST_500</option>
 					<option value="750" i18n>DIST_750</option>
-					<option value="4000">4km</option>
+					<option value="4000" selected>4km</option>
 			</select>
 
 			<label for="preset" i18n>PRESET</label>
