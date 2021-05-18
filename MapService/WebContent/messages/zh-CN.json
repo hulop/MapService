@@ -79,6 +79,7 @@
   "DOWN": "下%1",
   "REMAIN_DIST": "还剩约%1m",
   "DONT_LOOK_WHILE_WALKING": "一边看画面一边移动非常危险。如果需要看画面，请在安全的地方停下来操作。",
+  "ALERT_RESTRICTED_AREA": "该区域禁止使用导航。 请在服务对象区域使用和使用。",
   "DIST": "搜索范围:",
   "DIST_250": "250m",
   "DIST_500": "500m",

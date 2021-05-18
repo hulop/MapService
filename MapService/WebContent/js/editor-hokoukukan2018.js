@@ -655,7 +655,8 @@ $hulop.editor.importV1 = function(features) {
 			case 'hulop_area_height':
 			case 'hulop_area_localization':
 			case 'hulop_area_navigation':
-				set(tp, name, Number(value));
+			case 'hulop_area_prevent_while_walking':
+						set(tp, name, Number(value));
 				break;
 			}
 		}

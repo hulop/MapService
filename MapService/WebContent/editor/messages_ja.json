@@ -470,7 +470,10 @@
 				"desc": "1: not supported, 2: supported"
 			},
 			"hulop_area_navigation": {
-				"desc": "1: not supported, 2: supported"
+				"desc": "1: not supported, 2: supported, 3: restricted"
+			},
+			"hulop_area_prevent_while_walking": {
+				"desc": "1: disabled, 2: enabled"
 			}
 		}
 	}

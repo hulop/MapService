@@ -158,7 +158,13 @@ $hulop.location = function() {
 			lastLocation && showLocation(lastLocation = crd);
 			return;
 		}
-		$hulop.screen_filter && $hulop.screen_filter.onUpdateLocation(crd);
+		if ($hulop.screen_filter) {
+			$hulop.screen_filter.onUpdateLocation(crd);
+			if ($hulop.screen_filter.isRestricted()) {
+				lastLocation && showLocation(lastLocation = undefined);
+				return;
+			}
+		}
 		var ll = locationFilter && locationFilter($hulop.util.newLatLng(crd.latitude, crd.longitude));
 		if (ll) {
 			crd.latitude = ll[1];

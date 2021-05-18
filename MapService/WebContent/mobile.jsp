@@ -142,7 +142,7 @@ if (id == null || (agreeBean.isAgreementSupported() && !agreeBean.getAgreed(id))
 	</div>
 	<div data-role="page" id="confirm_floor" data-theme="a">
 		<div data-role="header" data-position="fixed">
-			<a href="#map-page" id="confirm_no" data-rel="close" data-icon="delete" class="ui-btn-right" i18n>CLOSE</a>
+			<a href="#map-page" data-rel="close" data-icon="delete" class="ui-btn-right" i18n>CLOSE</a>
 			<h1 i18n>CONFIRM_ROUTE</h1>
 		</div>
 		<div role="main" class="ui-content">
@@ -164,9 +164,9 @@ if (id == null || (agreeBean.isAgreementSupported() && !agreeBean.getAgreed(id))
 			<label for="dist" i18n>DIST</label>
 			<select data-mini="true" id="dist" name='dist'>
 					<option value="250" i18n>DIST_250</option>
-					<option value="500" i18n selected>DIST_500</option>
+					<option value="500" i18n>DIST_500</option>
 					<option value="750" i18n>DIST_750</option>
-					<option value="4000">4km</option>
+					<option value="4000" selected>4km</option>
 			</select>
 
 			<label for="preset" i18n>PRESET</label>

@@ -25,7 +25,13 @@ window.$hulop || eval('var $hulop={};');
 $hulop.area = function() {
 	var category = 'area';
 	var area_id = 'hulop_area_id';
-	var keys = [ area_id, 'hulop_area_name', 'hulop_area_height', 'hulop_area_localization', 'hulop_area_navigation' ];
+	var keys = [ area_id, 'hulop_area_name', 'hulop_area_height', 'hulop_area_localization', 'hulop_area_navigation', 'hulop_area_prevent_while_walking'];
+	keys.push('hulop_area_alert_message');
+	[ 'en', 'ja', 'ko', 'zh-CN' ].forEach(function(lang) {
+		keys.push('group:I18N_' + lang);
+		keys.push('hulop_area_alert_message:' + lang);
+		lang == 'ja' && keys.push('hulop_area_alert_message:ja-Pron');
+	});
 	var keys_readonly = [ area_id ];
 	var keys_string = [ area_id, 'hulop_area_name' ];
 	var style = new ol.style.Style({
@@ -110,7 +116,7 @@ $hulop.area = function() {
 			return keys_readonly.indexOf(key) != -1;
 		},
 		'isString' : function(key) {
-			return keys_string.indexOf(key) != -1;
+			return keys_string.indexOf(key) != -1 || key.indexOf('hulop_area_alert_message') == 0;
 		},
 		'getId' : function(feature) {
 			return feature[area_id] || feature.get(area_id);
@@ -118,7 +124,7 @@ $hulop.area = function() {
 		'getStyle' : function(feature, floor) {
 			var height = feature.get('hulop_area_height');
 			if (height == null || height === '' || floor == 0 || floor == height) {
-				return feature.get('hulop_area_localization') || feature.get('hulop_area_navigation') ? style : buildingStyle;
+				return feature.get('hulop_area_localization') || feature.get('hulop_area_navigation') || feature.get('hulop_area_prevent_while_walking') ? style : buildingStyle;
 			}
 		},
 		'getSelectStyle' : function(feature) {
