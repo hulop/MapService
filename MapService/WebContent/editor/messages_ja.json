@@ -474,6 +474,9 @@
 			},
 			"hulop_area_prevent_while_walking": {
 				"desc": "1: disabled, 2: enabled"
+			},
+			"hulop_area_alert_message": {
+				"desc": "Alert message for restricted area"
 			}
 		}
 	}
