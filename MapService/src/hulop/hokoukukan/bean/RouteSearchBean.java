@@ -231,13 +231,40 @@ public class RouteSearchBean {
 					// System.out.println(from + " - " + to + " - " + g.toString());
 					double lastWeight = Double.MAX_VALUE;
 					List<DefaultWeightedEdge> path = null;
-					for (String t : to.split("\\|")) {
+					mainLoop: for (String t : to.split("\\|")) {
 						t = t.trim();
 						if (t.length() > 0) {
 							try {
 								String node_id = extractNode(t);
 								if (mNodeFacilities.has(node_id) && !Hokoukukan.availableAny(mNodeFacilities.getJSONArray(node_id))) {
 									continue;
+								}
+								for (Object _obj:mLandmarks) {
+									JSONObject obj = (JSONObject)_obj;
+									if (obj.has("node") && node_id.equals(obj.getString("node")) && obj.has("exit_brr")) {
+										String exit_brr = obj.getString("exit_brr");
+										// 0: <2cm, 1: 2 to 5cm, 2: 5 to 10cm, 3: 10cm or more, 9: unknown
+										try {
+											switch (conditions.get("deff_LV")) {
+											case "1": // <2cm
+												if (exit_brr.equals("1")) {
+													continue mainLoop;
+												}
+												//$FALL-THROUGH$
+											case "2": // <5cm
+												if (exit_brr.equals("2")) {
+													continue mainLoop;
+												}
+												//$FALL-THROUGH$
+											case "3": // <10cm
+												if (exit_brr.equals("3")) {
+													continue mainLoop;
+												}
+												break;
+											}
+										} catch (NullPointerException npe) {
+										}
+									}
 								}
 								List<DefaultWeightedEdge> p = DijkstraShortestPath.findPathBetween(g, from, node_id);
 								if (p != null && p.size() > 0) {

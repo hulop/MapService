@@ -288,6 +288,9 @@ public class RouteData {
 								poi.put("short_description", short_description);
 							}
 							poi.put("geometry", json.get("geometry"));
+							if (p.has("段差")) {
+								poi.put("exit_brr", p.get("段差"));
+							}
 							if (i18.hasI18n(p, "出入口の名称")) {
 								String exit = i18.getI18n(p, "出入口の名称");
 								String exit_pron = i18.getI18nPron(p, "出入口の名称");
