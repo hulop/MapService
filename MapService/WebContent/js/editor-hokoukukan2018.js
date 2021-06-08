@@ -709,12 +709,12 @@ $hulop.editor.importV1 = function(features) {
 			case '段差':
 				var brr = 99;
 				switch (value) {
-				case 0: // 2cm 未満
+				case '0': // 2cm 未満
 					brr = 2; // 車いす使用者が利用可能な出入口あり
 					break;
-				case 1: // 2～5cm
-				case 2: // 5～10cm
-				case 3: // 10cm 以上
+				case '1': // 2～5cm
+				case '2': // 5～10cm
+				case '3': // 10cm 以上
 					brr = 1; // なし
 					break;
 				}

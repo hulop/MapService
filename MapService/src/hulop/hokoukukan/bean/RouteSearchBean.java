@@ -231,13 +231,23 @@ public class RouteSearchBean {
 					// System.out.println(from + " - " + to + " - " + g.toString());
 					double lastWeight = Double.MAX_VALUE;
 					List<DefaultWeightedEdge> path = null;
-					for (String t : to.split("\\|")) {
+					mainLoop: for (String t : to.split("\\|")) {
 						t = t.trim();
 						if (t.length() > 0) {
 							try {
 								String node_id = extractNode(t);
 								if (mNodeFacilities.has(node_id) && !Hokoukukan.availableAny(mNodeFacilities.getJSONArray(node_id))) {
 									continue;
+								}
+								for (Object _obj:mLandmarks) {
+									JSONObject obj = (JSONObject)_obj;
+									if (obj.has("node") && node_id.equals(obj.getString("node")) && obj.has("exit_brr")) {
+										int exit_brr = obj.getInt("exit_brr");
+										// 1: none, 2: with wheelchair accessible entrance, 99: unknown
+										if ("1".equals(conditions.get("deff_LV")) && exit_brr == 1) {
+											continue mainLoop;
+										}
+									}
 								}
 								List<DefaultWeightedEdge> p = DijkstraShortestPath.findPathBetween(g, from, node_id);
 								if (p != null && p.size() > 0) {

@@ -258,6 +258,10 @@ public class RouteData {
 						poi.put("short_description", short_description);
 					}
 					poi.put("geometry", json.get("geometry"));
+					Object exit_brr = properties.opt(ent_ + "brr");
+					if (exit_brr != null) {
+						poi.put("exit_brr", exit_brr);
+					}
 					if (i18.hasI18n(properties, ent_n)) {
 						String exit = i18.getI18n(properties, ent_n);
 						String exit_pron = i18.getI18nPron(properties, ent_n);
