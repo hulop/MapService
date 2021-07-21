@@ -43,6 +43,8 @@ $hulop.map = function() {
 	var playback = location.search.substr(1).split('&').indexOf('playback') != -1;
 	var listeners = {};
 	var lastAnnounce, lastStep, lastSearchTo;
+	var TRANSITION_MARGIN = 2.0;
+	var offroadStatus = null, lastOffroadStatus = null, offroadTimeout = null;
 
 	var format = new ol.format.GeoJSON()
 
@@ -342,6 +344,7 @@ $hulop.map = function() {
 		SNAP_DIST = config.SNAP_DIST || SNAP_DIST;
 		NEXT_DETAIL_DIST = ARRIVE_DIST < 10 ? 10 : 20
 		console.log([config, ARRIVE_DIST, REROUTE_DIST, SNAP_DIST, NEXT_DETAIL_DIST]);
+		TRANSITION_MARGIN = Number(config.TRANSITION_MARGIN || TRANSITION_MARGIN);
 	}
 
 	var iconClasses = 'ui-icon-navigation ui-icon-head-up ui-icon-route-up';
@@ -408,7 +411,7 @@ $hulop.map = function() {
 			}
 			var route = naviRoutes[currentStep];
 			if (route.polyline) {
-				if (!playback && !isLocationOnStep(currentStep, pos, isFloorLink() ? REROUTE_DIST * 2 : REROUTE_DIST)) {
+				if (!playback && !isLocationOnStep(currentStep, pos, isFloorLink() ? REROUTE_DIST * TRANSITION_MARGIN : REROUTE_DIST)) {
 					$hulop.util.speak($m('REROUTING'), true);
 					rerouting = true;
 					setTimeout(function() {
@@ -578,7 +581,7 @@ $hulop.map = function() {
 			for (var index = 0; index < radiusList.length; index++) {
 				var radius = radiusList[index];
 				var i = begin + index;
-				if (i < naviRoutes.length && isLocationOnStep(i, pos, index == 0 && isFloorLink() ? radius * 2 : radius)) {
+				if (i < naviRoutes.length && isLocationOnStep(i, pos, index == 0 && isFloorLink() ? radius * TRANSITION_MARGIN : radius)) {
 					var index = currentStep < 0 ? i : Math.min(i + 1, naviRoutes.length - 1);
 					if (index > currentStep) {
 						var route = naviRoutes[index];
@@ -588,13 +591,16 @@ $hulop.map = function() {
 								var source = naviRoutes[index - 1];
 								console.log('Current floor=' + floor + ', source=' + source.floor + ', target=' + route.floor);
 								if (isFloorLink() && Math.min(source.floor, route.floor) <= floor && floor <= Math.max(source.floor, route.floor)) {
+									offroadStatus = null;
 									return;
 								}
+								offroadStatus = 'offroad';
 								break;
 							}
 						}
 						onSuccess(pos, floor, index);
 					}
+					offroadStatus = null;
 					return;
 				}
 			}
@@ -602,7 +608,9 @@ $hulop.map = function() {
 				return;
 			}
 			if (lastErrorPos && $hulop.util.computeDistanceBetween(lastErrorPos, pos) < 10) {
-				return;
+				if (isLocationOnStep(currentStep, pos, isFloorLink() ? REROUTE_DIST * TRANSITION_MARGIN : REROUTE_DIST)) {
+					return;
+				}
 			}
 			onError(pos);
 		}
@@ -614,6 +622,7 @@ $hulop.map = function() {
 		try {
 			nest++;
 			findNextStep(getCenter(), SNAP_DIST);
+			handleOffroad();
 		} finally {
 			nest--;
 		}
@@ -1644,6 +1653,36 @@ $hulop.map = function() {
 			}
 		}
 		return 'ARRIVED';
+	}
+
+	function handleOffroad() {
+		if (currentStep < 0 || rerouting) {
+			offroadStatus = null;
+		}
+		if (lastOffroadStatus == offroadStatus) {
+			return;
+		}
+		console.log('OffroadStatus: ' + lastOffroadStatus + ' to ' + offroadStatus);
+		lastOffroadStatus = offroadStatus;
+		if (offroadTimeout) {
+			clearTimeout(offroadTimeout);
+			offroadTimeout = null;
+		}
+		var timeout;
+		if (offroadStatus == 'offroad') {
+			timeout = Number($hulop.config.REROUTE_OFFROAD_SEC);
+		}
+		if (timeout) {
+			offroadTimeout = setTimeout(function() {
+				offroadTimeout = null;
+				rerouting = true;
+				$hulop.util.speak($m('REROUTING'), true);
+				setTimeout(function() {
+					doSearch();
+				}, 3 * 1000);
+				$hulop.util.vibrate([ 400, 600, 400, 600, 400 ]);
+			}, timeout * 1000);
+		}
 	}
 
 	return {
