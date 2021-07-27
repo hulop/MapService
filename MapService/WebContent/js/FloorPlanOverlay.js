@@ -121,6 +121,10 @@ FloorPlanOverlay.prototype.show = function(show) {
 	} else if (show) {
 		this.img.src = this.src;
 	}
+	if (!show && this.canvas && this.canvas.width > 0 && this.source) {
+		this.canvas.width = this.canvas.height = 0;
+		this.source.changed();
+	}
 }
 
 FloorPlanOverlay.prototype.canvasFunction = function(extent, resolution, pixelRatio, size, projection) {
