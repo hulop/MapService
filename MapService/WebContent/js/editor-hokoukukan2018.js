@@ -749,10 +749,12 @@ $hulop.editor.importV1 = function(features) {
 	
 	// convert 0 based code to 1 based code
 	function Code1(value) {
+		if (value == '') return 99;
 		return value == '9' ? 99 : Number(value) + 1;
 	}
 
 	function Code0(value) {
+		if (value == '') return 99;
 		return value == '9' ? 99 : Number(value);
 	}
 
