@@ -39,9 +39,30 @@ function FloorPlanOverlay(options) {
 			}
 			console.log(overlay);
 		}
+		for (var ov of FloorPlanOverlay.instances) {
+			if (ov.floor == overlay.floor && ov.members) {
+				overlay.parent = ov;
+				ov.members.push(overlay);
+				ov.members.sort(function(a, b) {
+					return (a.zIndex || 0) - (b.zIndex || 0);
+				});
+				if (ov.canvas) {
+					ov.canvas.width = ov.canvas.height = 0;
+					ov.source.changed();
+				}
+				return;
+			}
+		}
+		overlay.members = [overlay];
 		var map = $hulop.map.getMap()
+		var maxRatio = 1.5;
+		if (!/chrome/i.test(navigator.userAgent)) {
+			var wh = map.getSize().map((v) => v * devicePixelRatio);
+			maxRatio = Math.sqrt(4096 ** 2 / (wh[0] ** 2 + wh[1] ** 2) / Math.cos(Math.PI / 4 - Math.atan(wh[0] / wh[1])));
+			console.log("maxRatio=" + maxRatio);
+		}
 		overlay.source = new ol.source.ImageCanvas({
-			// 'canvasFunction' : overlay.canvasFunction,
+			'ratio': Math.max(1.0, Math.min(maxRatio * 0.999, 1.5)),
 			'canvasFunction' : function(extent, resolution, pixelRatio, size, projection) {
 				// Set the last canvas size to 0 because ImageCanvas caches last canvas only
 				// https://github.com/openlayers/openlayers/blob/master/src/ol/source/ImageCanvas.js
@@ -116,6 +137,9 @@ FloorPlanOverlay.prototype.setOption = function(options) {
 
 FloorPlanOverlay.prototype.show = function(show) {
 	this.visible = show;
+	if (this.parent) {
+		return;
+	}
 	if (this.canvasLayer) {
 		this.canvasLayer.setVisible(show);
 	} else if (show) {
@@ -142,28 +166,29 @@ FloorPlanOverlay.prototype.canvasFunction = function(extent, resolution, pixelRa
 		return [ size[0] * (xy[0] - extent[0]) / (extent[2] - extent[0]), size[1] * (extent[3] - xy[1]) / (extent[3] - extent[1]) ];
 	}
 
-	var overlay = this;
 	var dpr = window.devicePixelRatio || 1;
-	function getScale(xy) {
-		var r = ol.proj.getPointResolution(projection, resolution, xy);
-		return [ dpr / r / overlay.ppm_x, dpr / r / overlay.ppm_y ];
+	for (var ov of this.members) {
+		function getScale(xy) {
+			var r = ol.proj.getPointResolution(projection, resolution, xy);
+			return [ dpr / r / ov.ppm_x, dpr / r / ov.ppm_y ];
+		}
+
+		var ref = ol.proj.transform([ ov.lng, ov.lat ], 'EPSG:4326', 'EPSG:3857');
+		var trans = getTranslate(ref);
+		var scale = getScale(ref);
+
+		context.save();
+		context.translate(trans[0], trans[1]);
+		context.rotate(ov.rotate * Math.PI / 180);
+		context.scale(scale[0], scale[1]);
+		context.drawImage(ov.img, -ov.origin_x, ov.origin_y - ov.height, ov.width, ov.height);
+		// context.fillStyle = 'rgba(0,0,255,0.1)';
+		// context.fillRect(-ov.origin_x, ov.origin_y - ov.height, ov.width,
+		// ov.height);
+		// context.arc(0, 0, 10, 0, 2 * Math.PI, false);
+		// context.fillStyle = 'red';
+		// context.fill();
+		context.restore();
 	}
-
-	var ref = ol.proj.transform([ this.lng, this.lat ], 'EPSG:4326', 'EPSG:3857');
-	var trans = getTranslate(ref);
-	var scale = getScale(ref);
-
-	context.save();
-	context.translate(trans[0], trans[1]);
-	context.rotate(this.rotate * Math.PI / 180);
-	context.scale(scale[0], scale[1]);
-	context.drawImage(this.img, -this.origin_x, this.origin_y - this.height, this.width, this.height);
-	// context.fillStyle = 'rgba(0,0,255,0.1)';
-	// context.fillRect(-this.origin_x, this.origin_y - this.height, this.width,
-	// this.height);
-	// context.arc(0, 0, 10, 0, 2 * Math.PI, false);
-	// context.fillStyle = 'red';
-	// context.fill();
-	context.restore();
 	return canvas;
 }
