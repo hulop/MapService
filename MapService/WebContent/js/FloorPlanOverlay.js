@@ -58,11 +58,11 @@ function FloorPlanOverlay(options) {
 		var maxRatio = 1.5;
 		if (!/chrome/i.test(navigator.userAgent)) {
 			var wh = map.getSize().map((v) => v * devicePixelRatio);
-			maxRatio = Math.sqrt(4096 ** 2 / (wh[0] ** 2 + wh[1] ** 2) / Math.cos(Math.PI / 4 - Math.atan(wh[0] / wh[1])));
+			maxRatio = 4096 / (wh[0] + wh[1]) * Math.sqrt(2);
 			console.log("maxRatio=" + maxRatio);
 		}
 		overlay.source = new ol.source.ImageCanvas({
-			'ratio': Math.max(1.0, Math.min(maxRatio * 0.999, 1.5)),
+			'ratio': Math.max(1.0, Math.min(maxRatio, 1.5)),
 			'canvasFunction' : function(extent, resolution, pixelRatio, size, projection) {
 				// Set the last canvas size to 0 because ImageCanvas caches last canvas only
 				// https://github.com/openlayers/openlayers/blob/master/src/ol/source/ImageCanvas.js
@@ -153,6 +153,7 @@ FloorPlanOverlay.prototype.show = function(show) {
 
 FloorPlanOverlay.prototype.canvasFunction = function(extent, resolution, pixelRatio, size, projection) {
 	// console.log(arguments);
+	console.log(size);
 
 	var canvas = document.createElement('canvas');
 	canvas.width = size[0];
