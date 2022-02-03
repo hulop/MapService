@@ -153,7 +153,7 @@ FloorPlanOverlay.prototype.show = function(show) {
 
 FloorPlanOverlay.prototype.canvasFunction = function(extent, resolution, pixelRatio, size, projection) {
 	// console.log(arguments);
-	console.log(size);
+	console.log(((w, h) => `Canvas size: ${w} x ${h} (${(w * h / 1024 / 1024).toFixed(3)}MP)`)(Math.floor(size[0]), Math.floor(size[1])));
 
 	var canvas = document.createElement('canvas');
 	canvas.width = size[0];
