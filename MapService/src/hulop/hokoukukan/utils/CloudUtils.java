@@ -36,6 +36,9 @@ public class CloudUtils {
 			if (vcap == null) {
 				vcap = System.getenv("VCAP_SERVICES");
 			}
+			if (vcap == null) {
+				vcap = System.getenv("CE_SERVICES");
+			}
 			if (vcap != null) {
 				JSONObject json = (JSONObject) JSON.parse(vcap);
 				for (String key : keys) {
@@ -56,6 +59,9 @@ public class CloudUtils {
 			String vcap = System.getenv("HULOP_VCAP_SERVICES");
 			if (vcap == null) {
 				vcap = System.getenv("VCAP_SERVICES");
+			}
+			if (vcap == null) {
+				vcap = System.getenv("CE_SERVICES");
 			}
 			if (vcap != null) {
 				JSONObject json = (JSONObject) JSON.parse(vcap);
