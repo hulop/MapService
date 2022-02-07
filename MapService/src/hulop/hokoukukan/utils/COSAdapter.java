@@ -62,6 +62,9 @@ public class COSAdapter implements DBAdapter {
 		if (services_env == null) {
 			services_env = System.getenv("VCAP_SERVICES");
 		}
+		if (services_env == null) {
+			services_env = System.getenv("CE_SERVICES");
+		}
 		if (services_env != null && settings_env != null) {
 			try {
 				JSONObject settings = (JSONObject) JSON.parse(settings_env);
