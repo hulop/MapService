@@ -47,7 +47,7 @@ function FloorPlanOverlay(options) {
 					return (a.zIndex || 0) - (b.zIndex || 0);
 				});
 				if (ov.canvas) {
-					ov.canvas.width = ov.canvas.height = 0;
+					ov.canvas.width = ov.canvas.height = 1;
 					ov.source.changed();
 				}
 				return;
@@ -66,7 +66,7 @@ function FloorPlanOverlay(options) {
 			'canvasFunction' : function(extent, resolution, pixelRatio, size, projection) {
 				// Set the last canvas size to 0 because ImageCanvas caches last canvas only
 				// https://github.com/openlayers/openlayers/blob/master/src/ol/source/ImageCanvas.js
-				overlay.canvas && (overlay.canvas.width = overlay.canvas.height = 0);
+				overlay.canvas && (overlay.canvas.width = overlay.canvas.height = 1);
 				var canvas = overlay.canvasFunction(extent, resolution, pixelRatio, size, projection);
 				if (canvas) {
 					return overlay.canvas = canvas;
@@ -146,7 +146,7 @@ FloorPlanOverlay.prototype.show = function(show) {
 		this.img.src = this.src;
 	}
 	if (!show && this.canvas && this.canvas.width > 0 && this.source) {
-		this.canvas.width = this.canvas.height = 0;
+		this.canvas.width = this.canvas.height = 1;
 		this.source.changed();
 	}
 }
