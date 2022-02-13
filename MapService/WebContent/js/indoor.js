@@ -294,6 +294,7 @@ $hulop.indoor = function() {
 
 		var layer = new ol.layer.Tile({
 			'source' : source,
+			'zIndex' : this.zIndex || 1,
 			'visible' : false
 		});
 		this.show = function(show) {
