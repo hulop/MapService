@@ -167,11 +167,10 @@ FloorPlanOverlay.prototype.canvasFunction = function(extent, resolution, pixelRa
 		return [ size[0] * (xy[0] - extent[0]) / (extent[2] - extent[0]), size[1] * (extent[3] - xy[1]) / (extent[3] - extent[1]) ];
 	}
 
-	var dpr = window.devicePixelRatio || 1;
 	for (var ov of this.members) {
 		function getScale(xy) {
-			var r = ol.proj.getPointResolution(projection, resolution, xy);
-			return [ dpr / r / ov.ppm_x, dpr / r / ov.ppm_y ];
+			var r = pixelRatio / ol.proj.getPointResolution(projection, resolution, xy);
+			return [r / ov.ppm_x, r / ov.ppm_y];
 		}
 
 		var ref = ol.proj.transform([ ov.lng, ov.lat ], 'EPSG:4326', 'EPSG:3857');
