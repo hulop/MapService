@@ -40,7 +40,7 @@ $ find . -name README.md
 - [jQuery-mobile-nestedlists](https://github.com/arschmitz/jquery-mobile-nestedlists) (MIT License)
 - [Cloudant Java Client version 2.7.0](https://github.com/cloudant/java-cloudant) (Apache License v2.0)
 - [JGraphT version 0.9.1](http://jgrapht.org/) (Eclipse Public License v1.0)
-- [MongoDB Java Driver version 3.4.3](https://mongodb.github.io/mongo-java-driver/) (MIT License)
+- [MongoDB Java Driver version 3.12.10](https://mongodb.github.io/mongo-java-driver/) (MIT License)
 - [Apache Wink version 1.4.0](https://wink.apache.org/) (Apache License v2.0)
 - [Apache Commons IO version 2.4](http://commons.apache.org/proper/commons-io/) (Apache License v2.0)
 - [Google Gson version 2.7](https://github.com/google/gson) (Apache License v2.0)
