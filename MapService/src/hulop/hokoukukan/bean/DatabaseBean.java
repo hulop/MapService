@@ -58,7 +58,11 @@ public class DatabaseBean {
 		JSONObject credentials = CloudUtils.getCredential(new String[] { "databases-for-mongodb" });
 		if (credentials != null) {
 			try {
-				JSONObject mongodb = credentials.getJSONObject("connection").getJSONObject("mongodb");
+				Object connection = credentials.get("connection");
+				if (connection instanceof String) {
+					connection = JSON.parse((String)connection);
+				}
+				JSONObject mongodb = ((JSONObject)connection).getJSONObject("mongodb");
 				String url = mongodb.getJSONArray("composed").getString(0);
 				String cert  = mongodb.getJSONObject("certificate").getString("certificate_base64");
 				String dbName = System.getenv("HULOP_NAVI_DB");
