@@ -1012,8 +1012,16 @@ $hulop.map = function() {
 
 	function findNearestLandmark(route, min) {
 		var result;
+		const SHOW_POI_DIST = 'SHOW_POI_DIST' in $hulop.config ? $hulop.config.SHOW_POI_DIST : 5;
+		const goal = naviRoutes[naviRoutes.length-1];
 		landmarks.forEach(function(lm) {
 			if (lm.geometry && lm.node && lm.node_height == route.floor) {
+				const goal_to_node = $hulop.util.computeDistanceBetween(goal.latlng, lm.node_coordinates);
+				const goal_to_text = $hulop.util.computeDistanceBetween(goal.latlng, lm.geometry.coordinates);
+				// console.log(goal_to_node + ", " + goal_to_text + ", " + lm.name);
+				if (goal_to_node > 0 && goal_to_text < SHOW_POI_DIST) {
+					return;
+				}
 				var dist_poi = $hulop.util.computeDistanceBetween(lm.geometry.coordinates, lm.node_coordinates);
 				if (dist_poi > 50) {
 					return;
