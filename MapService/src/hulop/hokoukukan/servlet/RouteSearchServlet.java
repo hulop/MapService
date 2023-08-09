@@ -210,6 +210,41 @@ public class RouteSearchServlet extends HttpServlet {
 				array.add(data);
 				// System.out.println("route_search user=" + user);
 				DatabaseBean.insertLogs(array, request);
+			} else if ("tour".equals(action)) {
+				String nodes = request.getParameter("nodes");
+				JSONObject preferences = (JSONObject) JSON.parse(request.getParameter("preferences"));
+				String from = null;
+				JSONArray tour = new JSONArray();
+				for (String t : nodes.split("\\,")) {
+					if (from == null) {
+						from = t;
+						continue;
+					}
+					int skip = 0;
+					if (tour.length() > 0) { // remove last point from the last path
+						tour.remove(tour.length()-1);
+						skip = 1;
+					}
+					JSONArray temp = (JSONArray) bean.getDirection(from, t, preferences);
+					for (int i = skip; i < temp.length(); i++) {
+						tour.add(temp.getJSONObject(i));
+					}
+					from = t;
+                                }
+				result = tour;
+				JSONObject route = new JSONObject();
+				route.put("nodes", nodes);
+				route.put("preferences", preferences);
+				route.put("lang", lang);
+				JSONObject data = new JSONObject();
+				data.put("event", "route_search");
+				data.put("client", user);
+				data.put("timestamp", System.currentTimeMillis());
+				data.put("route", route);
+				JSONArray array = new JSONArray();
+				array.add(data);
+				// System.out.println("route_search user=" + user);
+				DatabaseBean.insertLogs(array, request);
 			} else if ("features".equals(action)) {
 				result = bean.getFeatures();
 			} else if ("nodemap".equals(action)) {
