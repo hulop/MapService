@@ -984,6 +984,17 @@ $hulop.editor = function() {
 		if (node1 == node2) {
 			return false;
 		}
+		for (let i = 1; i <= MAX_INDEX; i++) {
+			let linkId = node1.get('接続リンクID' + i);
+			let link = linkId && source.getFeatureById(linkId);
+			if (link && link.getGeometry().getCoordinates().length == 2) {
+				for (let j = 1; j <= MAX_INDEX; j++) {
+					if (linkId == node2.get('接続リンクID' + j)) {
+						return false;
+					}
+				}
+			}
+		}
 		var linkID = newID('link');
 		[ node1, node2 ].forEach(function(node) {
 			for (var i = 1; i <= MAX_INDEX; i++) {
