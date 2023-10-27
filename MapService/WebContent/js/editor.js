@@ -26,7 +26,7 @@ $hulop.editor = function() {
 
 	function i18nMenu(properties) {
 		var result = [];
-		[ 'en', 'ja', 'es', 'fr', 'ko', 'zh-CN' ].forEach(function(lang) {
+		[ 'en', 'ja', 'es', 'fr', 'ko', 'zh-CN' , 'ar' ].forEach(function(lang) {
 			result.push('group:I18N_' + lang);
 			properties.forEach(function(p) {
 				result.push(p + ':' + lang);
