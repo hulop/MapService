@@ -1,0 +1,11 @@
+{
+	"$key_group": {
+		"subtitle": "{B} {F}",
+		"key": "$value"
+	},
+	"$key_nogroup": {
+		"subtitle": "{B} {F}",
+		"nogroup": true,
+		"key": "$value"
+	}
+}

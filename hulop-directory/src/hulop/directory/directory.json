@@ -1,0 +1,174 @@
+{
+	"showSectionIndex": false,
+	"sections": [
+		{
+			"title": "$SEARCH_CATEGORY",
+			"items": [
+				{
+					"title": "$CAT_RESTAURANT_J",
+					"content": {
+						"showSectionIndex": false,
+						"sections": [
+							{
+								"title": "$CAT_SUSHI",
+								"$key_group": "category/RESTAURANT_J/SUSHI"
+							},
+							{
+								"title": "$CAT_TEMPURA_DON",
+								"$key_group": "category/RESTAURANT_J/TEMPURA_DON"
+							},
+							{
+								"title": "$CAT_JAPA_NOODLE",
+								"$key_group": "category/RESTAURANT_J/JAPA_NOODLE"
+							},
+							{
+								"title": "$OTHERS",
+								"$key_group": "category/RESTAURANT_J/"
+							}
+						]
+					}
+				},
+				{
+					"title": "$CAT_RESTAURANT_WO",
+					"content": {
+						"showSectionIndex": false,
+						"sections": [
+							{
+								"title": "$CAT_ITALIAN",
+								"$key_group": "category/RESTAURANT_WO/ITALIAN"
+							},
+							{
+								"title": "$CAT_FRENCH",
+								"$key_group": "category/RESTAURANT_WO/FRENCH"
+							},
+							{
+								"title": "$CAT_WEST",
+								"$key_group": "category/RESTAURANT_WO/WEST"
+							},
+							{
+								"title": "$CAT_ASIAN",
+								"$key_group": "category/RESTAURANT_WO/ASIAN"
+							},
+							{
+								"title": "$OTHERS",
+								"$key_group": "category/RESTAURANT_WO/"
+							}
+						]
+					}
+				},
+				{
+					"title": "$CAT_SHOP",
+					"content": {
+						"showSectionIndex": false,
+						"sections": [
+							{
+								"title": "$CAT_INTERIOR",
+								"$key_group": "category/SHOP/INTERIOR"
+							},
+							{
+								"title": "$CAT_FLOWER",
+								"$key_group": "category/SHOP/FLOWER"
+							},
+							{
+								"title": "$CAT_BOOK",
+								"$key_group": "category/SHOP/BOOK"
+							},
+							{
+								"title": "$OTHERS",
+								"$key_group": "category/SHOP/"
+							}
+						]
+					}
+				},
+				{
+					"title": "$CAT_TOIL",
+					"content": {
+						"showSectionIndex": false,
+						"sections": [
+							{
+								"title": "$CAT_TOIL",
+								"$key_nogroup": "category/TOIL/TOIL"
+							},
+							{
+								"title": "$CAT_TOIL_A",
+								"$key_nogroup": "category/TOIL/TOIL_A"
+							},
+							{
+								"title": "$CAT_TOIL_O",
+								"$key_nogroup": "category/TOIL/TOIL_O"
+							},
+							{
+								"title": "$CAT_TOIL_AM",
+								"$key_nogroup": "category/TOIL/TOIL_AM"
+							},
+							{
+								"title": "$CAT_TOIL_AF",
+								"$key_nogroup": "category/TOIL/TOIL_AF"
+							},
+							{
+								"title": "$CAT_TOIL_OM",
+								"$key_nogroup": "category/TOIL/TOIL_OM"
+							},
+							{
+								"title": "$CAT_TOIL_OF",
+								"$key_nogroup": "category/TOIL/TOIL_OF"
+							},
+							{
+								"title": "$CAT_TOIL_M",
+								"$key_nogroup": "category/TOIL/TOIL_M"
+							},
+							{
+								"title": "$CAT_TOIL_F",
+								"$key_nogroup": "category/TOIL/TOIL_F"
+							},
+							{
+								"title": "$OTHERS",
+								"$key_nogroup": "^category/TOIL/(?!(TOIL|TOIL_(A|O|M|F|AM|AF|OM|OF))$).*$"
+							}
+						]
+					}
+				}
+			]
+		},
+		{
+			"title": "$SEARCH_BUILDING",
+			"$building_items": {
+				"content": {
+					"showSectionIndex": false
+				}
+			}
+		},
+		{
+			"title": "$SEARCH_NEAR_FACILITY",
+			"$add_items": [
+				{
+					"title": "$CAT_TOIL",
+					"key": "category/TOIL/TOIL"
+				},
+				{
+					"title": "$CAT_TOIL_A",
+					"key": "^category/TOIL/TOIL_(A|O)"
+				},
+				{
+					"title": "$CAT_TOIL_O",
+					"key": "category/TOIL/TOIL_O"
+				},
+				{
+					"title": "$CAT_TOIL_M",
+					"key": "category/TOIL/TOIL_M"
+				},
+				{
+					"title": "$CAT_TOIL_F",
+					"key": "category/TOIL/TOIL_F"
+				},
+				{
+					"title": "$CAT_INFORMATION",
+					"key": "category/OTER/INFORMATION"
+				},
+				{
+					"key": "category/OTER/NEAR"
+				}
+			]
+		}
+	]
+}
