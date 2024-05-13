@@ -629,6 +629,7 @@ public class RouteSearchBean {
 		double theta = deg2rad(point1[0] - point2[0]);
 		double lat1 = deg2rad(point1[1]), lat2 = deg2rad(point2[1]);
 		double dist = Math.sin(lat1) * Math.sin(lat2) + Math.cos(lat1) * Math.cos(lat2) * Math.cos(theta);
+		dist = Math.min(1.0, Math.max(-1.0, dist));
 		return METERS_PER_DEGREE * Math.acos(dist) * 180.0 / Math.PI;
 	}
 
