@@ -49,6 +49,7 @@
 		"GROUP_I18N_fr": "i18n (French)",
 		"GROUP_I18N_ko": "i18n (Korean)",
 		"GROUP_I18N_zh-CN": "i18n (Simplified Chinese)",
+		"GROUP_I18N_ar": "i18n (Arabic)",
 		"GROUP_ROAD": "Road Width, Slope, Bump",
 		"GROUP_STAIR": "Stairway",
 		"GROUP_ELEVATOR": "Elevator",
