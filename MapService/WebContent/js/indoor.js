@@ -116,7 +116,7 @@ $hulop.indoor = function() {
 				});
 				map.on('moveend', refresh);
 				setTimeout(function() {
-					activeFloor = ($hulop.config.INITIAL_LOCATION && $hulop.config.INITIAL_LOCATION.floor) || null;
+					activeFloor = $hulop.config.INITIAL_LOCATION ? $hulop.config.INITIAL_LOCATION.floor : null;
 					refresh();
 				}, 1000)
 			},
